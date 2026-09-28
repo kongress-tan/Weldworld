@@ -1,0 +1,66 @@
+# LEARNINGS: master log of key decisions, logic changes and mistakes
+
+This file records how the tool's logic evolved: what I assumed, what I changed and why, and mistakes I made and fixed. Newest entries go at the top of each section.
+
+---
+
+## Session 1 (2026-09-28): v1.0 build
+
+### Approach (as confirmed at the start)
+1. Model the industry as a **7-layer directed graph**: tier → segment → application → process → automation → filler → NDT.
+2. Put **all content in `data.js`** so it can be edited without touching the 3D code.
+3. Render with three.js: one column per layer, curved links, and click-to-trace.
+4. Add study aids: detail panels, guided tours, a segment × layer matrix, and notes.
+
+### Key logic decisions
+
+**D1. Link applications directly to automation, filler and NDT, not only to processes.**
+- *First idea:* chain everything strictly: application → process → automation → filler → NDT.
+- *Problem:* clicking "Data Centers" would then light up every automation type GTAW can use (robots, cobots, special machines), which is wrong for that segment.
+- *Fix:* each application lists its own automation, fillers and NDT (**specific** links). Processes keep **generic** links (what the process can do in general), and those are only followed when you select a process-side node.
+- *Analogy:* a subway map where each train line (application) lists its own stops, instead of assuming every line stops everywhere the track goes.
+
+**D2. Trace rules that stop over-highlighting.**
+- Downstream from a segment or application: follow structural and specific links only.
+- Upstream from a filler or NDT node: take one hop to its processes (generic), but do not keep climbing from those processes. Otherwise "metal-cored wire" would light up every GMAW application in the world.
+
+**D3. Quantity is shown as weights, not fake precision.**
+- Each segment → application link carries a 1–5 weight for the share of that segment's welding workload.
+- The "mix" and matrix scores use Σ (weight × rank factor), where rank factor = 1.0, 0.6, 0.4, 0.3 for the 1st, 2nd, 3rd and later items in an application's list.
+- These are labeled **indicative** everywhere. They are a thinking tool, not market data.
+
+**D4. Added a "Manual (handheld)" and a "Semi-automatic" node to the automation layer.**
+- This keeps every chain complete (manual work is still a workflow choice), and it makes the manual vs automated filter a simple rule on the automation node's `mode`.
+
+### Domain corrections (things worth remembering)
+
+**C1. Data centers are not mainly orbital TIG.** (The original prompt suggested they were.)
+- By weld volume, data-center builds are led by **large-bore carbon-steel chilled-water piping** (TIG or stick root, FCAW or GMAW fill), **structural steel** (FCAW-S and stick in the field), and **off-site prefab** (skids, genset bases, switchgear and e-house enclosures).
+- **Orbital GTAW** is real but concentrated in **stainless liquid-cooling loops (TCS/CDU)**. It is smaller today and the fastest-growing slice as direct-to-chip cooling scales.
+- Grooved and press-fit mechanical couplings compete with welding on smaller pipe sizes.
+- The upstream power build (gas turbines, HRSGs, substations) shows up under Power Generation.
+
+**C2. Automotive body-in-white is mostly resistance spot welding, not arc welding.**
+Arc welding in autos concentrates in chassis and suspension, exhaust, and EV battery trays.
+
+**C3. Metal-cored wire is classified under GMAW (AWS A5.18 E70C), not FCAW.**
+It is linked to the GMAW process node, even though it is tubular like flux-cored wire.
+
+**C4. HVAC copper coils are brazed, not arc welded.**
+This is noted in the segment so it doesn't overstate arc-welding volume.
+
+### Build mistakes and fixes
+
+**M1. The CDN was blocked in the build container.**
+jsdelivr and cdnjs returned 403 from the sandbox. The page still loads three.js from jsdelivr (allowed in the artifact viewer and in normal browsers). For testing I pulled three@0.147.0 from npm and routed the CDN URLs to the local copy. *Lesson:* test offline-capable, and give the page a fallback message. The page shows "3D view unavailable" and opens the Matrix view if three.js fails to load.
+
+**M2. Label overlap.**
+With 111 nodes, drawing every label makes an unreadable wall of text. *Fix:* a per-frame collision pass places labels in priority order (selected > highlighted > layer importance > size > closeness) and skips any that would overlap. Dimmed labels are hidden while a chain is selected.
+
+---
+
+## How to add to this log
+For each future change, add:
+- **What changed** (one line)
+- **Why** (the assumption that was wrong or the user feedback)
+- **Lesson** (what to check next time)

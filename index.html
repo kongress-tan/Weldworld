@@ -1,0 +1,1292 @@
+<title>WeldWorld Atlas</title>
+<meta name="description" content="Interactive 3D map of welding and NDT workflows: industry tiers, end segments, applications, weld processes, automation, filler metals and inspection.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Single, deliberate dark theme: a shop floor lit by arc light. */
+  :root {
+    color-scheme: dark;
+    --bg: #0B1115;
+    --surface: #10181E;
+    --surface-2: #152029;
+    --surface-3: #1B2833;
+    --line: #22323E;
+    --line-2: #2D4150;
+    --text: #DCE5EB;
+    --muted: #8E9FAC;
+    --faint: #5F7280;
+    --accent: #58C4F5;
+    --accent-ink: #06202D;
+    --warn: #F2A93B;
+    --radius: 6px;
+    --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+    --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 var(--font-body); overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  #app {
+    position: fixed; inset: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    display: grid;
+    grid-template-columns: 264px minmax(0, 1fr) 384px;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "top top top" "rail stage panel";
+    background: var(--bg);
+  }
+
+  /* ---------- Top bar ---------- */
+  #topbar {
+    grid-area: top; display: flex; align-items: center; gap: 16px;
+    padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--surface);
+    min-width: 0;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .brand h1 {
+    margin: 0; font: 700 24px/1 var(--font-display); letter-spacing: .02em; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .brand h1 span { color: var(--accent); }
+  .brand p { margin: 0; color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .spacer { flex: 1; }
+  .seg-ctl { display: inline-flex; border: 1px solid var(--line-2); border-radius: var(--radius); overflow: hidden; flex-shrink: 0; }
+  .seg-ctl button {
+    background: transparent; border: 0; padding: 6px 12px; color: var(--muted);
+    font: 600 13px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase;
+  }
+  .seg-ctl button + button { border-left: 1px solid var(--line-2); }
+  .seg-ctl button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .icon-btn {
+    display: none; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: var(--radius);
+    padding: 6px 10px; font: 600 13px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase;
+  }
+
+  /* ---------- Search ---------- */
+  .search { position: relative; width: 100%; }
+  .search input {
+    width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line-2);
+    border-radius: var(--radius); padding: 8px 10px 8px 30px; font-size: 13.5px;
+  }
+  .search input::placeholder { color: var(--faint); }
+  .search svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; fill: none; stroke: var(--faint); stroke-width: 2; }
+  #results {
+    position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 20; margin: 0; padding: 4px; list-style: none;
+    background: var(--surface-2); border: 1px solid var(--line-2); border-radius: var(--radius);
+    box-shadow: 0 12px 30px rgba(0,0,0,.45); max-height: 320px; overflow: auto;
+  }
+  #results li button {
+    display: flex; gap: 8px; align-items: center; width: 100%; text-align: left; background: none; border: 0;
+    padding: 6px 8px; border-radius: 4px; font-size: 13px;
+  }
+  #results li button:hover, #results li button.active { background: var(--surface-3); }
+  #results .lyr { margin-left: auto; color: var(--faint); font: 11px var(--font-mono); white-space: nowrap; }
+
+  /* ---------- Left rail ---------- */
+  #rail {
+    grid-area: rail; overflow-y: auto; border-right: 1px solid var(--line); background: var(--surface);
+    padding: 16px; display: flex; flex-direction: column; gap: 20px;
+  }
+  .rail-h {
+    margin: 0 0 8px; font: 600 13px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  }
+  .layer-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .layer-list button {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 8px; background: none; border: 0;
+    border-radius: 4px; text-align: left; font-size: 13.5px;
+  }
+  .layer-list button:hover { background: var(--surface-2); }
+  .layer-list .n { color: var(--faint); font: 11px var(--font-mono); width: 14px; }
+  .layer-list .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); flex-shrink: 0; }
+  .layer-list .cnt { margin-left: auto; color: var(--faint); font: 11px var(--font-mono); }
+  .layer-list button[aria-pressed="false"] { opacity: .38; }
+  .layer-list button[aria-pressed="false"] .dot { box-shadow: none; }
+  .filter-group { display: flex; flex-direction: column; gap: 6px; }
+  .filter-group .flabel { font-size: 12px; color: var(--muted); }
+  .pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .pills button {
+    background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 4px 10px; font-size: 12.5px; color: var(--muted);
+  }
+  .pills button[aria-pressed="true"] { border-color: var(--accent); color: var(--text); background: rgba(88,196,245,.12); }
+  .rail-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+  .btn {
+    background: var(--surface-2); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 6px 10px; font-size: 12.5px;
+  }
+  .btn:hover { border-color: var(--faint); }
+  .btn[aria-pressed="true"] { border-color: var(--accent); background: rgba(88,196,245,.12); }
+  .tour-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .tour-list button {
+    width: 100%; text-align: left; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 8px 10px; font-size: 13px; display: flex; justify-content: space-between; gap: 8px;
+  }
+  .tour-list button:hover { border-color: var(--line-2); background: var(--surface-3); }
+  .tour-list .steps { color: var(--faint); font: 11px var(--font-mono); white-space: nowrap; }
+  .rail-foot { margin-top: auto; color: var(--faint); font-size: 11.5px; line-height: 1.45; }
+
+  /* ---------- Stage ---------- */
+  #stage { grid-area: stage; position: relative; overflow: hidden; min-width: 0; min-height: 0; background: radial-gradient(ellipse at 50% 40%, #122029 0%, var(--bg) 70%); }
+  #stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  #labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .lbl {
+    position: absolute; left: 0; top: 0; white-space: nowrap; pointer-events: auto; cursor: pointer;
+    font: 500 11.5px/15px var(--font-body); color: var(--c); padding: 0 3px; border-radius: 3px;
+    text-shadow: 0 0 3px var(--bg), 0 0 6px var(--bg), 0 1px 2px #000;
+    will-change: transform;
+  }
+  .lbl:hover { background: rgba(11,17,21,.85); }
+  .lbl.hi { color: #fff; font-weight: 600; }
+  .lbl.sel { color: #fff; font-weight: 600; background: rgba(11,17,21,.9); box-shadow: 0 0 0 1px var(--c); }
+  .lbl.rest { opacity: .88; }
+  .hdr {
+    position: absolute; left: 0; top: 0; white-space: nowrap; pointer-events: none; transform-origin: 50% 100%;
+    font: 700 14px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--c);
+    text-shadow: 0 0 8px var(--bg);
+  }
+  .hdr small { display: block; font: 400 10.5px/1.4 var(--font-mono); letter-spacing: 0; color: var(--faint); text-transform: none; text-align: center; }
+  #tooltip {
+    position: absolute; z-index: 5; pointer-events: none; max-width: 280px; background: rgba(16,24,30,.96);
+    border: 1px solid var(--line-2); border-radius: var(--radius); padding: 8px 10px; font-size: 12.5px; line-height: 1.4;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  }
+  #tooltip b { display: block; font-size: 13px; }
+  #tooltip .l { font: 10.5px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--c); }
+  .stage-hint {
+    position: absolute; left: 16px; bottom: 14px; color: var(--faint); font: 11px var(--font-mono); pointer-events: none;
+    display: flex; gap: 14px; flex-wrap: wrap;
+  }
+  .stage-tools { position: absolute; right: 12px; top: 12px; display: flex; gap: 6px; }
+  .stage-tools .btn { background: rgba(21,32,41,.9); }
+  .filter-note {
+    position: absolute; left: 50%; top: 12px; transform: translateX(-50%); background: rgba(21,32,41,.92); border: 1px solid var(--line-2);
+    border-radius: 999px; padding: 5px 12px; font-size: 12px; color: var(--muted); white-space: nowrap;
+  }
+  .filter-note b { color: var(--text); font-weight: 600; }
+  .filter-note button { background: none; border: 0; color: var(--accent); padding: 0 0 0 8px; font-size: 12px; }
+  #nogl {
+    position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; color: var(--muted);
+  }
+
+  /* ---------- Tour card ---------- */
+  #tour {
+    position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); width: min(560px, calc(100% - 32px));
+    background: rgba(16,24,30,.97); border: 1px solid var(--line-2); border-radius: 8px; padding: 14px 16px 12px;
+    box-shadow: 0 16px 40px rgba(0,0,0,.55); z-index: 6;
+  }
+  #tour .t-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  #tour .t-name { font: 700 16px/1.1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  #tour .t-step { font: 11px var(--font-mono); color: var(--faint); }
+  #tour p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.5; }
+  #tour .t-bar { height: 2px; background: var(--line); border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+  #tour .t-bar i { display: block; height: 100%; background: var(--accent); transition: width .3s; }
+  #tour .t-actions { display: flex; gap: 6px; justify-content: flex-end; }
+  #tour .t-actions .primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+
+  /* ---------- Matrix ---------- */
+  #matrix { position: absolute; inset: 0; overflow: auto; padding: 16px; background: var(--bg); }
+  .mx-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .mx-head h2 { margin: 0; font: 700 20px/1.1 var(--font-display); letter-spacing: .04em; text-transform: uppercase; }
+  .mx-head p { margin: 0; color: var(--muted); font-size: 12.5px; max-width: 70ch; flex-basis: 100%; }
+  .mx-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+  table.mx { border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+  table.mx th, table.mx td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
+  table.mx thead th {
+    position: sticky; top: 0; background: var(--surface); z-index: 1; vertical-align: bottom; padding: 8px 4px; min-width: 52px; max-width: 64px;
+    font: 500 11px/1.25 var(--font-body); color: var(--muted); text-align: center;
+  }
+  table.mx thead th button { background: none; border: 0; padding: 0; color: inherit; font: inherit; }
+  table.mx thead th button:hover { color: var(--text); }
+  table.mx th.row { position: sticky; left: 0; background: var(--surface); text-align: left; padding: 6px 10px; min-width: 190px; font-weight: 500; z-index: 2; }
+  table.mx thead th.row { z-index: 3; }
+  table.mx th.row button { background: none; border: 0; padding: 0; text-align: left; font-size: 12.5px; }
+  table.mx th.row button:hover { color: var(--warn); }
+  table.mx th.row .tier { display: block; font: 10px var(--font-mono); color: var(--faint); }
+  table.mx td { text-align: center; padding: 0; height: 34px; min-width: 52px; }
+  table.mx td span { display: grid; place-items: center; height: 100%; font-family: var(--font-mono); font-size: 11px; }
+  .mx-legend { display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--muted); font-size: 12px; }
+  .mx-legend i { width: 120px; height: 8px; border-radius: 2px; }
+
+  /* ---------- Detail panel ---------- */
+  #panel {
+    grid-area: panel; overflow-y: auto; border-left: 1px solid var(--line); background: var(--surface); padding: 18px 18px 28px;
+  }
+  .p-close { display: none; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 7px; font: 600 12px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--c);
+  }
+  .kicker::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); }
+  #panel h2 { margin: 8px 0 2px; font: 700 28px/1.05 var(--font-display); letter-spacing: .01em; text-wrap: balance; }
+  #panel .alias { margin: 0; color: var(--faint); font: 12px var(--font-mono); }
+  #panel .sum { margin: 12px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--text); }
+  #panel h3 {
+    margin: 22px 0 8px; font: 600 13px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  #panel h3 small { font: 400 11px var(--font-mono); letter-spacing: 0; text-transform: none; color: var(--faint); }
+  #panel p.body { margin: 0; color: var(--text); line-height: 1.6; font-size: 13.5px; }
+  dl.facts { margin: 0; display: grid; grid-template-columns: minmax(96px, 38%) 1fr; border-top: 1px solid var(--line); }
+  dl.facts dt, dl.facts dd { margin: 0; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  dl.facts dt { color: var(--muted); padding-right: 10px; }
+  dl.facts dd { font-variant-numeric: tabular-nums; }
+  .meta-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+  .meta { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 10px; }
+  .meta .k { font: 10.5px var(--font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--faint); }
+  .meta .v { font-size: 13px; font-weight: 500; margin-top: 3px; }
+  .pips { display: inline-flex; gap: 3px; vertical-align: middle; }
+  .pips i { width: 10px; height: 6px; border-radius: 1px; background: var(--line-2); }
+  .pips i.on { background: var(--warn); }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px;
+    padding: 4px 8px; font-size: 12.5px; text-align: left;
+  }
+  .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--c); flex-shrink: 0; }
+  .chip:hover { border-color: var(--c); }
+  .chip-group + .chip-group { margin-top: 10px; }
+  .chip-group .g { font: 10.5px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--faint); margin-bottom: 5px; }
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; border-left: 1px solid var(--line-2); margin-left: 9px; }
+  ol.steps li { counter-increment: s; position: relative; padding: 0 0 10px 20px; font-size: 13.5px; line-height: 1.45; }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: -10px; top: 0; width: 19px; height: 19px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--c); color: var(--c); font: 500 10.5px/19px var(--font-mono); text-align: center;
+  }
+  .bars { display: flex; flex-direction: column; gap: 7px; }
+  .bar-row { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; }
+  .bar-row button { background: none; border: 0; padding: 0; text-align: left; font-size: 13px; }
+  .bar-row button:hover { color: var(--c); text-decoration: underline; text-underline-offset: 2px; }
+  .bar-row .val { font: 11px var(--font-mono); color: var(--muted); }
+  .bar-row .track { grid-column: 1 / -1; height: 5px; background: var(--surface-3); border-radius: 3px; overflow: hidden; }
+  .bar-row .track i { display: block; height: 100%; background: var(--c); border-radius: 3px; }
+  .bar-row .note { grid-column: 1 / -1; font-size: 11.5px; color: var(--faint); line-height: 1.35; }
+  .mix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .mix-grid .g { font: 10.5px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--faint); margin-bottom: 6px; }
+  .mix-grid .bar-row button { font-size: 12px; }
+  .callout {
+    margin-top: 18px; background: rgba(242,169,59,.07); border: 1px solid rgba(242,169,59,.35); border-radius: var(--radius); padding: 10px 12px;
+  }
+  .callout .k { font: 600 12px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--warn); margin-bottom: 6px; }
+  .callout p { margin: 0; font-size: 13px; line-height: 1.55; }
+  .procon { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .procon div { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 10px; font-size: 12.5px; line-height: 1.45; }
+  .procon b { display: block; font: 600 11px/1.4 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .ex { font: 12px/1.5 var(--font-mono); color: var(--muted); }
+  .notes textarea {
+    width: 100%; box-sizing: border-box; min-height: 84px; resize: vertical; background: var(--bg); border: 1px solid var(--line-2);
+    border-radius: var(--radius); padding: 8px 10px; font-size: 13px; line-height: 1.45;
+  }
+  .notes .saved { font: 11px var(--font-mono); color: var(--faint); }
+  .start-flow { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; }
+  .start-flow li { display: grid; grid-template-columns: 22px 1fr; gap: 2px 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .start-flow .n { grid-row: span 2; font: 500 12px var(--font-mono); color: var(--c); padding-top: 2px; }
+  .start-flow b { font-weight: 600; font-size: 13.5px; color: var(--c); }
+  .start-flow span { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+  .cta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .cta .primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+  .disclaimer { margin-top: 18px; font-size: 11.5px; color: var(--faint); line-height: 1.5; }
+  .kbd { font: 11px var(--font-mono); border: 1px solid var(--line-2); border-radius: 3px; padding: 0 4px; color: var(--muted); }
+  ul.tips { margin: 0; padding-left: 18px; color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1240px) {
+    #app { grid-template-columns: 236px minmax(0, 1fr) 336px; }
+    .brand p { display: none; }
+  }
+  @media (max-width: 900px) {
+    #app {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      grid-template-areas: "top" "stage" "panel";
+    }
+    #topbar { gap: 8px; padding: 8px 16px; }
+    .brand h1 { font-size: 20px; }
+    .icon-btn { display: inline-block; }
+    #topbar .seg-ctl button { padding: 6px 8px; }
+    #rail {
+      position: fixed; z-index: 30; top: 0; bottom: 0; left: 0; width: min(300px, 86vw); box-sizing: border-box;
+      padding-top: calc(16px + env(safe-area-inset-top, 0px)); transform: translateX(-102%); transition: transform .25s ease;
+      box-shadow: 12px 0 40px rgba(0,0,0,.5);
+    }
+    #rail.open { transform: none; }
+    #panel { border-left: 0; border-top: 1px solid var(--line); max-height: 46vh; padding: 14px 16px 22px; }
+    #panel.collapsed { max-height: 0; padding-block: 0; overflow: hidden; border-top: 0; }
+    .p-close { display: block; float: right; }
+    #panel h2 { font-size: 24px; }
+    .stage-hint { display: none; }
+    #tour { bottom: 12px; }
+    .mix-grid { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #rail { transition: none; }
+    #tour .t-bar i { transition: none; }
+  }
+</style>
+
+<div id="app">
+  <header id="topbar">
+    <button class="icon-btn" id="menuBtn" aria-controls="rail" aria-expanded="false">Controls</button>
+    <div class="brand">
+      <h1>Weld<span>World</span></h1>
+      <p>Welding &amp; NDT workflow atlas · market → application → process → automation → filler → inspection</p>
+    </div>
+    <div class="spacer"></div>
+    <div class="seg-ctl" role="group" aria-label="View">
+      <button id="view3d" aria-pressed="true">3D map</button>
+      <button id="viewMx" aria-pressed="false">Matrix</button>
+    </div>
+  </header>
+
+  <aside id="rail" aria-label="Controls">
+    <div class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <input id="q" type="search" placeholder="Search: orbital, PAUT, wind…" autocomplete="off" aria-label="Search the map">
+      <ul id="results" hidden></ul>
+    </div>
+
+    <section>
+      <h2 class="rail-h">Layers</h2>
+      <ul class="layer-list" id="layerList"></ul>
+    </section>
+
+    <section class="filter-group">
+      <h2 class="rail-h">Filters</h2>
+      <span class="flabel" id="tierLbl">Industry tier</span>
+      <div class="pills" id="tierPills" role="group" aria-labelledby="tierLbl">
+        <button data-v="all" aria-pressed="true">All</button>
+        <button data-v="tier_light" aria-pressed="false">Light</button>
+        <button data-v="tier_heavy" aria-pressed="false">Heavy</button>
+      </div>
+      <span class="flabel" id="modeLbl">Operating mode</span>
+      <div class="pills" id="modePills" role="group" aria-labelledby="modeLbl">
+        <button data-v="all" aria-pressed="true">All</button>
+        <button data-v="manual" aria-pressed="false">Manual &amp; semi-auto</button>
+        <button data-v="mech" aria-pressed="false">Mechanized</button>
+        <button data-v="robot" aria-pressed="false">Robotic &amp; cobot</button>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="rail-h">Guided tours</h2>
+      <ul class="tour-list" id="tourList"></ul>
+    </section>
+
+    <section>
+      <h2 class="rail-h">View</h2>
+      <div class="rail-actions">
+        <button class="btn" id="flatBtn" aria-pressed="false">Flatten depth</button>
+        <button class="btn" id="spinBtn" aria-pressed="false">Auto-rotate</button>
+        <button class="btn" id="resetBtn">Reset view</button>
+      </div>
+    </section>
+
+    <p class="rail-foot" id="railFoot"></p>
+  </aside>
+
+  <main id="stage" aria-label="3D workflow map">
+    <div id="labels"></div>
+    <div id="tooltip" hidden></div>
+    <div class="filter-note" id="filterNote" hidden></div>
+    <div class="stage-tools"><button class="btn" id="clearBtn" hidden>Clear selection</button></div>
+    <div class="stage-hint"><span>drag · orbit</span><span>scroll · zoom</span><span>right-drag · pan</span><span>click · trace chain</span><span>esc · clear</span></div>
+    <div id="tour" hidden></div>
+    <div id="matrix" hidden></div>
+    <div id="nogl" hidden></div>
+  </main>
+
+  <aside id="panel" aria-label="Details" aria-live="polite"></aside>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="data.js"></script>
+<script>
+(function () {
+  "use strict";
+  const D = window.WELD_DATA;
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); return true; } catch (e) { return false; } },
+  };
+
+  /* ================= Graph model ================= */
+  const LAYERS = D.layers;
+  const LIDX = {}; LAYERS.forEach((l, i) => (LIDX[l.id] = i));
+  const LCOLOR = {}; LAYERS.forEach((l) => (LCOLOR[l.id] = l.color));
+  const NODES = D.nodes;
+  const byId = new Map(NODES.map((n) => [n.id, n]));
+  const edges = [], OUT = new Map(), IN = new Map();
+  NODES.forEach((n) => { OUT.set(n.id, []); IN.set(n.id, []); });
+  function addEdge(s, t, kind, w, note) {
+    if (!byId.has(s) || !byId.has(t)) { console.warn("WeldWorld: missing link", s, "→", t); return; }
+    const e = { s, t, kind, w: w || 1, note: note || "", i: edges.length };
+    edges.push(e); OUT.get(s).push(e); IN.get(t).push(e);
+  }
+  const APP_KEYS = { process: "processes", automation: "automation", filler: "fillers", ndt: "ndt" };
+  NODES.forEach((n) => {
+    if (n.layer === "segment") {
+      (n.tiers || []).forEach((t) => addEdge(t, n.id, "struct"));
+      (n.apps || []).forEach(([a, w, note]) => addEdge(n.id, a, "struct", w, note));
+    } else if (n.layer === "app") {
+      Object.values(APP_KEYS).forEach((k) => (n[k] || []).forEach((t) => addEdge(n.id, t, "spec")));
+    } else if (n.layer === "process") {
+      ["automation", "fillers", "ndt"].forEach((k) => (n[k] || []).forEach((t) => addEdge(n.id, t, "generic")));
+    }
+  });
+  const nodesOf = (layer) => NODES.filter((n) => n.layer === layer);
+
+  // Indicative scoring: segment weight x rank factor of the item in the application's list.
+  const RANK = [1, 0.6, 0.4, 0.3, 0.25, 0.2, 0.2, 0.2];
+  function segMix(segId, layer) {
+    const key = APP_KEYS[layer], res = new Map();
+    OUT.get(segId).forEach((e) => {
+      const app = byId.get(e.t); if (!app || app.layer !== "app") return;
+      (app[key] || []).forEach((x, i) => res.set(x, (res.get(x) || 0) + e.w * (RANK[i] || 0.2)));
+    });
+    return res;
+  }
+  const mixCache = new Map();
+  function segMixCached(segId, layer) {
+    const k = segId + "|" + layer;
+    if (!mixCache.has(k)) mixCache.set(k, segMix(segId, layer));
+    return mixCache.get(k);
+  }
+  // Where does a downstream node (process/automation/filler/ndt) show up across segments?
+  function reachBySegment(id) {
+    const layer = byId.get(id).layer, res = [];
+    nodesOf("segment").forEach((s) => {
+      const m = segMixCached(s.id, layer), v = m.get(id) || 0;
+      if (v > 0) {
+        let tot = 0; m.forEach((x) => (tot += x));
+        res.push({ id: s.id, v, share: v / tot });
+      }
+    });
+    return res.sort((a, b) => b.v - a.v);
+  }
+
+  /* ================= Trace & filters ================= */
+  function trace(id) {
+    const N = new Set([id]), E = new Set();
+    let q = [id]; const seenD = new Set([id]);
+    while (q.length) {
+      const x = q.shift();
+      for (const e of OUT.get(x)) {
+        if (e.kind === "generic" && x !== id) continue;
+        E.add(e);
+        if (!seenD.has(e.t)) { seenD.add(e.t); N.add(e.t); q.push(e.t); }
+      }
+    }
+    q = [id]; const seenU = new Set([id]);
+    while (q.length) {
+      const x = q.shift();
+      for (const e of IN.get(x)) {
+        if (e.kind === "generic" && x !== id) continue;
+        E.add(e);
+        if (!seenU.has(e.s)) { seenU.add(e.s); N.add(e.s); if (e.kind !== "generic") q.push(e.s); }
+      }
+    }
+    return { nodes: N, edges: E };
+  }
+  const state = { selected: null, tier: "all", mode: "all", hidden: new Set(), view: "3d", flat: false, tour: null };
+  function filterSet() {
+    if (state.tier === "all" && state.mode === "all") return null;
+    const modeOk = (id) => state.mode === "all" || byId.get(id).mode === state.mode;
+    const N = new Set(), E = new Set();
+    nodesOf("app").forEach((app) => {
+      const segEdges = IN.get(app.id).filter((e) => e.kind === "struct" && (state.tier === "all" || (byId.get(e.s).tiers || []).includes(state.tier)));
+      if (!segEdges.length) return;
+      const autos = OUT.get(app.id).filter((e) => byId.get(e.t).layer === "automation");
+      if (state.mode !== "all" && !autos.some((e) => modeOk(e.t))) return;
+      N.add(app.id);
+      segEdges.forEach((e) => {
+        E.add(e); N.add(e.s);
+        IN.get(e.s).forEach((te) => { if (state.tier === "all" || te.s === state.tier) { E.add(te); N.add(te.s); } });
+      });
+      OUT.get(app.id).forEach((e) => {
+        if (byId.get(e.t).layer === "automation" && !modeOk(e.t)) return;
+        E.add(e); N.add(e.t);
+      });
+    });
+    return { nodes: N, edges: E };
+  }
+  function computeActive() {
+    const F = filterSet();
+    if (!state.selected) return F;
+    const A = trace(state.selected);
+    if (!F) return A;
+    const N = new Set([...A.nodes].filter((x) => F.nodes.has(x) || x === state.selected));
+    const E = new Set([...A.edges].filter((e) => N.has(e.s) && N.has(e.t) && (F.edges.has(e) || e.kind === "generic")));
+    return { nodes: N, edges: E };
+  }
+
+  /* ================= Layout ================= */
+  const X_GAP = 235;
+  const pos = new Map(); // id -> {x,y,z}
+  (function layout() {
+    const yOf = new Map();
+    LAYERS.forEach((L, li) => {
+      let list = nodesOf(L.id).map((n, k) => ({ n, k }));
+      if (li > 0) {
+        list.forEach((it) => {
+          const ys = IN.get(it.n.id).filter((e) => LIDX[byId.get(e.s).layer] < li && yOf.has(e.s)).map((e) => yOf.get(e.s));
+          it.b = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : -1e9;
+        });
+        list.sort((a, b) => b.b - a.b || a.k - b.k);
+      }
+      const n = list.length;
+      const cols = n > 28 ? 3 : n > 14 ? 2 : 1;
+      const rows = Math.ceil(n / cols);
+      const sy = cols === 1 ? 30 : 27, sz = 78;
+      list.forEach((it, k) => {
+        const row = Math.floor(k / cols), col = k % cols;
+        const x = (li - (LAYERS.length - 1) / 2) * X_GAP + (col - (cols - 1) / 2) * 14;
+        const y = ((rows - 1) / 2) * sy - row * sy;
+        const z = (col - (cols - 1) / 2) * sz;
+        pos.set(it.n.id, { x, y, z });
+        yOf.set(it.n.id, y);
+      });
+    });
+  })();
+  // Node sizes
+  const radius = new Map();
+  NODES.forEach((n) => {
+    let r;
+    if (n.layer === "tier") r = 15;
+    else if (n.layer === "segment") r = 5 + (n.intensity || 3) * 1.5;
+    else if (n.layer === "app") r = 4.5 + Math.sqrt(IN.get(n.id).reduce((a, e) => a + e.w, 0)) * 1.25;
+    else r = 4.5 + Math.sqrt(IN.get(n.id).filter((e) => e.kind === "spec").length) * 1.15;
+    radius.set(n.id, r);
+  });
+
+  /* ================= UI: rail ================= */
+  const layerList = $("#layerList");
+  layerList.innerHTML = LAYERS.map((L, i) =>
+    `<li><button data-layer="${L.id}" aria-pressed="true" style="--c:${L.color}" title="Show or hide this layer"><span class="n">${i + 1}</span><span class="dot"></span>${esc(L.name)}<span class="cnt">${nodesOf(L.id).length}</span></button></li>`
+  ).join("");
+  layerList.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button[data-layer]"); if (!b) return;
+    const id = b.dataset.layer;
+    if (state.hidden.has(id)) state.hidden.delete(id); else state.hidden.add(id);
+    b.setAttribute("aria-pressed", String(!state.hidden.has(id)));
+    refresh();
+  });
+  function bindPills(elId, key) {
+    const el = $(elId);
+    el.addEventListener("click", (ev) => {
+      const b = ev.target.closest("button[data-v]"); if (!b) return;
+      state[key] = b.dataset.v;
+      el.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      refresh(); if (state.view === "matrix") renderMatrix();
+    });
+  }
+  bindPills("#tierPills", "tier");
+  bindPills("#modePills", "mode");
+  $("#tourList").innerHTML = D.tours.map((t) =>
+    `<li><button data-tour="${t.id}"><span>${esc(t.name)}</span><span class="steps">${t.steps.length} stops</span></button></li>`
+  ).join("");
+  $("#tourList").addEventListener("click", (ev) => {
+    const b = ev.target.closest("button[data-tour]"); if (b) startTour(b.dataset.tour);
+  });
+  $("#railFoot").textContent = D.meta.disclaimer;
+
+  const rail = $("#rail"), menuBtn = $("#menuBtn");
+  menuBtn.addEventListener("click", () => {
+    const open = !rail.classList.contains("open");
+    rail.classList.toggle("open", open); menuBtn.setAttribute("aria-expanded", String(open));
+  });
+  const isNarrow = () => window.matchMedia("(max-width: 900px)").matches;
+  function closeRailIfNarrow() { if (isNarrow()) { rail.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); } }
+
+  /* ================= Search ================= */
+  const q = $("#q"), results = $("#results");
+  let resIdx = 0, resItems = [];
+  function searchText(n) {
+    return [n.name, n.alias, n.sum, n.mat, n.codes, (n.facts || []).map((f) => f.join(" ")).join(" "), n.ex].join(" ").toLowerCase();
+  }
+  const SEARCH = NODES.map((n) => ({ n, t: searchText(n), name: n.name.toLowerCase() }));
+  function doSearch() {
+    const s = q.value.trim().toLowerCase();
+    if (!s) { results.hidden = true; return; }
+    const terms = s.split(/\s+/);
+    resItems = SEARCH.filter((x) => terms.every((t) => x.t.includes(t)))
+      .map((x) => ({ n: x.n, sc: (x.name.includes(s) ? 10 : 0) + (x.name.startsWith(s) ? 5 : 0) }))
+      .sort((a, b) => b.sc - a.sc).slice(0, 10).map((x) => x.n);
+    resIdx = 0;
+    results.innerHTML = resItems.length
+      ? resItems.map((n, i) => `<li><button data-go="${n.id}" class="${i === 0 ? "active" : ""}" style="--c:${LCOLOR[n.layer]}"><span class="chip-dot" style="width:8px;height:8px;border-radius:50%;background:${LCOLOR[n.layer]};flex-shrink:0"></span>${esc(n.name)}<span class="lyr">${esc(LAYERS[LIDX[n.layer]].name)}</span></button></li>`).join("")
+      : `<li style="padding:8px;color:var(--faint);font-size:12.5px">No matches. Try a process (SAW), a code (API 1104) or a material (9% Ni).</li>`;
+    results.hidden = false;
+  }
+  q.addEventListener("input", doSearch);
+  q.addEventListener("keydown", (ev) => {
+    if (results.hidden) return;
+    const btns = [...results.querySelectorAll("button")];
+    if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+      ev.preventDefault();
+      resIdx = (resIdx + (ev.key === "ArrowDown" ? 1 : -1) + btns.length) % btns.length;
+      btns.forEach((b, i) => b.classList.toggle("active", i === resIdx));
+    } else if (ev.key === "Enter" && resItems[resIdx]) {
+      pick(resItems[resIdx].id);
+    } else if (ev.key === "Escape") { results.hidden = true; }
+  });
+  results.addEventListener("click", (ev) => { const b = ev.target.closest("button[data-go]"); if (b) pick(b.dataset.go); });
+  document.addEventListener("click", (ev) => { if (!ev.target.closest(".search")) results.hidden = true; });
+  function pick(id) { q.value = ""; results.hidden = true; closeRailIfNarrow(); endTour(); setView("3d"); select(id); }
+
+  /* ================= Detail panel ================= */
+  const panel = $("#panel");
+  const lname = (id) => LAYERS[LIDX[id]].name;
+  const chip = (id) => { const n = byId.get(id); return `<button class="chip" data-go="${id}" style="--c:${LCOLOR[n.layer]}">${esc(n.name)}</button>`; };
+  const chipGroup = (label, ids) => ids.length ? `<div class="chip-group"><div class="g">${esc(label)}</div><div class="chips">${ids.map(chip).join("")}</div></div>` : "";
+  const facts = (arr) => arr && arr.length ? `<dl class="facts">${arr.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : "";
+  const pips = (v) => `<span class="pips" aria-label="${v} of 5">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= v ? "on" : ""}"></i>`).join("")}</span>`;
+  function barRows(items, color) {
+    const max = Math.max(...items.map((x) => x.v), 1e-9);
+    return `<div class="bars">${items.map((x) => {
+      const n = byId.get(x.id), c = color || LCOLOR[n.layer];
+      return `<div class="bar-row" style="--c:${c}"><button data-go="${x.id}">${esc(n.name)}</button><span class="val">${esc(x.label)}</span><span class="track"><i style="width:${Math.max(3, (x.v / max) * 100).toFixed(1)}%"></i></span>${x.note ? `<span class="note">${esc(x.note)}</span>` : ""}</div>`;
+    }).join("")}</div>`;
+  }
+  function mixBlock(segId, layer, top) {
+    const m = segMixCached(segId, layer); let tot = 0; m.forEach((v) => (tot += v));
+    const items = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, top).map(([id, v]) => ({ id, v, label: Math.round((v / tot) * 100) + "%" }));
+    return `<div><div class="g">${esc(lname(layer))}</div>${barRows(items)}</div>`;
+  }
+  function notesBlock(id) {
+    const v = store.get("ww-note-" + id) || "";
+    return `<h3>My notes <small class="saved" id="noteSaved"></small></h3><div class="notes"><textarea id="note-${id}" data-note="${id}" placeholder="Customer names, share estimates, questions to validate… (saved in this browser)">${esc(v)}</textarea></div>`;
+  }
+  function startPanel() {
+    const counts = LAYERS.map((L) => nodesOf(L.id).length);
+    return `
+      <div class="kicker" style="--c:var(--accent)">Start here</div>
+      <h2>Follow a weld from market to inspection</h2>
+      <p class="sum">Every column in the map is one step of the workflow. Click any node to light up its full chain: who welds it, how, with which automation and filler, and how it gets inspected.</p>
+      <ol class="start-flow">
+        ${LAYERS.map((L, i) => `<li style="--c:${L.color}"><span class="n">${i + 1}</span><b>${esc(L.name)} · ${counts[i]}</b><span>${esc({
+          tier: "Light vs heavy industrial: thickness, volume and code regime.",
+          segment: "End markets, with growth, automation level and weld intensity.",
+          app: "What actually gets welded, with a step-by-step workflow.",
+          process: "SMAW, GMAW, FCAW, GTAW, SAW and more: how each works.",
+          automation: "Manual to cobot, column and boom, orbital and pipeline systems.",
+          filler: "Electrodes, solid, metal-cored and flux-cored wire, SAW flux, alloys.",
+          ndt: "VT, PT, MT, RT, UT, PAUT, TOFD, ET and in-process monitoring.",
+        }[L.id])}</span></li>`).join("")}
+      </ol>
+      <div class="cta">
+        <button class="btn primary" data-tour-start="tour_dc">Tour: data center build-out</button>
+        <button class="btn" data-go="seg_wind">Wind energy</button>
+        <button class="btn" data-go="ndt_paut">PAUT</button>
+        <button class="btn" data-go="auto_cobot">Cobots</button>
+      </div>
+      <h3>Tips</h3>
+      <ul class="tips">
+        <li>Drag to orbit, scroll to zoom, right-drag to pan. <span class="kbd">/</span> searches, <span class="kbd">Esc</span> clears.</li>
+        <li>Brighter links between segments and applications carry a larger share of the segment's welding.</li>
+        <li>Selecting a process, automation, filler or NDT node also shows its general capabilities.</li>
+        <li><b>Matrix</b> compares every segment against processes, automation, fillers or NDT.</li>
+        <li>Share a view: the page address ends with the selected node's id (for example <span class="kbd">#seg_dc</span>).</li>
+      </ul>
+      <p class="disclaimer">${esc(D.meta.disclaimer)} Data version ${esc(D.meta.version)}, ${esc(D.meta.updated)}.</p>`;
+  }
+  function renderPanel(id) {
+    if (!id) { panel.innerHTML = startPanel(); panel.scrollTop = 0; return; }
+    const n = byId.get(id), c = LCOLOR[n.layer];
+    let h = `<button class="btn p-close" id="pClose">Hide</button><div class="kicker" style="--c:${c}">${esc(lname(n.layer))}</div><h2>${esc(n.name)}</h2>`;
+    if (n.alias) h += `<p class="alias">${esc(n.alias)}</p>`;
+    if (n.sum) h += `<p class="sum">${esc(n.sum)}</p>`;
+
+    if (n.layer === "tier") {
+      h += `<h3>Profile</h3>${facts(n.facts)}`;
+      const segs = OUT.get(id).map((e) => e.t);
+      h += `<h3>End segments <small>${segs.length}</small></h3><div class="chips">${segs.map(chip).join("")}</div>`;
+    }
+
+    if (n.layer === "segment") {
+      h += `<div class="meta-row">
+        <div class="meta"><div class="k">Weld intensity</div><div class="v">${pips(n.intensity || 0)}</div></div>
+        <div class="meta"><div class="k">Automation</div><div class="v">${esc(n.autoLevel)}</div></div>
+        <div class="meta"><div class="k">Growth</div><div class="v">${esc(n.growth)}</div></div></div>`;
+      h += `<h3>Applications <small>share of segment weld workload (1–5)</small></h3>`;
+      const apps = OUT.get(id).filter((e) => byId.get(e.t).layer === "app").sort((a, b) => b.w - a.w);
+      h += barRows(apps.map((e) => ({ id: e.t, v: e.w, label: e.w + "/5", note: e.note })), LCOLOR.app);
+      h += `<h3>Indicative mix <small>weighted by application share</small></h3><div class="mix-grid">${["process", "automation", "filler", "ndt"].map((l) => mixBlock(id, l, 5)).join("")}</div>`;
+      h += `<h3>Context</h3>${facts([["Demand drivers", n.drivers], ["Codes & standards", n.codes], ["Industry tier", (n.tiers || []).map((t) => byId.get(t).name).join(", ")]].filter((x) => x[1]))}`;
+    }
+
+    if (n.layer === "app") {
+      if (n.mat) h += `<h3>Materials & thickness</h3><p class="body">${esc(n.mat)}</p>`;
+      if (n.steps) h += `<h3>Workflow</h3><ol class="steps" style="--c:${c}">${n.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>`;
+      h += `<h3>Weld chain <small>first listed = primary</small></h3>`;
+      h += chipGroup("Weld processes", n.processes || []) + chipGroup("Automation", n.automation || []) + chipGroup("Filler metals", n.fillers || []) + chipGroup("NDT & QA", n.ndt || []);
+      const segs = IN.get(id).filter((e) => e.kind === "struct").sort((a, b) => b.w - a.w);
+      h += `<h3>Used in segments <small>weight within segment</small></h3>` + barRows(segs.map((e) => ({ id: e.s, v: e.w, label: e.w + "/5", note: e.note })));
+    }
+
+    if (["process", "automation", "filler", "ndt"].includes(n.layer)) {
+      if (n.how) h += `<h3>How it works</h3><p class="body">${esc(n.how)}</p>`;
+      if (n.facts) h += `<h3>Key facts</h3>${facts(n.facts)}`;
+      if (n.pros || n.cons) h += `<h3>Trade-offs</h3><div class="procon"><div><b>Strengths</b>${esc(n.pros || "")}</div><div><b>Limits</b>${esc(n.cons || "")}</div></div>`;
+      if (n.layer === "process") {
+        h += `<h3>Capabilities <small>general, not segment-specific</small></h3>` + chipGroup("Automation", n.automation || []) + chipGroup("Filler metals", n.fillers || []) + chipGroup("Typical NDT", n.ndt || []);
+      } else {
+        const procs = IN.get(id).filter((e) => e.kind === "generic").map((e) => e.s);
+        if (procs.length) h += `<h3>Weld processes</h3><div class="chips">${procs.map(chip).join("")}</div>`;
+      }
+      const apps = IN.get(id).filter((e) => e.kind === "spec").map((e) => e.s);
+      if (apps.length) h += `<h3>Applications <small>${apps.length}</small></h3><div class="chips">${apps.map(chip).join("")}</div>`;
+      const reach = reachBySegment(id).slice(0, 8);
+      if (reach.length) h += `<h3>Where it matters most <small>share of each segment's ${esc(lname(n.layer).toLowerCase())} mix</small></h3>` +
+        barRows(reach.map((r) => ({ id: r.id, v: r.share, label: Math.round(r.share * 100) + "%" })), LCOLOR.segment);
+      if (n.ex) h += `<h3>Examples</h3><p class="ex">${esc(n.ex)}</p>`;
+    }
+    if (n.insight) h += `<div class="callout"><div class="k">Strategy note</div><p>${esc(n.insight)}</p></div>`;
+    h += notesBlock(id);
+    panel.innerHTML = h;
+    panel.scrollTop = 0;
+  }
+  panel.addEventListener("click", (ev) => {
+    const g = ev.target.closest("[data-go]"); if (g) { endTourIfOff(g.dataset.go); setView("3d"); select(g.dataset.go); return; }
+    const t = ev.target.closest("[data-tour-start]"); if (t) { startTour(t.dataset.tourStart); return; }
+    if (ev.target.closest("#pClose")) { panel.classList.add("collapsed"); }
+  });
+  let noteTimer = null;
+  panel.addEventListener("input", (ev) => {
+    const ta = ev.target.closest("textarea[data-note]"); if (!ta) return;
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(() => {
+      const ok = store.set("ww-note-" + ta.dataset.note, ta.value.trim() ? ta.value : "");
+      const s = $("#noteSaved"); if (s) s.textContent = ok ? "saved" : "browser storage unavailable: note not saved";
+    }, 400);
+  });
+
+  /* ================= Tours ================= */
+  const tourEl = $("#tour");
+  function startTour(tid) {
+    const t = D.tours.find((x) => x.id === tid); if (!t) return;
+    closeRailIfNarrow(); setView("3d");
+    state.tour = { t, i: 0 }; showTourStep();
+  }
+  function showTourStep() {
+    const { t, i } = state.tour, st = t.steps[i];
+    tourEl.innerHTML = `<div class="t-head"><span class="t-name">${esc(t.name)}</span><span class="t-step">stop ${i + 1} of ${t.steps.length}</span></div>
+      <div class="t-bar"><i style="width:${((i + 1) / t.steps.length) * 100}%"></i></div>
+      <p>${esc(st.text)}</p>
+      <div class="t-actions"><button class="btn" data-t="exit">Exit tour</button><button class="btn" data-t="prev" ${i === 0 ? "disabled" : ""}>Back</button><button class="btn primary" data-t="next">${i === t.steps.length - 1 ? "Finish" : "Next"}</button></div>`;
+    tourEl.hidden = false;
+    select(st.node, { keepTour: true });
+  }
+  tourEl.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button[data-t]"); if (!b || !state.tour) return;
+    const a = b.dataset.t;
+    if (a === "exit") endTour();
+    else if (a === "prev" && state.tour.i > 0) { state.tour.i--; showTourStep(); }
+    else if (a === "next") { if (state.tour.i < state.tour.t.steps.length - 1) { state.tour.i++; showTourStep(); } else endTour(); }
+  });
+  function endTour() { state.tour = null; tourEl.hidden = true; }
+  function endTourIfOff(id) { if (state.tour && state.tour.t.steps[state.tour.i].node !== id) endTour(); }
+
+  /* ================= Matrix ================= */
+  const mxEl = $("#matrix");
+  let mxLayer = "process";
+  function renderMatrix() {
+    const cols = nodesOf(mxLayer);
+    const rows = nodesOf("segment").filter((s) => state.tier === "all" || (s.tiers || []).includes(state.tier));
+    const data = rows.map((s) => { const m = segMixCached(s.id, mxLayer); let tot = 0, max = 0; m.forEach((v) => { tot += v; max = Math.max(max, v); }); return { s, m, tot, max }; });
+    const colTot = new Map(cols.map((c) => [c.id, data.reduce((a, r) => a + (r.tot ? (r.m.get(c.id) || 0) / r.tot : 0), 0)]));
+    cols.sort((a, b) => colTot.get(b.id) - colTot.get(a.id));
+    const color = LCOLOR[mxLayer];
+    const rgb = hexRgb(color);
+    mxEl.innerHTML = `
+      <div class="mx-head">
+        <h2>Segment × ${esc(lname(mxLayer))}</h2>
+        <div class="seg-ctl" role="group" aria-label="Matrix columns">
+          ${["process", "automation", "filler", "ndt"].map((l) => `<button data-mx="${l}" aria-pressed="${l === mxLayer}">${esc(lname(l))}</button>`).join("")}
+        </div>
+        <p>Each row shows how a segment's welding splits across ${esc(lname(mxLayer).toLowerCase())} options, as a percentage of that row. Score = Σ over the segment's applications of (application weight 1–5 × rank factor: first-listed 1.0, second 0.6, third 0.4, then 0.3). Columns are sorted by overall presence. Indicative only. Click a segment or column header to trace it in 3D.${state.tier !== "all" ? ` Filtered to <b>${esc(byId.get(state.tier).name)}</b>.` : ""}</p>
+      </div>
+      <div class="mx-wrap"><table class="mx">
+        <thead><tr><th class="row">Segment</th>${cols.map((c) => `<th><button data-go="${c.id}" title="${esc(c.name)}">${esc(c.name.replace(/\s*\(.*\)$/, ""))}</button></th>`).join("")}</tr></thead>
+        <tbody>${data.map((r) => `<tr><th class="row"><button data-go="${r.s.id}">${esc(r.s.name)}</button><span class="tier">${(r.s.tiers || []).map((t) => byId.get(t).name.replace(" Industrial", "")).join(" + ")} · growth ${esc(r.s.growth)}</span></th>${cols.map((c) => {
+          const v = r.m.get(c.id) || 0; if (!v) return `<td></td>`;
+          const pct = v / r.tot, a = 0.1 + 0.85 * (v / r.max);
+          return `<td title="${esc(r.s.name)} × ${esc(c.name)}: ${Math.round(pct * 100)}%"><span style="background:rgba(${rgb},${a.toFixed(2)});color:${a > 0.55 ? "#0B1115" : "var(--text)"}">${Math.round(pct * 100)}</span></td>`;
+        }).join("")}</tr>`).join("")}</tbody>
+      </table></div>
+      <div class="mx-legend">low<i style="background:linear-gradient(90deg, rgba(${rgb},.1), rgba(${rgb},.95))"></i>high share within row (numbers = % of row)</div>`;
+  }
+  function hexRgb(h) { const n = parseInt(h.slice(1), 16); return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`; }
+  mxEl.addEventListener("click", (ev) => {
+    const m = ev.target.closest("button[data-mx]"); if (m) { mxLayer = m.dataset.mx; renderMatrix(); return; }
+    const g = ev.target.closest("[data-go]"); if (g) { setView("3d"); select(g.dataset.go); }
+  });
+  function setView(v) {
+    if (v === "3d" && !gl) v = "matrix";
+    state.view = v;
+    $("#view3d").setAttribute("aria-pressed", String(v === "3d"));
+    $("#viewMx").setAttribute("aria-pressed", String(v === "matrix"));
+    mxEl.hidden = v !== "matrix";
+    if (v === "matrix") { endTour(); renderMatrix(); }
+  }
+  $("#view3d").addEventListener("click", () => setView("3d"));
+  $("#viewMx").addEventListener("click", () => setView("matrix"));
+
+  /* ================= 3D scene ================= */
+  const stage = $("#stage"), labelsEl = $("#labels"), tip = $("#tooltip");
+  let gl = null;
+  const hasThree = !!(window.THREE && THREE.OrbitControls);
+  if (hasThree) { try { gl = initScene(); } catch (e) { console.error(e); gl = null; } }
+  if (!gl) {
+    const ng = $("#nogl"); ng.hidden = false;
+    ng.innerHTML = `<div><p style="font:700 20px var(--font-display);text-transform:uppercase;letter-spacing:.06em;color:var(--text)">3D view unavailable</p><p>${hasThree ? "This browser could not start WebGL." : "The 3D library could not load (network or firewall)."} The Matrix view, search and detail panel still work.</p></div>`;
+    $(".stage-hint").hidden = true;
+  }
+
+  function initScene() {
+    const BG = new THREE.Color("#0B1115");
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(BG, 1);
+    stage.insertBefore(renderer.domElement, labelsEl);
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(BG, 1500, 3600);
+    const camera = new THREE.PerspectiveCamera(40, 1, 1, 8000);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = 0.08;
+    controls.minDistance = 120; controls.maxDistance = 4200;
+    controls.autoRotateSpeed = 0.6;
+
+    // glow texture
+    const gc = document.createElement("canvas"); gc.width = gc.height = 64;
+    const g2 = gc.getContext("2d"), gr = g2.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, "rgba(255,255,255,1)"); gr.addColorStop(0.22, "rgba(255,255,255,.5)"); gr.addColorStop(0.55, "rgba(255,255,255,.12)"); gr.addColorStop(1, "rgba(255,255,255,0)");
+    g2.fillStyle = gr; g2.fillRect(0, 0, 64, 64);
+    const glowTex = new THREE.CanvasTexture(gc);
+
+    // nodes
+    const sphere = new THREE.SphereGeometry(1, 24, 16);
+    const objs = new Map();
+    const meshes = [];
+    NODES.forEach((n) => {
+      const base = new THREE.Color(LCOLOR[n.layer]);
+      const mat = new THREE.MeshBasicMaterial({ color: base.clone(), transparent: true });
+      const mesh = new THREE.Mesh(sphere, mat);
+      const r = radius.get(n.id);
+      mesh.scale.setScalar(r);
+      mesh.userData.id = n.id;
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: base.clone(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.4 }));
+      halo.scale.setScalar(r * 6);
+      scene.add(mesh); scene.add(halo);
+      meshes.push(mesh);
+      const lbl = document.createElement("div");
+      lbl.className = "lbl rest"; lbl.textContent = n.name; lbl.dataset.id = n.id; lbl.style.setProperty("--c", LCOLOR[n.layer]);
+      lbl.style.display = "none";
+      labelsEl.appendChild(lbl);
+      objs.set(n.id, { n, mesh, halo, base, r, lbl, lw: 0, state: "rest", shown: false, tf: "", p: new THREE.Vector3() });
+    });
+    // layer headers & frames
+    const frames = [], headers = [];
+    const frameGroup = new THREE.Group(); scene.add(frameGroup);
+    LAYERS.forEach((L) => {
+      const h = document.createElement("div"); h.className = "hdr"; h.style.setProperty("--c", L.color);
+      h.innerHTML = `${esc(L.name)}<small>${nodesOf(L.id).length}</small>`;
+      labelsEl.appendChild(h);
+      const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.Float32BufferAttribute(new Float32Array(15), 3));
+      const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: new THREE.Color(L.color), transparent: true, opacity: 0.16 }));
+      frameGroup.add(line);
+      frames.push({ L, line }); headers.push({ L, el: h, p: new THREE.Vector3(), tf: "" });
+    });
+    const grid = new THREE.GridHelper(2400, 48, 0x1c2b35, 0x131e26);
+    grid.material.transparent = true; grid.material.opacity = 0.55;
+    scene.add(grid);
+
+    // edges
+    const SEG = 18;
+    const nV = edges.length * SEG * 2;
+    const ePos = new Float32Array(nV * 3), eCol = new Float32Array(nV * 3), eT = new Float32Array(nV);
+    const eGeo = new THREE.BufferGeometry();
+    eGeo.setAttribute("position", new THREE.BufferAttribute(ePos, 3));
+    eGeo.setAttribute("color", new THREE.BufferAttribute(eCol, 3));
+    const eLines = new THREE.LineSegments(eGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+    eLines.frustumCulled = false;
+    scene.add(eLines);
+    const eColS = edges.map((e) => new THREE.Color(LCOLOR[byId.get(e.s).layer]));
+    const eColT = edges.map((e) => new THREE.Color(LCOLOR[byId.get(e.t).layer]));
+
+    // flow particles along highlighted edges
+    const MAXP = 700;
+    const pPos = new Float32Array(MAXP * 3), pCol = new Float32Array(MAXP * 3);
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
+    pGeo.setAttribute("color", new THREE.BufferAttribute(pCol, 3));
+    const pMat = new THREE.PointsMaterial({ size: 9, map: glowTex, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true });
+    const points = new THREE.Points(pGeo, pMat); points.frustumCulled = false; scene.add(points);
+    let particles = [];
+
+    // selection ring
+    const ring = new THREE.Mesh(new THREE.RingGeometry(1.55, 1.75, 48), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85, side: THREE.DoubleSide, depthWrite: false }));
+    ring.visible = false; scene.add(ring);
+
+    let zScale = 1, zTarget = 1;
+    const P = (id) => objs.get(id).p;
+    const tmpA = new THREE.Vector3(), tmpB = new THREE.Vector3(), tmpC1 = new THREE.Vector3(), tmpC2 = new THREE.Vector3();
+    function bez(e, t, out) {
+      const a = P(e.s), b = P(e.t);
+      const span = LIDX[byId.get(e.t).layer] - LIDX[byId.get(e.s).layer];
+      const bow = span > 1 ? (span - 1) * 55 : 0, dx = b.x - a.x;
+      tmpC1.set(a.x + dx * 0.45, a.y + bow * 0.6, a.z + bow);
+      tmpC2.set(b.x - dx * 0.45, b.y + bow * 0.6, b.z + bow);
+      const u = 1 - t;
+      out.set(
+        u * u * u * a.x + 3 * u * u * t * tmpC1.x + 3 * u * t * t * tmpC2.x + t * t * t * b.x,
+        u * u * u * a.y + 3 * u * u * t * tmpC1.y + 3 * u * t * t * tmpC2.y + t * t * t * b.y,
+        u * u * u * a.z + 3 * u * u * t * tmpC1.z + 3 * u * t * t * tmpC2.z + t * t * t * b.z
+      );
+      return out;
+    }
+    function placeAll() {
+      objs.forEach((o, id) => {
+        const b = pos.get(id);
+        o.p.set(b.x, b.y, b.z * zScale);
+        o.mesh.position.copy(o.p); o.halo.position.copy(o.p);
+      });
+      let k = 0;
+      edges.forEach((e) => {
+        for (let i = 0; i < SEG; i++) {
+          const t0 = i / SEG, t1 = (i + 1) / SEG;
+          bez(e, t0, tmpA); bez(e, t1, tmpB);
+          ePos[k * 3] = tmpA.x; ePos[k * 3 + 1] = tmpA.y; ePos[k * 3 + 2] = tmpA.z; eT[k] = t0; k++;
+          ePos[k * 3] = tmpB.x; ePos[k * 3 + 1] = tmpB.y; ePos[k * 3 + 2] = tmpB.z; eT[k] = t1; k++;
+        }
+      });
+      eGeo.attributes.position.needsUpdate = true;
+      eGeo.computeBoundingSphere();
+      frames.forEach((f, li) => {
+        const ids = nodesOf(f.L.id).map((n) => n.id);
+        let y0 = Infinity, y1 = -Infinity, z0 = Infinity, z1 = -Infinity, x = 0;
+        ids.forEach((id) => { const p = P(id); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); z0 = Math.min(z0, p.z); z1 = Math.max(z1, p.z); x += p.x; });
+        x /= ids.length;
+        const pad = 26, a = f.line.geometry.attributes.position.array;
+        const pts = [[x, y0 - pad, z0 - pad], [x, y1 + pad, z0 - pad], [x, y1 + pad, z1 + pad], [x, y0 - pad, z1 + pad], [x, y0 - pad, z0 - pad]];
+        pts.forEach((p, i) => { a[i * 3] = p[0]; a[i * 3 + 1] = p[1]; a[i * 3 + 2] = p[2]; });
+        f.line.geometry.attributes.position.needsUpdate = true;
+        headers[li].p.set(x, y1 + pad + 18, 0);
+      });
+      let minY = Infinity; pos.forEach((p) => (minY = Math.min(minY, p.y)));
+      grid.position.y = minY - 80;
+    }
+
+    let active = null;
+    function applyState() {
+      active = computeActive();
+      const sel = state.selected;
+      objs.forEach((o, id) => {
+        const hiddenL = state.hidden.has(o.n.layer);
+        o.mesh.visible = o.halo.visible = !hiddenL;
+        let st = "rest";
+        if (active) st = id === sel ? "sel" : active.nodes.has(id) ? "hi" : "dim";
+        if (!active && id === sel) st = "sel";
+        o.state = hiddenL ? "hidden" : st;
+        const f = st === "dim" ? 0.16 : st === "rest" ? 0.82 : 1;
+        o.mesh.material.color.copy(o.base).multiplyScalar(f);
+        o.mesh.material.opacity = st === "dim" ? 0.55 : 1;
+        o.halo.material.opacity = st === "dim" ? 0.03 : st === "rest" ? 0.32 : st === "hi" ? 0.6 : 0.95;
+        const s = st === "sel" ? 1.35 : 1;
+        o.mesh.scale.setScalar(o.r * s); o.halo.scale.setScalar(o.r * (st === "sel" ? 9 : 6));
+        o.lbl.className = "lbl " + (st === "hidden" ? "rest" : st);
+      });
+      let k = 0;
+      particles = [];
+      edges.forEach((e, ei) => {
+        const hid = state.hidden.has(byId.get(e.s).layer) || state.hidden.has(byId.get(e.t).layer);
+        let b;
+        if (hid) b = 0;
+        else if (!active) b = e.kind === "generic" ? 0 : e.kind === "struct" && e.w > 1 ? 0.05 + e.w * 0.025 : 0.1;
+        else if (active.edges.has(e)) { b = e.kind === "struct" && byId.get(e.s).layer === "segment" ? 0.45 + e.w * 0.11 : 0.75; if (particles.length < MAXP) particles.push({ e, t: Math.random(), sp: 0.12 + Math.random() * 0.1 }); }
+        else b = e.kind === "generic" ? 0 : 0.018;
+        const cs = eColS[ei], ct = eColT[ei];
+        for (let i = 0; i < SEG * 2; i++, k++) {
+          const t = eT[k];
+          eCol[k * 3] = (cs.r + (ct.r - cs.r) * t) * b;
+          eCol[k * 3 + 1] = (cs.g + (ct.g - cs.g) * t) * b;
+          eCol[k * 3 + 2] = (cs.b + (ct.b - cs.b) * t) * b;
+        }
+      });
+      eGeo.attributes.color.needsUpdate = true;
+      particles.forEach((pt, i) => {
+        const c = eColT[pt.e.i];
+        pCol[i * 3] = c.r; pCol[i * 3 + 1] = c.g; pCol[i * 3 + 2] = c.b;
+      });
+      pGeo.setDrawRange(0, reduceMotion ? 0 : particles.length);
+      pGeo.attributes.color.needsUpdate = true;
+      ring.visible = !!sel && !state.hidden.has(byId.get(sel).layer);
+      frames.forEach((f) => (f.line.visible = !state.hidden.has(f.L.id)));
+      headers.forEach((h) => (h.el.style.display = state.hidden.has(h.L.id) ? "none" : ""));
+    }
+
+    // sizing
+    let W = 1, H = 1, pxPerUnit = 1;
+    function resize() {
+      W = Math.max(1, stage.clientWidth); H = Math.max(1, stage.clientHeight);
+      renderer.setSize(W, H, false);
+      camera.aspect = W / H; camera.updateProjectionMatrix();
+      pxPerUnit = H / 2 / Math.tan((camera.fov * Math.PI) / 360);
+    }
+    new ResizeObserver(resize).observe(stage);
+    resize();
+
+    // camera helpers
+    const DIR = new THREE.Vector3(-0.5, 0.3, 0.81).normalize();
+    function fitDistance(radiusW) {
+      const vf = (camera.fov * Math.PI) / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * camera.aspect);
+      return radiusW / Math.sin(Math.min(vf, hf) / 2);
+    }
+    let anim = null;
+    function flyTo(target, dist, dir) {
+      const d = (dir || camera.position.clone().sub(controls.target).normalize());
+      const endT = target.clone(), endP = target.clone().add(d.clone().multiplyScalar(dist));
+      if (reduceMotion) { controls.target.copy(endT); camera.position.copy(endP); controls.update(); return; }
+      anim = { t0: performance.now(), dur: 850, sT: controls.target.clone(), sP: camera.position.clone(), eT: endT, eP: endP };
+    }
+    function boundsOf(ids) {
+      const c = new THREE.Vector3(); let n = 0;
+      ids.forEach((id) => { c.add(P(id)); n++; });
+      c.divideScalar(Math.max(n, 1));
+      let r = 0; ids.forEach((id) => (r = Math.max(r, P(id).distanceTo(c))));
+      return { c, r };
+    }
+    function resetView() {
+      const { c, r } = boundsOf([...objs.keys()]);
+      flyTo(c, fitDistance(r) * 0.78, DIR);
+    }
+    function frameActive() {
+      if (!state.selected) return;
+      const ids = active ? [...active.nodes].filter((id) => !state.hidden.has(byId.get(id).layer)) : [state.selected];
+      const { c, r } = boundsOf(ids.length ? ids : [state.selected]);
+      flyTo(c, Math.max(360, fitDistance(r + 40) * 0.9));
+    }
+
+    // labels
+    const v3 = new THREE.Vector3();
+    const LPRI = { tier: 6, segment: 5, process: 5, automation: 3, ndt: 3, filler: 3, app: 2 };
+    function measure() {
+      objs.forEach((o) => {
+        o.lbl.style.display = "";
+        o.lw = o.lbl.offsetWidth || o.n.name.length * 6.5;
+        o.lbl.style.display = o.shown ? "" : "none";
+      });
+    }
+    function layoutLabels() {
+      const items = [];
+      objs.forEach((o) => {
+        if (o.state === "hidden" || o.state === "dim") { hideL(o); return; }
+        v3.copy(o.p).project(camera);
+        if (v3.z > 1 || v3.x < -1.3 || v3.x > 1.3 || v3.y < -1.3 || v3.y > 1.3) { hideL(o); return; }
+        const d = camera.position.distanceTo(o.p);
+        const sx = (v3.x * 0.5 + 0.5) * W, sy = (-v3.y * 0.5 + 0.5) * H;
+        const rpx = ((o.r * (o.state === "sel" ? 1.35 : 1)) / d) * pxPerUnit;
+        const pri = (o.state === "sel" ? 1e6 : o.state === "hi" ? 1e4 : 0) + LPRI[o.n.layer] * 100 + o.r * 5 - d * 0.02;
+        items.push({ o, sx, sy, rpx, pri });
+      });
+      items.sort((a, b) => b.pri - a.pri);
+      const placed = [];
+      for (const it of items) {
+        const w = it.o.lw, h = 15, x = it.sx + it.rpx + 4, y = it.sy - h / 2;
+        let ok = x < W - 4 && x + w > 4 && y > -h && y < H;
+        if (ok && it.o.state !== "sel") {
+          for (let j = 0; j < placed.length; j++) {
+            const p = placed[j];
+            if (x < p.x + p.w + 3 && x + w + 3 > p.x && y < p.y + p.h && y + h > p.y) { ok = false; break; }
+          }
+        }
+        if (ok) {
+          placed.push({ x, y, w, h });
+          const tf = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+          if (tf !== it.o.tf) { it.o.lbl.style.transform = tf; it.o.tf = tf; }
+          if (!it.o.shown) { it.o.lbl.style.display = ""; it.o.shown = true; }
+        } else hideL(it.o);
+      }
+      headers.forEach((hd) => {
+        v3.copy(hd.p).project(camera);
+        if (v3.z > 1) { hd.el.style.visibility = "hidden"; return; }
+        hd.el.style.visibility = "";
+        const x = (v3.x * 0.5 + 0.5) * W, y = (-v3.y * 0.5 + 0.5) * H;
+        const tf = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) translate(-50%,-100%)`;
+        if (tf !== hd.tf) { hd.el.style.transform = tf; hd.tf = tf; }
+      });
+    }
+    function hideL(o) { if (o.shown) { o.lbl.style.display = "none"; o.shown = false; } }
+
+    // picking
+    const ray = new THREE.Raycaster(), mouse = new THREE.Vector2();
+    function pickAt(cx, cy) {
+      const r = renderer.domElement.getBoundingClientRect();
+      mouse.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(mouse, camera);
+      const hits = ray.intersectObjects(meshes.filter((m) => m.visible), false);
+      if (hits.length) return hits[0].object.userData.id;
+      // forgiving pick: nearest node within 14px on screen
+      let best = null, bd = 14;
+      objs.forEach((o, id) => {
+        if (o.state === "hidden") return;
+        v3.copy(o.p).project(camera); if (v3.z > 1) return;
+        const sx = (v3.x * 0.5 + 0.5) * r.width + r.left, sy = (-v3.y * 0.5 + 0.5) * r.height + r.top;
+        const d = Math.hypot(sx - cx, sy - cy); if (d < bd) { bd = d; best = id; }
+      });
+      return best;
+    }
+    let down = null;
+    renderer.domElement.addEventListener("pointerdown", (ev) => { down = { x: ev.clientX, y: ev.clientY }; if (anim) anim = null; });
+    renderer.domElement.addEventListener("pointerup", (ev) => {
+      if (!down) return;
+      const moved = Math.hypot(ev.clientX - down.x, ev.clientY - down.y); down = null;
+      if (moved > 5 || ev.button !== 0) return;
+      const id = pickAt(ev.clientX, ev.clientY);
+      if (id) { endTourIfOff(id); select(id); }
+      else if (state.selected && !state.tour) select(null);
+    });
+    let hoverRaf = 0, lastMove = null;
+    renderer.domElement.addEventListener("pointermove", (ev) => {
+      lastMove = ev;
+      if (hoverRaf) return;
+      hoverRaf = requestAnimationFrame(() => {
+        hoverRaf = 0;
+        if (down || ev.pointerType === "touch") { tip.hidden = true; return; }
+        const id = pickAt(lastMove.clientX, lastMove.clientY);
+        renderer.domElement.style.cursor = id ? "pointer" : "";
+        showTip(id, lastMove.clientX, lastMove.clientY);
+      });
+    });
+    renderer.domElement.addEventListener("pointerleave", () => { tip.hidden = true; });
+    labelsEl.addEventListener("click", (ev) => { const l = ev.target.closest(".lbl"); if (l) { endTourIfOff(l.dataset.id); select(l.dataset.id); } });
+    labelsEl.addEventListener("mouseover", (ev) => { const l = ev.target.closest(".lbl"); if (l) showTip(l.dataset.id, ev.clientX, ev.clientY); });
+    labelsEl.addEventListener("mouseout", (ev) => { if (ev.target.closest(".lbl")) tip.hidden = true; });
+    function showTip(id, cx, cy) {
+      if (!id) { tip.hidden = true; return; }
+      const n = byId.get(id), r = stage.getBoundingClientRect();
+      tip.style.setProperty("--c", LCOLOR[n.layer]);
+      tip.innerHTML = `<span class="l">${esc(lname(n.layer))}</span><b>${esc(n.name)}</b>${n.sum ? esc(n.sum.length > 140 ? n.sum.slice(0, 137) + "…" : n.sum) : ""}`;
+      tip.hidden = false;
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      let x = cx - r.left + 14, y = cy - r.top + 14;
+      if (x + tw > r.width - 8) x = cx - r.left - tw - 14;
+      if (y + th > r.height - 8) y = cy - r.top - th - 14;
+      tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+    }
+
+    // loop
+    const clock = new THREE.Clock();
+    function loop() {
+      requestAnimationFrame(loop);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      if (Math.abs(zScale - zTarget) > 0.001) {
+        zScale += (zTarget - zScale) * (reduceMotion ? 1 : Math.min(1, dt * 6));
+        if (Math.abs(zScale - zTarget) < 0.002) zScale = zTarget;
+        placeAll();
+      }
+      if (anim) {
+        const k = Math.min(1, (performance.now() - anim.t0) / anim.dur), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        controls.target.lerpVectors(anim.sT, anim.eT, e);
+        camera.position.lerpVectors(anim.sP, anim.eP, e);
+        if (k >= 1) anim = null;
+      }
+      controls.update();
+      if (particles.length && !reduceMotion) {
+        for (let i = 0; i < particles.length; i++) {
+          const pt = particles[i];
+          pt.t += pt.sp * dt; if (pt.t > 1) pt.t -= 1;
+          bez(pt.e, pt.t, tmpA);
+          pPos[i * 3] = tmpA.x; pPos[i * 3 + 1] = tmpA.y; pPos[i * 3 + 2] = tmpA.z;
+        }
+        pGeo.attributes.position.needsUpdate = true;
+      }
+      if (ring.visible && state.selected) {
+        const o = objs.get(state.selected);
+        ring.position.copy(o.p); ring.quaternion.copy(camera.quaternion);
+        const pulse = reduceMotion ? 1 : 1 + 0.08 * Math.sin(performance.now() / 260);
+        ring.scale.setScalar(o.r * 1.35 * pulse);
+      }
+      renderer.render(scene, camera);
+      layoutLabels();
+    }
+
+    placeAll();
+    measure();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    applyState();
+    {
+      const { c, r } = boundsOf([...objs.keys()]);
+      controls.target.copy(c);
+      camera.position.copy(c).add(DIR.clone().multiplyScalar(fitDistance(r) * 0.78));
+      controls.update();
+    }
+    loop();
+
+    return {
+      applyState, frameActive, resetView,
+      setFlat(f) { zTarget = f ? 0 : 1; },
+      setSpin(s) { controls.autoRotate = s; },
+    };
+  }
+
+  /* ================= Selection & wiring ================= */
+  function refresh() {
+    if (gl) gl.applyState();
+    const note = $("#filterNote");
+    const parts = [];
+    if (state.tier !== "all") parts.push(byId.get(state.tier).name);
+    if (state.mode !== "all") parts.push({ manual: "Manual & semi-auto", mech: "Mechanized", robot: "Robotic & cobot" }[state.mode]);
+    if (state.hidden.size) parts.push(state.hidden.size + " layer" + (state.hidden.size > 1 ? "s" : "") + " hidden");
+    note.hidden = !parts.length;
+    if (parts.length) note.innerHTML = `Showing <b>${esc(parts.join(" · "))}</b><button id="clrFilters">Reset filters</button>`;
+  }
+  $("#filterNote").addEventListener("click", (ev) => {
+    if (!ev.target.closest("#clrFilters")) return;
+    state.tier = "all"; state.mode = "all"; state.hidden.clear();
+    document.querySelectorAll("#tierPills button, #modePills button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === "all")));
+    layerList.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", "true"));
+    refresh(); if (state.view === "matrix") renderMatrix();
+  });
+  function select(id, opts = {}) {
+    if (id && !byId.has(id)) id = null;
+    if (!opts.keepTour && state.tour && (!id || state.tour.t.steps[state.tour.i].node !== id)) endTour();
+    state.selected = id;
+    refresh();
+    renderPanel(id);
+    panel.classList.remove("collapsed");
+    $("#clearBtn").hidden = !id;
+    if (gl && id) gl.frameActive();
+    try { history.replaceState(null, "", id ? "#" + id : location.pathname + location.search); } catch (e) { /* hash unavailable */ }
+  }
+  $("#clearBtn").addEventListener("click", () => select(null));
+  $("#resetBtn").addEventListener("click", () => { if (gl) gl.resetView(); });
+  $("#flatBtn").addEventListener("click", (ev) => {
+    state.flat = !state.flat; ev.currentTarget.setAttribute("aria-pressed", String(state.flat));
+    if (gl) gl.setFlat(state.flat);
+  });
+  $("#spinBtn").addEventListener("click", (ev) => {
+    const on = ev.currentTarget.getAttribute("aria-pressed") !== "true";
+    ev.currentTarget.setAttribute("aria-pressed", String(on)); if (gl) gl.setSpin(on);
+  });
+  document.addEventListener("keydown", (ev) => {
+    const typing = ev.target.matches("input, textarea");
+    if (ev.key === "/" && !typing) { ev.preventDefault(); if (isNarrow()) { rail.classList.add("open"); } q.focus(); }
+    else if (ev.key === "Escape" && !typing) { if (state.tour) endTour(); else if (state.selected) select(null); closeRailIfNarrow(); }
+  });
+
+  // boot
+  const hash = (location.hash || "").slice(1);
+  if (!gl) setView("matrix");
+  if (hash && byId.has(hash)) select(hash); else renderPanel(null);
+  refresh();
+})();
+</script>

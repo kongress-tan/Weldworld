@@ -1,5 +1,5 @@
 /*
- * WeldWorld: Gemba 3D worlds
+ * EBXWorld: Gemba 3D worlds
  * ------------------------------------------------------------------
  * A small kit of low-poly building blocks (halls, cranes, people,
  * arcs, turning rolls, column & booms, pipe, vehicles...) and one

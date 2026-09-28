@@ -1,5 +1,5 @@
 /*
- * WeldWorld data model
+ * EBXWorld data model
  * ------------------------------------------------------------------
  * Edit this file to add or correct content. The markets table,
  * application pages and glossary are all generated from it.
@@ -28,6 +28,7 @@ window.WELD_DATA = {
   meta: {
     version: "1.0",
     updated: "2026-09-28",
+    app: "EBXWorld",
     disclaimer:
       "Weights (1–5), shares and deposition rates are indicative analyst estimates for learning and discussion, not market data. Validate before external use.",
   },

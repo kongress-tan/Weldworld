@@ -1,5 +1,5 @@
 /*
- * WeldWorld: welding systems and brand comparison data
+ * EBXWorld: welding systems and brand comparison data
  * ------------------------------------------------------------------
  * One entry per 3D system. Each component has:
  *   role    one-line job of the part

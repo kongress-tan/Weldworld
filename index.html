@@ -1,4 +1,4 @@
-<title>WeldWorld Atlas</title>
+<title>EBXWorld</title>
 <meta name="description" content="Welding and NDT market atlas: structured end markets, application workflows and a 3D MIG cobot cell with brand comparisons.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,6 +49,8 @@
   }
   .brand h1 { margin: 0; font: 700 24px/1 var(--font-display); letter-spacing: .02em; text-transform: uppercase; white-space: nowrap; }
   .brand h1 span { color: var(--accent); }
+  .brand { display: flex; align-items: baseline; gap: 8px; }
+  .ver { font: 500 10.5px/1 var(--font-mono); color: var(--faint); border: 1px solid var(--line-2); border-radius: 3px; padding: 3px 5px; white-space: nowrap; }
   .steps { display: flex; gap: 4px; }
   .steps button {
     display: flex; align-items: center; gap: 8px; background: none; border: 1px solid transparent; border-radius: var(--radius);
@@ -335,7 +337,7 @@
 
 <div id="app">
   <header id="top">
-    <div class="brand"><h1>Weld<span>World</span></h1></div>
+    <div class="brand"><h1>EBX<span>World</span></h1><span class="ver" id="appVer" title="Release version"></span></div>
     <nav class="steps" aria-label="Sections">
       <button data-view="markets"><span class="n">1</span>Markets</button><span class="sep">›</span>
       <button data-view="apps"><span class="n">2</span>Applications</button><span class="sep">›</span>
@@ -453,6 +455,7 @@
 (function () {
   "use strict";
   const D = window.WELD_DATA, SYS = window.WELD_SYSTEMS;
+  const APP_VERSION = "1.0", APP_DATE = "28 Sep 2026";
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -473,7 +476,7 @@
   const siteById = new Map(GEMBA_SITES.map((g) => [g.id, g]));
   // application -> [{seg, w, note}]
   const appSegs = new Map(APPS.map((a) => [a.id, []]));
-  SEGS.forEach((s) => (s.apps || []).forEach(([a, w, note]) => { if (appSegs.has(a)) appSegs.get(a).push({ seg: s, w, note }); else console.warn("WeldWorld: unknown app", a); }));
+  SEGS.forEach((s) => (s.apps || []).forEach(([a, w, note]) => { if (appSegs.has(a)) appSegs.get(a).push({ seg: s, w, note }); else console.warn("EBXWorld: unknown app", a); }));
   appSegs.forEach((l) => l.sort((x, y) => y.w - x.w));
   const KEY = { process: "processes", automation: "automation", filler: "fillers", ndt: "ndt" };
   const RANK = [1, 0.6, 0.4, 0.3, 0.25, 0.2, 0.2, 0.2];
@@ -549,7 +552,8 @@
   });
 
   /* ================= 1. Markets ================= */
-  $("#mkDisc").textContent = D.meta.disclaimer;
+  $("#appVer").textContent = "v" + APP_VERSION;
+  $("#mkDisc").textContent = `EBXWorld v${APP_VERSION} · ${APP_DATE}. ${D.meta.disclaimer}`;
   $("#tierPills").addEventListener("click", (ev) => {
     const b = ev.target.closest("button[data-v]"); if (!b) return;
     state.tier = b.dataset.v;

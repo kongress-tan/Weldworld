@@ -4,6 +4,11 @@ This file records how the tool's logic evolved: what I assumed, what I changed a
 
 ---
 
+## Release v1.0 (2026-09-28): renamed to EBXWorld for executive sharing
+- **Change:** renamed the tool from "WeldWorld" to **EBXWorld**, added a visible version stamp (v1.0, top bar and Markets footer), added `CHANGELOG.md`, and tagged the git release `v1.0.0`.
+- **Logic:** executives need to know which version they are looking at when giving feedback, so the version appears in the page itself, not only in git.
+- **Watch-out before sharing:** the page still shows "(verify)" on some product names and labels figures "indicative", which is honest but visible. Confirm these with product management before wider use.
+
 ## Session 3 (2026-09-28): v3 Gemba walks
 
 ### Request

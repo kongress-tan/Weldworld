@@ -1,4 +1,4 @@
-# WeldWorld Atlas
+# EBXWorld
 
 A study tool for commercial strategy in welding: structured end markets, application workflows, and a 3D model of the actual welding equipment with brand comparisons (ESAB/EWM, Lincoln Electric, Miller/ITW, Fronius).
 
@@ -31,7 +31,10 @@ Deep links: `#seg_dc` (market), `#app_liquid` (application), `#system`, `#c_wire
 
 ## Project task tracker
 
-### v3 (current): Gemba walks
+### Release v1.0: EBXWorld (see CHANGELOG.md)
+Renamed, versioned and published for executive review.
+
+### Build 3: Gemba walks
 | # | Task | Status |
 | --- | --- | --- |
 | 1 | Gemba content: 6 sites, 40 stops | Done |
@@ -40,7 +43,7 @@ Deep links: `#seg_dc` (market), `#app_liquid` (application), `#system`, `#c_wire
 | 4 | Cross-links from Markets and Applications to Gemba sites | Done |
 | 5 | Test all sites, fix camera and layout issues, publish, push | Done |
 
-### v2: structured markets + 3D equipment
+### Build 2: structured markets + 3D equipment
 | # | Task | Status |
 | --- | --- | --- |
 | 1 | Restructure data: market groups, buyers, channel; remove graph tours | Done |
@@ -52,7 +55,7 @@ Deep links: `#seg_dc` (market), `#app_liquid` (application), `#system`, `#c_wire
 | 7 | Browser test (desktop + mobile), publish, commit, push | Done |
 | 8 | Update `LEARNINGS.md` | Done |
 
-### v1: 3D relationship graph (replaced)
+### Build 1: 3D relationship graph (replaced)
 Superseded by v2 after feedback that the graph was confusing.
 
 ### Backlog

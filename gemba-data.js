@@ -1,5 +1,5 @@
 /*
- * WeldWorld: Gemba walk content
+ * EBXWorld: Gemba walk content
  * ------------------------------------------------------------------
  * One entry per customer site. Stops are listed in walking order and
  * their ids must match the camera stops in gemba-world.js.

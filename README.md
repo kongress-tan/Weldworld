@@ -1,75 +1,64 @@
 # EBXWorld
 
-A study tool for commercial strategy in welding: structured end markets, application workflows, and a 3D model of the actual welding equipment with brand comparisons (ESAB/EWM, Lincoln Electric, Miller/ITW, Fronius).
+A study and strategy tool for the welding business: six end markets, who actually does the welding, named US accounts and hotspots, 3D welding systems with ESAB components highlighted, and 3D Gemba walks of typical customer sites.
 
 ```
-① Markets  →  ② Application  →  ③ Welding system (3D)  →  ④ Gemba walk (3D customer sites)
+① End markets  →  ② US market map  →  ③ Welding systems (3D)  →  ④ Gemba walk (3D sites)
 ```
 
 ## How to open it
 
-- **To share:** send `dist/EBXWorld-v1.0.html`. It is one self-contained file (~900 KB) that opens in Chrome, Edge or Safari by double-clicking, with no install and no internet needed. Rebuild it after edits with `python3 build.py`.
-
-- **Locally:** open `index.html` in Chrome or Edge. Keep `data.js`, `systems.js`, `gemba-data.js` and `gemba-world.js` next to it. It needs internet access to load three.js from jsdelivr.
-- **Hosted:** use the private artifact link shared in the Claude session.
+- **To share:** send `dist/EBXWorld-v2.0.html`. It is one self-contained file that opens in Chrome, Edge or Safari by double-clicking, with no install and no internet needed. Rebuild it after edits with `python3 build.py`.
+- **Locally:** open `index.html` with the `.js` files next to it (needs internet for three.js).
+- **Hosted:** the private artifact link from the Claude session.
 
 ## What each step does
 
 | Step | What you see |
 | --- | --- |
-| **1 · Markets** | 18 segments in 7 market groups, as a sortable table: tier, growth, weld intensity, automation level and top processes. Click a row for buyers, route to market, drivers, codes, a strategy note, the applications inside it (share of segment welding) and the process and automation mix. |
-| **2 · Applications** | 41 applications, filterable by market. Each page has materials, the markets it serves, a **weld system recipe** (process, automation, filler, inspection; primary first), the workflow steps and personal notes. Click any recipe item for a definition. |
-| **3 · Welding system** | A 3D **MIG cobot cell** with 13 clickable parts: power source, feeder, wire drum, gas, cobot arm, torch, pendant/software, table, workpiece, ground, reamer, fume extraction and safety. Each part shows how it works, what buyers compare, and a **brand comparison**. It also has Explode, Run weld (the arm follows the seam and the bead grows), and a **consumables calculator** (wire, gas and tips per year, cobot vs manual). |
-| **4 · Gemba walk** | Six 3D customer sites you walk stop by stop: **wind tower factory, data center campus + prefab shop, job shop with a cobot, pipeline spread, aerospace component shop, shipyard** (40 stops in total). Each stop has *what you'd see*, *who's there and what they care about*, *waste and pain points*, *welding products in use*, *questions to ask* and *where ESAB can win*, plus personal notes. Each site has at-a-glance facts, customer economics and PPE/etiquette. Use Next/Back or the arrow keys; drag to look around. |
+| **1 · End markets** | Six markets: **Shipbuilding, Wind, Aerospace, Semi & Data Centers, Nuclear, Fabricators**. There is a market × product heat map on the home page. Each market has tabs: **Overview · Applications · Who welds · Products · US accounts · Gemba**. |
+| Who welds | A value-chain diagram per application (owner → GC/EPC → fabricator/contractor…) with badges for **Holds the torch**, **Buys equipment** and **Specifies**. Example: data center structural steel is welded by the steel fabricator (shop) and the erector (field); the hyperscaler and GC never weld. |
+| Products | A simplified grid: **MIG · TIG · SAW · Flux-cored** × **Manual · Cobot · Automation** (Primary / Common / Niche), with ESAB products per cell, a link to the matching 3D system, and then **NDT**. |
+| **2 · US market map** | 63 named US accounts (public information) with 92 sites, 16 geographic hotspots, filters by market, type, tier and "holds the torch", and account detail with outsourcing partners. |
+| **3 · Welding systems** | Five 3D systems: **MIG cobot cell, SAW column & boom, orbital TIG, manual MIG/flux-cored station, precision TIG bench**. Each shows an ESAB bill of materials ("ESAB supplies X of Y parts"), a **Highlight ESAB** mode, an ESAB solution card per part, competitor comparison (Lincoln, Miller, Fronius), Explode and Run weld. |
+| **4 · Gemba walk** | Seven sites tied to the six markets: wind tower factory, data center campus + prefab, semiconductor fab build, nuclear component shop + outage, aerospace shop, shipyard, job shop. There are 47 briefed stops, animated sparks, moving cranes, green flow arrows on the floor, a walk diagram, and links to the 3D welding systems. |
 
-Deep links: `#seg_dc` (market), `#app_liquid` (application), `#system`, `#c_wire` (a part), `#g_wind` (a site), `#g_wind.3` (stop 3).
+Deep links: `#mk_wind`, `#mk_semidc.who`, `#map`, `#s.saw_cab`, `#s.saw_cab.head`, `#g_nuclear.3`.
 
 ## Editing the content
 
-- `data.js`: markets, applications, processes, automation, fillers, NDT. The header explains the schema. The first item in each application list counts as primary.
-- `systems.js`: 3D system components and brand product families. Items marked "(verify)" need checking against current catalogs.
-- `gemba-data.js`: Gemba site and stop content (easy to edit text).
-- `gemba-world.js`: the 3D kit (halls, cranes, people, arcs, turning rolls, column & boom, vehicles) and one layout per site, with camera positions per stop.
+| File | Content |
+| --- | --- |
+| `markets.js` | Markets, applications, value chains, product grids, NDT, **accounts**, hotspots, US outline |
+| `systems.js` | Welding systems, components, `esabPick`, brand comparisons |
+| `systems-world.js` | 3D models for SAW, orbital, manual MIG and TIG systems |
+| `gemba-data.js` / `gemba-world.js` | Gemba content / 3D site layouts |
+| `data.js` | Glossary of processes, automation, fillers and NDT (definitions) |
+| `index.html` | The app (includes the 3D cobot cell) |
 
 ## Project task tracker
 
-### Release v1.0: EBXWorld (see CHANGELOG.md)
-Renamed, versioned and published for executive review.
-
-### Build 3: Gemba walks
+### v2.0: executive feedback round
 | # | Task | Status |
 | --- | --- | --- |
-| 1 | Gemba content: 6 sites, 40 stops | Done |
-| 2 | Reusable 3D kit + 6 site layouts with per-stop cameras | Done |
-| 3 | Gemba view (site list, stops, 3D stage, briefing panel, notes, arrow keys, deep links) | Done |
-| 4 | Cross-links from Markets and Applications to Gemba sites | Done |
-| 5 | Test all sites, fix camera and layout issues, publish, push | Done |
+| 1 | Refocus on 6 end markets with 3–4 applications each | Done |
+| 2 | Who welds: value chain per application (torch / buys / specifies) | Done |
+| 3 | Simplified product grid (MIG/TIG/SAW/Flux × Manual/Cobot/Automation → NDT) | Done |
+| 4 | US market visibility: 63 named accounts, partners, 16 hotspots, map | Done |
+| 5 | 4 new 3D welding systems + ESAB highlighting and bill of materials | Done |
+| 6 | Gemba: tie to markets, add nuclear + semi fab, sparks/cranes/flow arrows, walk diagram | Done |
+| 7 | Test (desktop + mobile, offline), build v2.0 file, publish, push | Done |
 
-### Build 2: structured markets + 3D equipment
-| # | Task | Status |
-| --- | --- | --- |
-| 1 | Restructure data: market groups, buyers, channel; remove graph tours | Done |
-| 2 | Markets table view with expandable segment detail | Done |
-| 3 | Application page with weld system recipe and glossary | Done |
-| 4 | 3D MIG cobot cell (13 parts, IK-driven arm, explode, run weld) | Done |
-| 5 | Brand comparison per part (ESAB/EWM, Lincoln, Miller, Fronius) | Done |
-| 6 | Consumables pull-through calculator | Done |
-| 7 | Browser test (desktop + mobile), publish, commit, push | Done |
-| 8 | Update `LEARNINGS.md` | Done |
-
-### Build 1: 3D relationship graph (replaced)
-Superseded by v2 after feedback that the graph was confusing.
+### v1.0 and earlier
+See `CHANGELOG.md` and `LEARNINGS.md`.
 
 ### Backlog
-- [ ] More Gemba sites: pressure vessel shop, auto body shop, semiconductor fab hook-up, heavy-equipment robot line, refinery turnaround
-- [ ] Gemba "field sales mode": one-page question checklist per site to take on real visits
-- [ ] 3D: SAW column & boom with turning rolls and flux recovery
-- [ ] 3D: orbital TIG (power supply + enclosed head) for semiconductor and data-center liquid cooling
-- [ ] 3D: semi-automatic MIG/FCAW shop setup
-- [ ] Verify all "(verify)" product names with the product management team
-- [ ] Replace indicative weights with ESAB market-intelligence data
-- [ ] Regional view (NA / EU / APAC / LATAM)
+- [ ] Replace public-info accounts and tiers with ESAB CRM data (spend, share, owner)
+- [ ] Confirm all "(verify)" product names with product management
+- [ ] Add more accounts per market (target 100+) and contractor lists per owner site
+- [ ] Regional views beyond the US (EU, APAC)
+- [ ] More Gemba sites: pressure vessel shop, naval module supplier, SMR factory
 
 ## Disclaimer
 
-Weights, shares, prices and consumption figures are indicative estimates for learning and discussion, not market data. Product names come from public catalogs; validate them before external use.
+Accounts, partners and sites come from public information. Tiers, shares, levels, prices and volumes are analyst estimates, not ESAB data. Validate them before external use.

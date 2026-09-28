@@ -32,7 +32,58 @@
     g2.fillStyle = gr; g2.fillRect(0, 0, 64, 64);
     const glowTex = new THREE.CanvasTexture(gc);
 
-    let root = null, arcs = [], spinners = [], env = null, pinEls = [];
+    let root = null, arcs = [], spinners = [], movers = [], chevrons = [], env = null, pinEls = [];
+    let sparks = null; // { pts, pos, vel, life, owner, emitters }
+    const SPARKS_PER = 16;
+    function buildSparks() {
+      const emitters = arcs.filter((a) => a.sparks).slice(0, 16);
+      if (!emitters.length) { sparks = null; return; }
+      const n = emitters.length * SPARKS_PER, pos = new Float32Array(n * 3).fill(-999), vel = new Float32Array(n * 3), life = new Float32Array(n);
+      const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      const pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.16, map: glowTex, color: 0xffc46b, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
+      pts.frustumCulled = false; root.add(pts);
+      sparks = { pts, pos, vel, life, emitters };
+    }
+    function updateSparks(dt) {
+      if (!sparks) return;
+      const { pos, vel, life, emitters } = sparks;
+      for (let i = 0; i < life.length; i++) {
+        const e = emitters[(i / SPARKS_PER) | 0], k = i * 3;
+        if (life[i] <= 0) {
+          if (!e.lit || Math.random() > 0.25) { pos[k + 1] = -999; continue; }
+          const sc = Math.max(0.5, e.size);
+          pos[k] = e.pos.x; pos[k + 1] = e.pos.y; pos[k + 2] = e.pos.z;
+          vel[k] = (Math.random() - 0.5) * 3 * sc; vel[k + 1] = (0.6 + Math.random() * 2.2) * sc; vel[k + 2] = (Math.random() - 0.5) * 3 * sc;
+          life[i] = 0.25 + Math.random() * 0.55;
+        } else {
+          vel[k + 1] -= 9.8 * dt;
+          pos[k] += vel[k] * dt; pos[k + 1] += vel[k + 1] * dt; pos[k + 2] += vel[k + 2] * dt;
+          life[i] -= dt; if (life[i] <= 0) pos[k + 1] = -999;
+        }
+      }
+      sparks.pts.geometry.attributes.position.needsUpdate = true;
+    }
+    // animated chevrons on the floor tracing the walk from stop to stop
+    function buildFlow(site) {
+      chevrons = [];
+      const pts = site.stops.map((st) => env.stops[st.id]).filter(Boolean).map((c) => new THREE.Vector3(c.t[0], c.t[1] < 0 ? c.t[1] + 0.1 : 0.12, c.t[2]));
+      if (pts.length < 2) return;
+      let total = 0; for (let i = 1; i < pts.length; i++) total += pts[i].distanceTo(pts[i - 1]);
+      const gap = Math.max(env.outdoor ? 5 : 2.4, total / 220), size = env.outdoor ? 1.6 : 0.7;
+      const shape = new THREE.Shape(); shape.moveTo(-0.5, -0.5); shape.lineTo(0, 0); shape.lineTo(-0.5, 0.5); shape.lineTo(-0.2, 0.5); shape.lineTo(0.3, 0); shape.lineTo(-0.2, -0.5); shape.closePath();
+      const geo = new THREE.ShapeGeometry(shape);
+      let dist = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1], b = pts[i], len = a.distanceTo(b), ang = Math.atan2(-(b.z - a.z), b.x - a.x);
+        for (let d = gap / 2; d < len; d += gap) {
+          const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x4dd4a6, transparent: true, opacity: 0.5, depthWrite: false, side: THREE.DoubleSide }));
+          m.rotation.x = -Math.PI / 2; m.rotation.z = ang; m.scale.setScalar(size);
+          m.position.lerpVectors(a, b, d / len); root.add(m);
+          chevrons.push({ m, d: dist + d });
+        }
+        dist += len;
+      }
+    }
 
     /* ---------------- kit ---------------- */
     function makeKit(G) {
@@ -58,6 +109,11 @@
           return m;
         },
         torus(R, r, x, y, z, color, o = {}) { const m = new THREE.Mesh(new THREE.TorusGeometry(R, r, 10, 40), o.m || mat(color, o.mo)); if (o.axis === "x") m.rotation.y = Math.PI / 2; else if (o.axis !== "z") m.rotation.x = Math.PI / 2; return place(m, x, y, z, o); },
+        dome(r, x, y, z, color, o = {}) {
+          const m = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), o.m || mat(color, Object.assign({ metalness: 0.5, side: THREE.DoubleSide }, o.mo)));
+          if (o.flip) m.rotation.x = Math.PI;
+          m.position.set(x, y + (o.flip ? r : 0), z); (o.parent || G).add(m); return m;
+        },
         group(x = 0, y = 0, z = 0, ry = 0, parent) { const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = ry; (parent || G).add(g); return g; },
         ground(w, d, color, x = 0, z = 0, y = 0) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat(color, { roughness: 1 })); m.rotation.x = -Math.PI / 2; m.position.set(x, y, z); G.add(m); return m; },
         stripe(x, z, w, d, color = 0xd9a92b) { return K.box(w, 0.02, d, x, 0.005, z, color, { mo: { roughness: 0.9 } }); },
@@ -93,7 +149,7 @@
           const size = o.size || 0.9; s.scale.setScalar(size); s.position.set(x, y, z); G.add(s);
           let light = null;
           if (o.light !== false && arcs.filter((a) => a.light).length < 6) { light = new THREE.PointLight(o.color || 0x9fd8ff, 0, o.range || 9, 2); light.position.set(x, y + 0.3, z); G.add(light); }
-          arcs.push({ s, light, size, phase: Math.random() * 10, on: o.duty || 0.8 });
+          arcs.push({ s, light, size, phase: Math.random() * 10, on: o.duty || 0.8, sparks: o.sparks !== false && (o.color == null || o.color === 0xcfeaff || o.color === 0xd8f0ff), pos: new THREE.Vector3(x, y, z), lit: false });
           return s;
         },
         spin(obj, axis, speed) { spinners.push({ obj, axis, speed }); },
@@ -118,11 +174,15 @@
           return { x0: x - w / 2, x1: x + w / 2, z0: z - d / 2, z1: z + d / 2, h };
         },
         bridgeCrane(x, z, d, h, color = 0xe0a526) {
-          const c = mat(color, { metalness: 0.3 });
-          K.box(0.9, 1.1, d - 1, x, h - 2.0, z, 0, { m: c });
-          K.box(1.6, 0.8, 1.6, x, h - 2.8, z + 1, 0, { m: mat(0x3a444c) });
-          K.cyl(0.03, 3.5, x, h - 6.3, z + 1, 0x222222);
-          K.box(0.8, 0.25, 0.5, x, h - 6.6, z + 1, 0x333a40);
+          const c = mat(color, { metalness: 0.3 }), g = K.group(x, 0, z);
+          K.box(0.9, 1.1, d - 1, 0, h - 2.0, 0, 0, { m: c, parent: g });
+          const trolley = K.group(0, 0, 0, 0, g);
+          K.box(1.6, 0.8, 1.6, 0, h - 2.8, 1, 0, { m: mat(0x3a444c), parent: trolley });
+          K.cyl(0.03, 3.5, 0, h - 6.3, 1, 0x222222, { parent: trolley });
+          K.box(0.8, 0.25, 0.5, 0, h - 6.6, 1, 0x333a40, { parent: trolley });
+          movers.push({ obj: g, axis: "x", base: x, amp: 7 + Math.random() * 4, speed: 0.06 + Math.random() * 0.04, phase: Math.random() * 6 });
+          movers.push({ obj: trolley, axis: "z", base: 0, amp: d * 0.3, speed: 0.11 + Math.random() * 0.05, phase: Math.random() * 6 });
+          return g;
         },
         plates(x, z, w, d, n, color = 0x6b5a4c) { for (let i = 0; i < n; i++) K.box(w, 0.12, d, x + (i % 2) * 0.08, i * 0.13, z, color, { mo: { metalness: 0.5, roughness: 0.6 } }); },
         rollStand(x, z, dz = 1.5) {
@@ -231,14 +291,14 @@
         K.rollStand(-11, 0); K.rollStand(-8, 0);
         const ls = K.can(-9.5, 2.9, 0, 2.2, 3.6);
         const tip = K.columnBoom(-18, 0, 0, 5.2, 10.5);
-        K.arc(tip.x, tip.y - 0.1, 0, { size: 0.8 });
+        K.arc(tip.x, tip.y - 0.1, 0, { size: 0.8, color: 0xffb070, sparks: false });
         K.person(-19.5, 2, 0.3, "hivis"); K.person(-7, 3.4, -0.5, "hivis");
         // 4 circ seams: section of cans on stands, 2 column & booms from -z side
         const sec = K.group(18, 2.9, 0);
         for (let i = 0; i < 6; i++) { const m = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.2, 3.55, 40, 1, true), K.mat(i % 2 ? 0x5a6771 : 0x62707a, { metalness: 0.55, roughness: 0.5, side: THREE.DoubleSide })); m.rotation.z = Math.PI / 2; m.position.set(-9 + i * 3.6 + 1.8, 0, 0); sec.add(m); }
         K.spin(sec, "x", 0.06);
         [9.5, 15, 21, 26.5].forEach((x) => K.rollStand(x, 0));
-        [16.2, 23.4].forEach((x) => { const t = K.columnBoom(x, -6.6, -Math.PI / 2, 7.2, 7.3); K.arc(t.x, 5.2, t.z, { size: 0.9 }); });
+        [16.2, 23.4].forEach((x) => { const t = K.columnBoom(x, -6.6, -Math.PI / 2, 7.2, 7.3); K.arc(t.x, 5.2, t.z, { size: 0.9, color: 0xffb070, sparks: false }); });
         K.person(12, 4.5, 0.2, "hivis"); K.person(24, -3.5, 2.6, "hivis");
         // 5 flange: short section with flange ring
         K.rollStand(41, 0); K.rollStand(45, 0);
@@ -384,53 +444,114 @@
         };
       },
 
-      pipeline(K) {
-        K.ground(700, 400, 0x5f6b45); // grass
-        K.box(260, 0.02, 22, 0, 0, 2, 0x7a6848); // right-of-way (graded dirt)
-        K.box(200, 0.05, 2.2, 10, -0.02, -2, 0x2c2419); // trench (dark strip)
-        K.box(200, 1.6, 4, 10, 0, -6.5, 0x6d5a3c); // spoil pile
-        const pipeC = 0x3f5a4a, jl = 12.2;
-        // strung pipe (not yet welded) on skids
-        for (let i = 0; i < 5; i++) { const x = -96 + i * 13; K.cyl(0.6, jl, x, 0.9, 3.5, pipeC, { axis: "x", mo: { metalness: 0.4 } }); K.box(0.3, 0.3, 1.4, x - 4, 0, 3.5, 0x8a6a44); K.box(0.3, 0.3, 1.4, x + 4, 0, 3.5, 0x8a6a44); }
-        K.truck(-86, 12, Math.PI, { bed: 13 }); for (let i = 0; i < 3; i++) K.cyl(0.6, 12, -93, 2.0 + i * 0.1, 11.2 + i * 1.25, pipeC, { axis: "x" });
-        K.box(5, 2.2, 3, -72, 0, 11, 0xe8b21e); K.sign("STRINGING & BENDING", -84, 4.2, -9.2, 0, 10);
-        // welded string from x=-50 to 80
-        const joints = []; for (let x = -52; x < 45; x += jl) joints.push(x);
-        joints.forEach((x) => K.cyl(0.6, jl - 0.05, x + jl / 2, 0.9, 3.5, pipeC, { axis: "x", mo: { metalness: 0.4 } }));
-        for (let x = -50; x < 45; x += 6) K.box(0.3, 0.3, 1.4, x, 0, 3.5, 0x8a6a44);
-        // line-up: sidebooms + root welders at x=-52
-        K.sideboom(-58, 9.5, Math.PI, 4); K.sideboom(-50, 9.5, Math.PI, 4);
-        [[-52.6, 2.4], [-52.6, 4.6], [-51.4, 2.4]].forEach(([x, z], i) => { K.person(x, z, i === 1 ? Math.PI : 0, "welder", { kneel: i === 2 }); });
-        K.arc(-52, 1.0, 2.8, { size: 0.7 }); K.arc(-52, 1.2, 4.1, { size: 0.6 });
-        K.sign("LINE-UP & ROOT", -56, 4.2, -9.2, 0, 7);
-        // firing line: tents over joints with rigs
-        [-39.8, -27.6, -15.4, -3.2].forEach((x, i) => { K.tent(x, 3.5, 0); K.person(x - 0.6, 5.0, Math.PI, "welder"); K.arc(x - 0.4, 1.3, 4.1, { size: 0.6, light: i < 2 }); K.pickup(x + 1, 11, 0); });
-        K.sign("FIRING LINE: FILL & CAP", -22, 4.2, -9.2, 0, 11);
-        // AUT shack
-        K.box(3, 2.4, 2.6, 9, 0, 9, 0xf4f4f0); K.torus(0.68, 0.1, 9, 0.9, 3.5, 0xf2a93b, { axis: "x" }); K.person(9.8, 5.2, Math.PI, "hivis"); K.box(5, 2.2, 2.2, 15, 0, 11, 0xdddddd);
-        K.sign("AUT INSPECTION", 9, 4.2, -9.2, 0, 6);
-        // coating
-        K.box(1.6, 1.4, 1.6, 26.3, 0.2, 3.5, 0x8c9aa3, { mo: { transparent: true, opacity: 0.7 } }); K.person(25, 5, Math.PI, "orange"); K.person(28, 5.2, Math.PI, "orange"); K.box(3, 1.6, 2, 27, 0, 10, 0x5b6770);
-        K.sign("FIELD JOINT COATING", 27, 4.2, -9.2, 0, 8);
-        // lowering-in: string descends into trench
-        for (let i = 0; i < 4; i++) { const x = 48 + i * 11, y = 0.5 - i * 0.9, z = 3.5 - i * 1.6; K.cyl(0.6, 11, x, y, z, pipeC, { axis: "x", mo: { metalness: 0.4 } }); }
-        [52, 63, 74].forEach((x, i) => K.sideboom(x, 8 - i * 0.5, Math.PI, 5));
-        K.box(4, 0.1, 3, 88, -1.8, -2, 0x2c2419); K.person(88, -2.5, 0, "welder", { y: -1.9 }); K.arc(88.3, -1.3, -2, { size: 0.6 });
-        K.sign("LOWERING-IN & TIE-INS", 70, 4.2, -9.2, 0, 10);
+      nuclear(K) {
+        K.ground(700, 500, 0x1d262c);
+        K.hall(0, 0, 100, 36, 22, { bay: 12.5 });
+        K.stripe(0, 9, 100, 0.15); K.stripe(0, -9, 100, 0.15);
+        K.bridgeCrane(-30, 0, 36, 22); K.bridgeCrane(18, 0, 36, 22);
+        [["1  FORGINGS & MATERIAL", -42, 10], ["2  STRIP CLADDING", -22, 8], ["3  NARROW-GAP SAW", -2, 8], ["4  ORBITAL PIPING", 16, 8], ["5  SMR MODULE", 34, 7], ["6  NDT VAULT", 44, 6]].forEach(([t, x, w]) => K.sign(t, x, 15, -18.6, 0, w));
+        // 1 forgings + material cage
+        K.torus(2.2, 0.45, -44, 0.45, -9, 0x6d6f72, { mo: { metalness: 0.6 } }); K.torus(2.2, 0.45, -44, 1.36, -9, 0x6d6f72, { mo: { metalness: 0.6 } });
+        K.torus(1.8, 0.5, -38.5, 0.5, -10, 0x74777a, { mo: { metalness: 0.6 } });
+        K.dome(2.4, -40, 0, -2, 0x6d6f72, { flip: false });
+        K.box(7, 3, 4, -42, 0, 11, 0, { m: K.mat(0x9fb0bb, { transparent: true, opacity: 0.25, depthWrite: false }) });
+        for (let i = 0; i < 4; i++) K.box(1.2, 2.4, 0.6, -44.5 + i * 1.6, 0, 12.4, 0x3f6b8c);
+        K.person(-41, 10, Math.PI, "office"); K.person(-38, -6, 0.5, "hivis");
+        // 2 cladding: inverted head on positioner, column & boom from -z
+        K.box(3, 1.2, 3, -22, 0, 0, 0x2c6fa3); K.dome(2.8, -22, 1.2, 0, 0x7a8288, { flip: true });
+        const ct = K.columnBoom(-22, -7.5, -Math.PI / 2, 6.6, 7.4); K.arc(ct.x, 1.4, ct.z, { size: 0.9, color: 0xffb070, sparks: false });
+        K.person(-18.5, -4.5, 2.4, "hivis");
+        // 3 narrow-gap SAW on thick shell with preheat band
+        K.rollStand(-4.5, 0); K.rollStand(0.5, 0);
+        const sh = K.group(-2, 2.9, 0); const shell = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.4, 4.5, 40, 1, true), K.mat(0x5f6c75, { metalness: 0.6, side: THREE.DoubleSide })); shell.rotation.z = Math.PI / 2; sh.add(shell);
+        const band = new THREE.Mesh(new THREE.CylinderGeometry(2.46, 2.46, 0.8, 40, 1, true), K.mat(0xd9562b, { emissive: 0x7a2a10, emissiveIntensity: 0.8, side: THREE.DoubleSide })); band.rotation.z = Math.PI / 2; sh.add(band);
+        K.spin(sh, "x", 0.04);
+        const nt = K.columnBoom(-2, -7.5, -Math.PI / 2, 7.3, 7.5); K.arc(nt.x, 5.3, nt.z, { size: 0.8, color: 0xffb070, sparks: false });
+        K.person(1.5, 4, -0.4, "hivis");
+        // 4 orbital piping
+        for (let i = 0; i < 3; i++) { const z = -5 + i * 4; K.box(0.4, 1, 0.4, 13, 0, z, 0x2c6fa3); K.box(0.4, 1, 0.4, 19, 0, z, 0x2c6fa3); K.cyl(0.36, 7, 16, 1.36, z, 0xa9b3b9, { axis: "x", mo: { metalness: 0.7, roughness: 0.3 } }); K.torus(0.5, 0.14, 16, 1.36, z, 0x2f3a42, { axis: "x" }); K.arc(16, 1.36, z + 0.2, { size: 0.35, light: i === 1 }); }
+        K.box(0.8, 1.3, 0.6, 16, 0, 6.5, 0x33414b); K.box(0.6, 0.4, 0.05, 16, 1.3, 6.2, 0x58c4f5, { mo: { emissive: 0x1d5c7a } }); K.person(17.2, 6.8, 2.6, "hivis");
+        // 5 SMR module with scaffolding
+        K.cyl(3, 14, 34, 0, 0, 0x7d8a93, { mo: { metalness: 0.5 } });
+        const scaf = K.mat(0xd9a92b);
+        for (let y = 2.5; y < 14; y += 3) { K.box(8.4, 0.12, 0.8, 34, y, 3.6, 0, { m: scaf }); K.box(0.8, 0.12, 8.4, 37.6, y, 0, 0, { m: scaf }); }
+        [[30, 3.6], [38, 3.6], [37.6, -4], [37.6, 4]].forEach(([x, z]) => K.box(0.1, 14, 0.1, x, 0, z, 0, { m: scaf }));
+        [[2.6, 32.5], [5.6, 35.5], [8.6, 33]].forEach(([y, x], i) => { K.person(x, 3.7, Math.PI, "welder", { y: y + 0.1 }); K.arc(x, y + 1.1, 3.05, { size: 0.6, light: i < 2 }); });
+        // 6 NDT vault
+        K.box(8, 7, 0.8, 44, 0, 14, 0x8d959b); K.box(0.8, 7, 7, 40.4, 0, 10.5, 0x8d959b); K.box(0.8, 7, 7, 47.6, 0, 10.5, 0x8d959b); K.box(8, 0.8, 8, 44, 7, 10.5, 0x8d959b);
+        K.box(1.2, 1.2, 2.4, 44, 0, 11, 0x2a3036); K.cyl(0.2, 0.6, 44, 7.8, 7, 0xf2c230, { mo: { emissive: 0x7a5a00 } }); K.person(42.5, 6.5, 0, "office");
+        // 7 plant outage (outside the shop)
+        const px = 105, pz = 0;
+        K.cyl(11, 20, px, 0, pz, 0xc9cfd3); K.dome(11, px, 20, pz, 0xc9cfd3, {});
+        K.cyl(10, 30, px + 35, 0, pz - 25, 0xb8bec2, { r2: 7, open: true, seg: 40 });
+        K.box(22, 12, 14, px - 22, 0, pz - 18, 0x8d959b);
+        K.tent(px - 8, pz + 13, 0, 0xe8e2c6); K.person(px - 8.5, pz + 13.6, Math.PI, "welder"); K.arc(px - 8.2, 1.2, pz + 12.6, { size: 0.6 });
+        K.box(8, 2.6, 2.4, px - 16, 0, pz + 20, 0xf4f4f0); K.box(8, 2.6, 2.4, px - 16, 0, pz + 24, 0xf4f4f0); K.person(px - 12, pz + 16, 0.4, "orange"); K.person(px - 5, pz + 17, -0.6, "hivis");
+        K.sign("7  PLANT OUTAGE", px - 10, 5, pz + 28, 0, 8);
         return {
-          outdoor: true,
-          overview: { t: [0, 0, 2], c: [-70, 60, 95] },
+          overview: { t: [30, 3, 0], c: [-50, 75, 110] },
           stops: {
-            row: { t: [-80, 1, 5], c: [-66, 10, 26] },
-            lineup: { t: [-52, 1, 4], c: [-44, 6, 17] },
-            firing: { t: [-22, 1.5, 5], c: [-14, 12, 28] },
-            aut: { t: [10, 1.2, 5], c: [17, 7, 20] },
-            coat: { t: [26, 1, 4], c: [32, 6, 17] },
-            lower: { t: [68, -0.5, 1], c: [78, 12, 26] },
+            forgings: { t: [-41, 1.5, 0], c: [-30, 11, 22] },
+            cladding: { t: [-22, 2.5, 0], c: [-13, 10, 17] },
+            narrowgap: { t: [-2, 3, 0], c: [7, 10, 17] },
+            piping: { t: [16, 1.4, -1], c: [23, 7, 12] },
+            module: { t: [34, 6, 0], c: [26, 12, 22] },
+            ndt: { t: [44, 2, 11], c: [44, 8, 26] },
+            outage: { t: [px - 8, 2, pz + 14], c: [px - 30, 16, pz + 46] },
           },
         };
       },
 
+      semi(K) {
+        K.ground(700, 600, 0x6a6150);
+        K.box(400, 0.05, 10, 0, 0, 55, 0x3a3d40); K.box(10, 0.05, 200, -60, 0, 0, 0x3a3d40);
+        // fab: steel frame with one clad end and a cleanroom level
+        const st = K.mat(0x8a4b2a, { metalness: 0.4 }), fx = 20, fz = -10, W = 100, D = 60;
+        for (let i = 0; i <= 10; i++) for (let j = 0; j <= 6; j++) K.box(0.8, 30, 0.8, fx - W / 2 + i * 10, 0, fz - D / 2 + j * 10, 0, { m: st });
+        [12, 30].forEach((y) => { for (let i = 0; i <= 10; i++) K.box(0.6, 1.8, D, fx - W / 2 + i * 10, y - 1.8, fz, 0, { m: st }); });
+        K.box(W, 0.6, D, fx, 12, fz, 0x9aa1a6, { mo: { transparent: true, opacity: 0.45 } });
+        K.box(0.4, 30, D, fx + W / 2 + 0.4, 0, fz, 0xc9d1d6); K.box(40, 30, 0.4, fx + 30, 0, fz - D / 2 - 0.4, 0xc9d1d6);
+        const cc = K.group(fx - 40, 0, fz + 42); K.box(8, 1.2, 6, 0, 0, 0, 0x222222, { parent: cc }); K.box(6, 3, 4, 0, 1.2, 0, 0xd33b2c, { parent: cc });
+        const boom = K.box(1, 60, 1, 0, 0, 0, 0xd33b2c, { parent: cc }); boom.position.set(8, 28, -6); boom.rotation.set(-0.25, 0, -0.3);
+        K.box(2.4, 1, 1.2, fx - 30, 0, fz + 31, 0xf2a93b); K.box(0.6, 26, 0.6, fx - 30, 1, fz + 31, 0x9aa1a6); K.box(2.2, 0.15, 1.4, fx - 30, 27, fz + 31, 0xf2a93b);
+        K.person(fx - 30.3, fz + 31, Math.PI, "welder", { y: 27.2 }); K.arc(fx - 30, 28.3, fz + 30.4, { size: 0.8 });
+        K.sign("FAB (STRUCTURE UNDER CONSTRUCTION)", fx - 10, 33, fz + D / 2, 0, 26, { bg: "#16303c", fg: "#58c4f5" });
+        // sub-fab piping forest under the cleanroom deck
+        const cols = [0x2a5f8a, 0xa9b3b9, 0x8a6a44, 0x4dd4a6, 0xa9b3b9, 0xe8795a];
+        for (let k = 0; k < 14; k++) K.cyl(0.18 + (k % 3) * 0.12, 60, fx + 10, 3 + (k % 5) * 1.6, fz - 20 + k * 2.6, cols[k % 6], { axis: "x", mo: { metalness: 0.6 } });
+        for (let k = 0; k < 5; k++) K.box(60, 1.2, 1.6, fx + 10, 9.5, fz - 18 + k * 8, 0x9aa6ae);
+        K.person(fx - 2, fz + 1, 0, "hivis"); K.arc(fx - 2, 4.6, fz - 0.4, { size: 0.45, light: true }); K.person(fx + 12, fz + 9, 0.5, "welder"); K.arc(fx + 12.2, 3.2, fz + 8.3, { size: 0.45 });
+        // central utility building with pipe rack to fab
+        const cx = -95, cz = 0;
+        K.box(40, 16, 0.4, cx, 0, cz - 15, 0x8d959b); K.box(0.4, 16, 30, cx - 20, 0, cz, 0x8d959b); K.box(40, 0.4, 30, cx, 16, cz, 0x8d959b, { mo: { transparent: true, opacity: 0.3 } });
+        for (let i = 0; i < 4; i++) { K.box(9, 2.6, 3, cx - 8, 0, cz - 10 + i * 5.5, 0x9aa6ae); K.cyl(0.9, 3, cx + 6, 0, cz - 10 + i * 5.5, 0x5b6770); }
+        K.rack(-45, 0, 44, 0); for (let k = 0; k < 4; k++) K.cyl(0.35, 70, -45, 1.8 + (k % 2) * 1.2, -0.4 + (k >> 1) * 0.8, cols[k], { axis: "x" });
+        K.person(cx + 10, cz + 8, -0.6, "welder"); K.arc(cx + 10.4, 1.3, cz + 7.4, { size: 0.5 }); K.sign("CENTRAL UTILITY BUILDING", cx, 18, cz - 15, 0, 14);
+        // bulk gas yard
+        const gx = -90, gz = -60;
+        for (let i = 0; i < 6; i++) { K.cyl(2.2, 16, gx - 15 + i * 6, 0, gz, 0xf4f4f0); K.cyl(0.25, 3, gx - 15 + i * 6, 16, gz, 0x9aa6ae); }
+        for (let i = 0; i < 4; i++) K.box(1.2, 4, 3, gx - 12 + i * 3, 0, gz + 8, 0xc9d1d6);
+        K.sign("BULK GAS YARD", gx - 3, 6, gz + 12, 0, 8);
+        // UHP hook-up weld shop (cleanroom tent) and QA
+        const hx = 95, hz = 30;
+        K.box(16, 4.5, 7, hx, 0, hz, 0, { m: K.mat(0xf4f8fa, { transparent: true, opacity: 0.35, depthWrite: false }) });
+        for (let i = 0; i < 3; i++) { const x = hx - 5 + i * 4.5; K.box(2.4, 0.9, 1, x, 0, hz - 1.8, 0x7b8791); K.cyl(0.02, 2, x, 1.0, hz - 1.8, 0xc9d1d6, { axis: "x" }); K.box(0.25, 0.25, 0.2, x, 1.0, hz - 1.8, 0x2f3a42); K.box(0.5, 0.6, 0.5, x + 1.5, 0.9, hz - 1.4, 0x33414b); K.person(x, hz - 0.8, Math.PI, "clean"); K.arc(x, 1.0, hz - 1.9, { size: 0.25, light: i === 1, sparks: false }); }
+        K.cyl(0.12, 1.4, hx + 6.5, 0, hz + 2.6, 0x5b6770); K.sign("UHP WELD SHOP (CLEANROOM)", hx, 6, hz - 3.6, 0, 12);
+        K.box(1.2, 1, 0.8, hx - 18, 0, hz + 2, 0x2c6fa3); K.box(0.5, 0.35, 0.05, hx - 18, 1, hz + 1.6, 0x58c4f5, { mo: { emissive: 0x1d5c7a } }); K.person(hx - 16.5, hz + 3, 2.4, "clean"); K.person(hx - 19.5, hz + 3.2, -2.4, "office");
+        K.truck(hx - 30, hz + 25, 0, { bed: 13 });
+        return {
+          outdoor: true,
+          overview: { t: [0, 5, 0], c: [-110, 110, 170] },
+          stops: {
+            structure: { t: [fx - 30, 20, fz + 30], c: [fx - 2, 34, fz + 70] },
+            cub: { t: [cx + 2, 3, cz], c: [cx + 22, 20, cz + 40] },
+            bulkgas: { t: [gx, 6, gz], c: [gx + 30, 20, gz + 36] },
+            subfab: { t: [fx + 2, 4, fz], c: [fx + 36, 10, fz + 38] },
+            hookup: { t: [hx, 1.2, hz - 1.5], c: [hx + 7, 7, hz + 14] },
+            qa: { t: [hx - 18, 1.2, hz + 2], c: [hx - 12, 5, hz + 12] },
+          },
+        };
+      },
       aero(K) {
         K.ground(300, 300, 0x1d262c);
         K.hall(0, 0, 56, 32, 8, { bay: 8, floor: 0xb7c2c4, frame: 0x8d99a2, wall: 0xcfd6da, endWall: true });
@@ -560,9 +681,10 @@
     let stopList = [];
     function load(site) {
       if (root) { scene.remove(root); dispose(root); }
-      arcs = []; spinners = [];
+      arcs = []; spinners = []; movers = []; chevrons = []; sparks = null;
       root = new THREE.Group(); scene.add(root);
       env = BUILD[site.id](makeKit(root));
+      buildSparks(); buildFlow(site);
       const outdoor = !!env.outdoor;
       scene.background = new THREE.Color(outdoor ? 0x8fa6b5 : 0x0f171c);
       scene.fog = new THREE.Fog(outdoor ? 0x8fa6b5 : 0x0f171c, outdoor ? 180 : 90, outdoor ? 700 : 260);
@@ -607,11 +729,16 @@
       if (!reduceMotion) {
         arcs.forEach((a) => {
           const on = ((t * 0.25 + a.phase) % 1) < a.on;
+          a.lit = on;
           const f = on ? 0.75 + Math.random() * 0.5 : 0;
           a.s.visible = f > 0; a.s.scale.setScalar(a.size * (0.8 + 0.4 * f));
           if (a.light) a.light.intensity = f * 3;
         });
         spinners.forEach((s) => (s.obj.rotation[s.axis] += s.speed * dt));
+        movers.forEach((m) => (m.obj.position[m.axis] = m.base + m.amp * Math.sin(t * m.speed * 2 * Math.PI / 6 + m.phase)));
+        updateSparks(dt);
+        const gap = chevrons.length > 1 ? chevrons[1].d - chevrons[0].d || 3 : 3;
+        chevrons.forEach((c) => { const w = Math.sin((c.d / gap) * 0.7 - t * 4); c.m.material.opacity = 0.15 + 0.6 * Math.max(0, w); });
       } else arcs.forEach((a) => { if (a.light) a.light.intensity = 2; });
       renderer.render(scene, camera);
       if (stopList.length) stopList.forEach((s, i) => {

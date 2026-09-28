@@ -1,5 +1,5 @@
 <title>EBXWorld</title>
-<meta name="description" content="Welding and NDT market atlas: structured end markets, application workflows and a 3D MIG cobot cell with brand comparisons.">
+<meta name="description" content="EBXWorld: six welding end markets, who does the welding, US accounts and hotspots, 3D welding systems with ESAB components, and 3D Gemba walks.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -333,74 +333,247 @@
   @media (prefers-reduced-motion: reduce) {
     .seg-name .car { transition: none; }
   }
+
+  /* ================= v2 additions ================= */
+  [hidden] { display: none !important; }
+  .brand { display: flex; align-items: baseline; gap: 8px; }
+  .ver { font: 500 10.5px/1 var(--font-mono); color: var(--faint); border: 1px solid var(--line-2); border-radius: 3px; padding: 3px 5px; white-space: nowrap; }
+  .esab-tag { display: inline-block; font: 600 10px/1 var(--font-mono); letter-spacing: .06em; padding: 3px 5px; border-radius: 3px; background: rgba(88,196,245,.16); color: #8fd6f7; border: 1px solid rgba(88,196,245,.45); }
+  .back { background: none; border: 0; color: var(--muted); padding: 0; font-size: 13px; }
+  .back:hover { color: var(--text); }
+
+  /* markets home */
+  .mk-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+  .mk-card { text-align: left; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--c); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .mk-card:hover { background: var(--surface-2); border-color: var(--line-2); border-top-color: var(--c); }
+  .mk-card h3 { margin: 0; font: 700 24px/1.05 var(--font-display); text-transform: uppercase; letter-spacing: .02em; }
+  .mk-card .tg { font-size: 13px; color: var(--muted); line-height: 1.4; }
+  .mk-card .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 2px; }
+  .mk-card .stats div { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 5px 7px; }
+  .mk-card .stats .k { font: 10px var(--font-mono); text-transform: uppercase; color: var(--faint); letter-spacing: .04em; }
+  .mk-card .stats .v { font-size: 12.5px; font-weight: 500; margin-top: 2px; line-height: 1.25; }
+  .mk-card .tops { display: flex; flex-wrap: wrap; gap: 4px; }
+  .mk-card .tops span { font: 500 11px/1 var(--font-mono); padding: 4px 6px; border-radius: 3px; background: rgba(88,196,245,.1); color: #9CD9F5; }
+  .mk-card .go { margin-top: auto; font-size: 12.5px; color: var(--c); }
+  table.glance { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 12px; }
+  table.glance th, table.glance td { border-bottom: 1px solid var(--line); padding: 6px 4px; text-align: center; }
+  table.glance thead th { font: 500 10.5px var(--font-mono); text-transform: uppercase; color: var(--faint); letter-spacing: .04em; }
+  table.glance thead tr:first-child th { font: 700 14px var(--font-display); color: var(--text); letter-spacing: .08em; border-bottom: 0; }
+  table.glance th.grp { border-left: 1px solid var(--line-2); }
+  table.glance td.gl { border-left: 1px solid var(--line-2); }
+  table.glance th.row { text-align: left; padding-left: 12px; }
+  table.glance th.row button { background: none; border: 0; padding: 0; font: 600 13px var(--font-body); display: inline-flex; align-items: center; gap: 8px; }
+  table.glance th.row button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .cellv { display: grid; place-items: center; height: 26px; border-radius: 3px; font: 500 10.5px var(--font-mono); cursor: pointer; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 10px; font-size: 12px; color: var(--muted); }
+  .legend i { display: inline-block; width: 22px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+
+  /* market detail */
+  .mk-hero { border-left: 4px solid var(--c); padding-left: 14px; margin-top: 12px; }
+  .mk-hero h2 { margin: 6px 0 2px; font: 700 40px/1 var(--font-display); text-transform: uppercase; }
+  .mk-hero p { margin: 0; color: var(--muted); font-size: 14px; }
+  .tabs { display: flex; gap: 2px; margin-top: 18px; border-bottom: 1px solid var(--line-2); overflow-x: auto; }
+  .tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 9px 14px; font: 600 14px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .tabs button:hover { color: var(--text); }
+  .tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--c); }
+  .tabpanel { padding-top: 18px; }
+  .two { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; }
+  .app-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+  .app-pills button { background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 5px 12px; font-size: 12.5px; color: var(--muted); }
+  .app-pills button[aria-pressed="true"] { border-color: var(--c); color: var(--text); background: color-mix(in srgb, var(--c) 14%, transparent); }
+  .app-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .app-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .app-card h3 { margin: 0; font: 700 19px/1.1 var(--font-display); }
+  .app-card p { margin: 0; font-size: 13px; line-height: 1.5; }
+  .app-card .mat { font-size: 12px; color: var(--muted); }
+  .app-card .sharebar { height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+  .app-card .sharebar i { display: block; height: 100%; background: var(--c); }
+  .app-card .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 11px var(--font-mono); color: var(--faint); }
+  .app-card .torch { font-size: 12.5px; background: rgba(232,121,90,.08); border: 1px solid rgba(232,121,90,.3); border-radius: 4px; padding: 6px 8px; }
+  .app-card .torch b { color: var(--copper); font-weight: 600; }
+  .app-card .acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; }
+  .chain { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: 6px; }
+  .stage-box { flex: 1 1 0; min-width: 190px; background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .stage-box.torch { border-color: var(--copper); box-shadow: 0 0 0 1px rgba(232,121,90,.35), 0 0 22px rgba(232,121,90,.12); }
+  .stage-box .st { font: 600 12px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .stage-box .who { font-size: 13.5px; font-weight: 600; line-height: 1.35; }
+  .stage-box .rl { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+  .stage-box .bdgs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; }
+  .bdg { font: 600 10.5px/1 var(--font-mono); padding: 4px 6px; border-radius: 3px; letter-spacing: .02em; }
+  .bdg.torch { background: rgba(232,121,90,.18); color: #f3a78f; }
+  .bdg.buys { background: rgba(88,196,245,.16); color: #8fd6f7; }
+  .bdg.spec { background: rgba(164,140,247,.16); color: #c3b4fb; }
+  .chain .arr { flex: 0 0 28px; display: grid; place-items: center; color: var(--faint); font-size: 18px; }
+  table.simple { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.simple th { text-align: left; font: 500 10.5px var(--font-mono); text-transform: uppercase; color: var(--faint); padding: 8px 10px; border-bottom: 1px solid var(--line-2); letter-spacing: .04em; }
+  table.simple td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.4; }
+  table.simple td b { font-weight: 600; }
+  table.pgrid { width: 100%; border-collapse: separate; border-spacing: 6px; table-layout: fixed; }
+  table.pgrid th { font: 600 13px/1.1 var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-align: center; padding: 4px; }
+  table.pgrid th.p { text-align: left; width: 150px; vertical-align: middle; }
+  table.pgrid th.p button { background: none; border: 0; padding: 0; font: 700 22px/1 var(--font-display); color: var(--text); letter-spacing: .04em; }
+  table.pgrid th.p button:hover { color: var(--accent); }
+  table.pgrid th.p small { display: block; font: 400 11px/1.3 var(--font-body); color: var(--faint); letter-spacing: 0; text-transform: none; margin-top: 3px; }
+  table.pgrid td { border-radius: var(--radius); padding: 10px; vertical-align: top; height: 84px; border: 1px solid var(--line); }
+  table.pgrid td .lv { font: 600 12px/1 var(--font-display); letter-spacing: .1em; text-transform: uppercase; }
+  table.pgrid td .ep { font-size: 12px; margin-top: 6px; line-height: 1.35; }
+  table.pgrid td .ep b { color: var(--accent); font-weight: 600; }
+  table.pgrid td .ap { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.35; }
+  table.pgrid td button.s3 { margin-top: 8px; background: rgba(11,17,21,.6); border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 3px 9px; font-size: 11.5px; }
+  .lv0 { background: var(--bg); color: var(--faint); }
+  .lv1 { background: rgba(88,196,245,.07); }
+  .lv2 { background: rgba(88,196,245,.16); }
+  .lv3 { background: rgba(88,196,245,.3); border-color: rgba(88,196,245,.6) !important; }
+  .ndt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  .ndt-row .k { font: 600 13px var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--good); margin-right: 6px; }
+  .tier { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 4px; font: 600 11px var(--font-mono); }
+  .tier.A { background: rgba(242,169,59,.25); color: #f7c47a; } .tier.B { background: rgba(88,196,245,.18); color: #8fd6f7; } .tier.C { background: var(--surface-3); color: var(--muted); }
+  .yes { color: var(--copper); font-weight: 600; } .no { color: var(--faint); }
+  .site-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+  /* map */
+  #v-map { display: grid; grid-template-columns: 270px minmax(0, 1fr) 390px; }
+  .map-rail { border-right: 1px solid var(--line); background: var(--surface); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .map-rail h2 { margin: 4px 0 0; font: 700 24px/1.05 var(--font-display); text-transform: uppercase; }
+  .map-rail p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+  .mk-toggles { display: flex; flex-direction: column; gap: 3px; }
+  .mk-toggles button { display: flex; align-items: center; gap: 8px; background: none; border: 0; border-radius: 4px; padding: 5px 6px; font-size: 13px; text-align: left; }
+  .mk-toggles button:hover { background: var(--surface-2); }
+  .mk-toggles button i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .mk-toggles button[aria-pressed="false"] { opacity: .35; }
+  .mk-toggles button .n { margin-left: auto; font: 11px var(--font-mono); color: var(--faint); }
+  .hs-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .hs-list button { width: 100%; text-align: left; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 7px 9px; font-size: 12.5px; display: flex; flex-direction: column; gap: 2px; }
+  .hs-list button:hover, .hs-list button[aria-pressed="true"] { border-color: var(--amber); }
+  .hs-list .d { font-size: 11.5px; color: var(--faint); line-height: 1.35; }
+  .map-main { position: relative; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+  .kpi .k { font: 10.5px var(--font-mono); text-transform: uppercase; color: var(--faint); letter-spacing: .04em; }
+  .kpi .v { font: 700 26px/1.1 var(--font-display); font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .mapbox { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; }
+  .mapbox svg { display: block; width: 100%; height: auto; }
+  .mapbox .us { fill: #16232c; stroke: #3a5566; stroke-width: 1.5; }
+  .mapbox .hs { fill: rgba(242,169,59,.08); stroke: rgba(242,169,59,.55); stroke-dasharray: 4 3; cursor: pointer; }
+  .mapbox .hs.on { fill: rgba(242,169,59,.2); stroke: var(--amber); stroke-dasharray: none; }
+  .mapbox .hsl { fill: #f2c47a; font: 600 11px var(--font-body); pointer-events: none; }
+  .mapbox .dot { cursor: pointer; stroke: #0b1115; stroke-width: 1.5; }
+  .mapbox .dot.hollow { fill: #0b1115 !important; stroke-width: 2.2; }
+  .mapbox .dot.sel { stroke: #fff; stroke-width: 3; }
+  .mapbox .grid { stroke: #1b2a33; stroke-width: 1; }
+  .map-side { border-left: 1px solid var(--line); background: var(--surface); overflow-y: auto; padding: 16px; }
+  .acct-card { background: var(--surface-2); border: 1px solid var(--line-2); border-left: 3px solid var(--c); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; }
+  .acct-card h3 { margin: 4px 0 6px; font: 700 20px/1.1 var(--font-display); }
+  .acct-list { list-style: none; margin: 0; padding: 0; }
+  .acct-list button { width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 8px 4px; display: grid; grid-template-columns: 12px 1fr auto; gap: 4px 10px; align-items: center; font-size: 13px; }
+  .acct-list button:hover { background: var(--surface-2); }
+  .acct-list button[aria-current="true"] { background: var(--surface-3); }
+  .acct-list i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .acct-list i.hollow { background: transparent; border: 2px solid var(--c); box-sizing: border-box; }
+  .acct-list .sub { grid-column: 2 / 4; font-size: 11.5px; color: var(--faint); }
+  .map-tip { position: absolute; pointer-events: none; background: rgba(16,24,30,.96); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 6px 9px; font-size: 12px; z-index: 5; max-width: 260px; }
+
+  /* systems */
+  .sys-pick { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .sys-pick button { width: 100%; text-align: left; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 7px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .sys-pick button:hover { border-color: var(--line-2); }
+  .sys-pick button[aria-current="true"] { border-color: var(--accent); background: rgba(88,196,245,.1); }
+  .sys-pick .nm { font-size: 13px; font-weight: 600; }
+  .sys-pick .sub { font-size: 11px; color: var(--faint); }
+  #stage2 { grid-area: 1 / 2 / 2 / 3; position: relative; overflow: hidden; min-width: 0; min-height: 0; background: #0E161B; }
+  #stage { grid-area: 1 / 2 / 2 / 3; }
+  #stage2 canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  #pins2 { position: absolute; inset: 0; pointer-events: none; }
+  .pin.esab .num { border-color: var(--accent); color: #0b1115; background: var(--accent); }
+  .pin:not(.esab) .num { border-color: var(--faint); color: var(--muted); }
+  .comp-list .esab-tag { margin-left: auto; }
+  .esab-card { background: linear-gradient(135deg, rgba(88,196,245,.16), rgba(88,196,245,.04)); border: 1px solid rgba(88,196,245,.5); border-radius: var(--radius); padding: 12px 14px; margin-top: 14px; }
+  .esab-card .k { font: 700 12px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  .esab-card .p { font-size: 15px; font-weight: 600; margin-top: 6px; line-height: 1.35; }
+  .esab-card .e { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+  .esab-card.none { background: var(--surface-2); border-color: var(--line-2); }
+  .esab-card.none .k { color: var(--muted); }
+  .meter { height: 8px; border-radius: 4px; background: var(--surface-3); overflow: hidden; margin-top: 6px; }
+  .meter i { display: block; height: 100%; background: var(--accent); }
+  table.bom { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.bom td { padding: 6px 4px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.35; }
+  table.bom td:first-child { color: var(--muted); width: 38%; }
+  table.bom tr.y td:last-child { color: #bfe6fa; }
+  table.bom tr.n td:last-child { color: var(--faint); }
+  table.bom button { background: none; border: 0; padding: 0; color: inherit; text-align: left; font: inherit; }
+  table.bom button:hover { color: var(--text); text-decoration: underline; }
+
+  /* gemba flow diagram */
+  .flowsvg { width: 100%; height: auto; display: block; margin-top: 4px; }
+  .flowsvg .bx { fill: var(--surface-2); stroke: var(--line-2); cursor: pointer; }
+  .flowsvg .bx:hover { stroke: var(--good); }
+  .flowsvg .bx.sys { stroke: rgba(88,196,245,.7); }
+  .flowsvg .t { fill: var(--text); font: 500 11.5px var(--font-body); pointer-events: none; }
+  .flowsvg .n { fill: #06231a; font: 600 11px var(--font-mono); pointer-events: none; }
+  .flowsvg .nc { fill: var(--good); }
+  .flowsvg .ln { stroke: var(--good); stroke-width: 1.5; fill: none; opacity: .7; }
+  .flowsvg .ed { fill: var(--accent); }
+  .site-group { font: 600 11px var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--c); margin: 8px 0 4px; display: flex; align-items: center; gap: 6px; }
+  .site-group::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+
+  @media (max-width: 1180px) {
+    .mk-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #v-map { grid-template-columns: 230px minmax(0, 1fr) 330px; }
+    .two { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 860px) {
+    .mk-cards, .app-cards, .site-cards { grid-template-columns: 1fr; }
+    .mk-hero h2 { font-size: 30px; }
+    #v-map { display: block; overflow-y: auto; }
+    .map-rail, .map-side { border: 0; border-bottom: 1px solid var(--line); overflow: visible; }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    #stage2 { height: 56vh; }
+    .sys-pick { flex-direction: row; overflow-x: auto; }
+    .sys-pick button { min-width: 180px; }
+    table.pgrid th.p { width: 80px; }
+    table.pgrid th.p button { font-size: 17px; }
+    table.pgrid th.p small { display: none; }
+    table.pgrid td { padding: 6px; height: auto; }
+    .chain { flex-direction: column; }
+    .chain .arr { transform: rotate(90deg); height: 24px; }
+  }
+
+  .map-rail .filter-group { display: flex; flex-direction: column; gap: 6px; }
+  .map-rail .flabel { font-size: 12px; color: var(--muted); }
+  #v-system > .sys-rail { grid-column: 1; grid-row: 1; }
+  #v-system > .sys-panel { grid-column: 3; grid-row: 1; }
+  #v-gemba > .g-rail { grid-column: 1; }
 </style>
 
 <div id="app">
   <header id="top">
     <div class="brand"><h1>EBX<span>World</span></h1><span class="ver" id="appVer" title="Release version"></span></div>
     <nav class="steps" aria-label="Sections">
-      <button data-view="markets"><span class="n">1</span>Markets</button><span class="sep">›</span>
-      <button data-view="apps"><span class="n">2</span>Applications</button><span class="sep">›</span>
-      <button data-view="system"><span class="n">3</span><span class="lg">Welding&nbsp;</span>system</button><span class="sep">›</span>
+      <button data-view="markets"><span class="n">1</span>End&nbsp;markets</button><span class="sep">›</span>
+      <button data-view="map"><span class="n">2</span><span class="lg">US&nbsp;</span>map</button><span class="sep">›</span>
+      <button data-view="system"><span class="n">3</span><span class="lg">Welding&nbsp;</span>systems</button><span class="sep">›</span>
       <button data-view="gemba"><span class="n">4</span>Gemba<span class="lg">&nbsp;walk</span></button>
     </nav>
     <div id="crumb"></div>
   </header>
 
   <main>
-    <!-- 1. Markets -->
-    <section id="v-markets" class="view scroll" aria-label="End markets">
-      <div class="wrap">
-        <div class="mk-head">
-          <div>
-            <div class="kicker" style="--c:var(--amber)">Step 1 · End markets</div>
-            <h2 class="h-view">Where welding demand comes from</h2>
-            <p class="lede">18 segments in 7 market groups. Click a row to see buyers, channel, drivers, the applications inside it and how its welding splits by process and automation.</p>
-          </div>
-          <div class="mk-ctl">
-            <span>Tier</span>
-            <div class="pills" id="tierPills" role="group" aria-label="Industry tier">
-              <button data-v="all" aria-pressed="true">All</button>
-              <button data-v="tier_light" aria-pressed="false">Light</button>
-              <button data-v="tier_heavy" aria-pressed="false">Heavy</button>
-            </div>
-            <label>Sort
-              <select class="sel" id="mkSort">
-                <option value="group">By market group</option>
-                <option value="growth">Growth outlook</option>
-                <option value="intensity">Weld intensity</option>
-                <option value="auto">Automation level</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <div class="tbl-wrap"><table class="mk" id="mkTable"></table></div>
-        <p class="disclaimer" id="mkDisc"></p>
-      </div>
+    <section id="v-markets" class="view scroll" aria-label="End markets"></section>
+
+    <section id="v-map" class="view" aria-label="US market map" hidden>
+      <aside class="map-rail" id="mapRail"></aside>
+      <div class="map-main" id="mapMain"></div>
+      <aside class="map-side" id="mapSide" aria-live="polite"></aside>
     </section>
 
-    <!-- 2. Applications -->
-    <section id="v-apps" class="view" aria-label="Applications" hidden>
-      <aside class="app-list">
-        <div class="ctl">
-          <select class="sel" id="appSeg" aria-label="Filter by market"></select>
-          <input id="appQ" type="search" placeholder="Search applications…" autocomplete="off" aria-label="Search applications">
-        </div>
-        <ul id="appUl"></ul>
-        <div class="count" id="appCount"></div>
-      </aside>
-      <article class="app-detail" id="appDetail"></article>
-    </section>
-
-    <!-- 3. System -->
-    <section id="v-system" class="view" aria-label="Welding system" hidden>
+    <section id="v-system" class="view" aria-label="Welding systems" hidden>
       <aside class="sys-rail">
-        <div>
-          <div class="kicker">Step 3 · Welding system</div>
-          <h2 id="sysName"></h2>
-        </div>
+        <div class="kicker">Step 3 · Welding systems</div>
+        <ul class="sys-pick" id="sysPick"></ul>
+        <div><h2 id="sysName"></h2></div>
         <p id="sysSum"></p>
         <div class="sys-ctl">
+          <button class="btn" id="btnEsab" aria-pressed="false">Highlight ESAB</button>
           <button class="btn" id="btnExplode" aria-pressed="false">Explode</button>
           <button class="btn" id="btnRun" aria-pressed="false">Run weld</button>
           <button class="btn" id="btnReset">Reset view</button>
@@ -412,30 +585,24 @@
         <div class="stage-hint"><span>drag · orbit</span><span>scroll · zoom</span><span>right-drag · pan</span><span>click a part</span></div>
         <div id="nogl" hidden></div>
       </div>
+      <div id="stage2" hidden>
+        <div id="pins2"></div>
+        <div class="stage-hint"><span>drag · orbit</span><span>scroll · zoom</span><span>right-drag · pan</span><span>click a part</span></div>
+        <div id="nogl2" hidden style="position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)"></div>
+      </div>
       <aside class="sys-panel" id="sysPanel" aria-live="polite"></aside>
     </section>
-    <!-- 4. Gemba walk -->
+
     <section id="v-gemba" class="view" aria-label="Gemba walk" hidden>
       <aside class="g-rail">
-        <div>
-          <div class="kicker" style="--c:var(--good)">Step 4 · Gemba walk</div>
-          <h2>Walk a customer site</h2>
-        </div>
-        <p>Go where the work happens. Pick a site, then walk it stop by stop in the order the work flows. Drag to look around at any stop.</p>
+        <div><div class="kicker" style="--c:var(--good)">Step 4 · Gemba walk</div><h2>Walk a customer site</h2></div>
+        <p>One site per end market. Walk it stop by stop in the order the work flows; drag to look around. Green arrows on the ground trace the route.</p>
         <ul class="site-list" id="siteList"></ul>
-        <div>
-          <h3 class="sec-h" style="margin-top:4px">Stops</h3>
-          <ul class="stop-list" id="stopList"></ul>
-        </div>
+        <div><h3 class="sec-h" style="margin-top:4px">Stops</h3><ul class="stop-list" id="stopList"></ul></div>
       </aside>
       <div id="gstage">
         <div id="gpins"></div>
-        <div id="gbar">
-          <button class="btn" id="gPrev">← Back</button>
-          <span class="where" id="gWhere"></span>
-          <button class="btn" id="gOver">Overview</button>
-          <button class="btn go" id="gNext">Next →</button>
-        </div>
+        <div id="gbar"><button class="btn" id="gPrev">← Back</button><span class="where" id="gWhere"></span><button class="btn" id="gOver">Overview</button><button class="btn go" id="gNext">Next →</button></div>
         <div id="gnogl" hidden></div>
       </div>
       <aside class="g-panel" id="gPanel" aria-live="polite"></aside>
@@ -448,14 +615,16 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 <script src="data.js"></script>
+<script src="markets.js"></script>
 <script src="systems.js"></script>
+<script src="systems-world.js"></script>
 <script src="gemba-data.js"></script>
 <script src="gemba-world.js"></script>
 <script>
 (function () {
   "use strict";
-  const D = window.WELD_DATA, SYS = window.WELD_SYSTEMS;
-  const APP_VERSION = "1.0", APP_DATE = "28 Sep 2026";
+  const D = window.WELD_DATA, SYS = window.WELD_SYSTEMS, M = window.EBX_MARKETS, G = window.GEMBA;
+  const APP_VERSION = "2.0", APP_DATE = "28 Sep 2026";
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -466,230 +635,40 @@
 
   /* ================= Model ================= */
   const byId = new Map(D.nodes.map((n) => [n.id, n]));
-  const LCOLOR = {}; D.layers.forEach((l) => (LCOLOR[l.id] = l.color));
-  const LNAME = {}; D.layers.forEach((l) => (LNAME[l.id] = l.name));
-  const of = (layer) => D.nodes.filter((n) => n.layer === layer);
-  const SEGS = of("segment").map((s) => Object.assign(s, D.segmentMeta[s.id] || {}));
-  const APPS = of("app");
-  const GROUPS = D.groups;
-  const GEMBA_SITES = (window.GEMBA && window.GEMBA.sites) || [];
-  const siteById = new Map(GEMBA_SITES.map((g) => [g.id, g]));
-  // application -> [{seg, w, note}]
-  const appSegs = new Map(APPS.map((a) => [a.id, []]));
-  SEGS.forEach((s) => (s.apps || []).forEach(([a, w, note]) => { if (appSegs.has(a)) appSegs.get(a).push({ seg: s, w, note }); else console.warn("EBXWorld: unknown app", a); }));
-  appSegs.forEach((l) => l.sort((x, y) => y.w - x.w));
-  const KEY = { process: "processes", automation: "automation", filler: "fillers", ndt: "ndt" };
-  const RANK = [1, 0.6, 0.4, 0.3, 0.25, 0.2, 0.2, 0.2];
-  function segMix(seg, layer) {
-    const m = new Map();
-    (seg.apps || []).forEach(([a, w]) => { const app = byId.get(a); if (!app) return; (app[KEY[layer]] || []).forEach((x, i) => m.set(x, (m.get(x) || 0) + w * (RANK[i] || 0.2))); });
-    let tot = 0; m.forEach((v) => (tot += v));
-    return [...m.entries()].map(([id, v]) => ({ id, v, share: v / (tot || 1) })).sort((a, b) => b.v - a.v);
+  const LCOLOR = {}, LNAME = {}; D.layers.forEach((l) => { LCOLOR[l.id] = l.color; LNAME[l.id] = l.name; });
+  const MK = M.markets, mkById = new Map(MK.map((m) => [m.id, m]));
+  const PROCS = M.processes, MODES = M.modes;
+  const SYSTEMS = SYS.systems, sysById = new Map(SYSTEMS.map((s) => [s.id, s]));
+  const COBOT = sysById.get("cobot_mig");
+  const SITES = G.sites, siteById = new Map(SITES.map((s) => [s.id, s]));
+  const ACCTS = M.accounts.map((a, i) => Object.assign({ id: "a" + i }, a));
+  const HS = M.hotspots, hsById = new Map(HS.map((h) => [h.id, h]));
+  const isEsab = (c) => !!(c && c.esabPick && !/^(—|White space)/.test(c.esabPick));
+  const fact = (m, k) => { const f = (m.facts || []).find((x) => x[0] === k); return f ? f[1] : ""; };
+  const LVL = ["—", "Niche", "Common", "Primary"];
+  const lvlOf = (v) => (v >= 2.5 ? 3 : v >= 1.5 ? 2 : v >= 0.5 ? 1 : 0);
+  function agg(m) { // share-weighted process x mode levels for a market
+    const out = {}; PROCS.forEach((p) => (out[p.id] = MODES.map((_, j) => m.apps.reduce((s, a) => s + (a.share / 100) * ((a.grid[p.id] || [0, 0, 0])[j] || 0), 0))));
+    // show at least "niche" where any app uses it
+    PROCS.forEach((p) => MODES.forEach((_, j) => { if (out[p.id][j] < 0.5 && m.apps.some((a) => (a.grid[p.id] || [])[j] > 0)) out[p.id][j] = 0.5; }));
+    return out;
   }
-  const growthScore = (g) => /very high/i.test(g) ? 5 : /^high/i.test(g) ? 4 : /→ high/i.test(g) ? 3.5 : /moderate/i.test(g) ? 3 : 2;
-  const autoScore = (a) => /very high/i.test(a) ? 5 : /^high/i.test(a) ? 4 : /^medium/i.test(a) ? 3 : /→ medium/i.test(a) ? 2.5 : 1;
-  const growthCls = (g) => "g" + Math.min(5, Math.max(3, Math.floor(growthScore(g))));
-  const short = (id) => byId.get(id).name.split(" (")[0].split(" ")[0];
-  const tierTags = (tiers) => (tiers || []).map((t) => t === "tier_light" ? `<span class="tag light">LIGHT</span>` : `<span class="tag heavy">HEAVY</span>`).join(" ");
-  const pips = (v) => `<span class="pips" aria-label="${v} of 5">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= v ? "on" : ""}"></i>`).join("")}</span>`;
+  const AGG = new Map(MK.map((m) => [m.id, agg(m)]));
+
+  const state = { view: "markets", mk: null, tab: "overview", app: null, sys: "cobot_mig", comp: null, esabHi: false,
+    site: SITES[0].id, stop: -1, mapMk: new Set(MK.map((m) => m.id)), mapType: "all", mapTier: "all", mapTorch: false, acct: null, hs: null };
+
+  /* ================= Shared bits ================= */
   const facts = (arr) => arr && arr.length ? `<dl class="facts">${arr.filter((x) => x[1]).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : "";
+  const mkChip = (id) => { const m = mkById.get(id); return m ? `<button class="chip" data-mk="${id}" style="--c:${m.color}">${esc(m.name)}</button>` : ""; };
+  const glossChip = (id) => { const n = byId.get(id); return n && LCOLOR[n.layer] && ["process", "automation", "filler", "ndt"].includes(n.layer) ? `<button class="chip" data-gloss="${id}" style="--c:${LCOLOR[n.layer]}">${esc(n.name)}</button>` : ""; };
+  const sysChip = (id) => { const s = sysById.get(id); return s ? `<button class="chip" data-sys="${id}" style="--c:var(--accent)">3D: ${esc(s.name)}</button>` : ""; };
   function bars(items, color) {
     const max = Math.max(...items.map((x) => x.v), 1e-9);
-    return `<div class="bars">${items.map((x) => `<div class="bar-row" style="--c:${color}">${x.go ? `<button data-${x.goType}="${x.go}">${esc(x.name)}</button>` : `<span class="nm">${esc(x.name)}</span>`}<span class="val">${esc(x.label)}</span><span class="track"><i style="width:${Math.max(3, (x.v / max) * 100).toFixed(1)}%"></i></span>${x.note ? `<span class="note">${esc(x.note)}</span>` : ""}</div>`).join("")}</div>`;
+    return `<div class="bars">${items.map((x) => `<div class="bar-row" style="--c:${color}">${x.attr ? `<button ${x.attr}>${esc(x.name)}</button>` : `<span class="nm">${esc(x.name)}</span>`}<span class="val">${esc(x.label)}</span><span class="track"><i style="width:${Math.max(3, (x.v / max) * 100).toFixed(1)}%"></i></span>${x.note ? `<span class="note">${esc(x.note)}</span>` : ""}</div>`).join("")}</div>`;
   }
-  const nodeChip = (id) => { const n = byId.get(id); return `<button class="chip" data-gloss="${id}" style="--c:${LCOLOR[n.layer]}">${esc(n.name)}</button>`; };
-
-  const state = { site: GEMBA_SITES.length ? GEMBA_SITES[0].id : null, stop: -1, view: "markets", tier: "all", sort: "group", openSeg: null, seg: null, app: null, appSeg: "all", comp: null };
-
-  /* ================= Navigation ================= */
-  const views = { markets: $("#v-markets"), apps: $("#v-apps"), system: $("#v-system"), gemba: $("#v-gemba") };
-  function go(view, id, opts = {}) {
-    state.view = view;
-    Object.entries(views).forEach(([k, el]) => (el.hidden = k !== view));
-    document.querySelectorAll(".steps button").forEach((b) => { if (b.dataset.view === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
-    let hash = view;
-    if (view === "markets") {
-      if (id) { state.openSeg = id; state.seg = id; }
-      renderMarkets();
-      if (id) { hash = id; requestAnimationFrame(() => { const r = document.querySelector(`tr[data-seg="${id}"]`); if (r && !opts.noScroll) r.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" }); }); }
-    } else if (view === "apps") {
-      if (id) state.app = id;
-      if (!state.app) state.app = "app_jobshop";
-      if (!$("#appUl").children.length) renderAppList(); else markAppList();
-      renderApp(); hash = state.app;
-    } else if (view === "system") {
-      ensure3D();
-      if (opts.comp !== undefined) selectComp(opts.comp);
-      else renderSysPanel();
-      hash = state.comp ? "c_" + state.comp : "system";
-      if (gl) gl.resize();
-    } else if (view === "gemba") {
-      openSite(id || state.site, opts.stop != null ? opts.stop : (id && id !== state.site ? -1 : state.stop));
-      hash = gembaHash();
-    }
-    renderCrumb();
-    try { history.replaceState(null, "", "#" + hash); } catch (e) { /* no hash */ }
-  }
-  document.querySelector(".steps").addEventListener("click", (ev) => { const b = ev.target.closest("button[data-view]"); if (b) go(b.dataset.view); });
-  function renderCrumb() {
-    const parts = [];
-    if (state.view === "gemba") { $("#crumb").innerHTML = state.site ? `<button data-site="${state.site}"><b>Site</b>${esc(siteById.get(state.site).name)}</button>` : ""; return; }
-    if (state.seg) parts.push(`<button data-seg="${state.seg}"><b>Market</b>${esc(byId.get(state.seg).name)}</button>`);
-    if (state.app) parts.push(`<button data-app="${state.app}"><b>Application</b>${esc(byId.get(state.app).name)}</button>`);
-    $("#crumb").innerHTML = parts.join("");
-  }
-  // Global delegated navigation
-  document.addEventListener("click", (ev) => {
-    const t = ev.target.closest("[data-seg],[data-app],[data-gloss],[data-comp],[data-go-system],[data-site]");
-    if (!t || t.closest("tr.mrow")) return;
-    if (t.dataset.gloss) { openGloss(t.dataset.gloss); return; }
-    closeGloss();
-    if (t.dataset.seg) go("markets", t.dataset.seg);
-    else if (t.dataset.app) go("apps", t.dataset.app);
-    else if (t.dataset.comp) go("system", null, { comp: t.dataset.comp });
-    else if (t.dataset.site) go("gemba", t.dataset.site, t.dataset.siteStop != null ? { stop: +t.dataset.siteStop } : {});
-    else if (t.dataset.goSystem !== undefined) go("system", null, { comp: null });
-  });
-
-  /* ================= 1. Markets ================= */
-  $("#appVer").textContent = "v" + APP_VERSION;
-  $("#mkDisc").textContent = `EBXWorld v${APP_VERSION} · ${APP_DATE}. ${D.meta.disclaimer}`;
-  $("#tierPills").addEventListener("click", (ev) => {
-    const b = ev.target.closest("button[data-v]"); if (!b) return;
-    state.tier = b.dataset.v;
-    $("#tierPills").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-    renderMarkets();
-  });
-  $("#mkSort").addEventListener("change", (ev) => { state.sort = ev.target.value; renderMarkets(); });
-  function segRow(s) {
-    const open = state.openSeg === s.id;
-    const procs = segMix(s, "process").slice(0, 3);
-    let h = `<tr class="mrow${open ? " open" : ""}" data-seg="${s.id}" aria-expanded="${open}">
-      <td><button class="seg-name" aria-expanded="${open}"><span class="car">▶</span>${esc(s.name)}</button></td>
-      <td>${tierTags(s.tiers)}</td>
-      <td><span class="grow ${growthCls(s.growth)}">${esc(s.growth)}</span></td>
-      <td>${pips(s.intensity || 0)}</td>
-      <td>${esc(s.autoLevel)}</td>
-      <td><div class="proc-chips">${procs.map((p) => `<span title="${esc(byId.get(p.id).name)}: ${Math.round(p.share * 100)}%">${esc(short(p.id))} ${Math.round(p.share * 100)}%</span>`).join("")}</div></td>
-      <td style="text-align:right">${(s.apps || []).length}</td></tr>`;
-    if (open) h += `<tr class="mdetail"><td colspan="7">${segDetail(s)}</td></tr>`;
-    return h;
-  }
-  function segDetail(s) {
-    const apps = (s.apps || []).slice().sort((a, b) => b[1] - a[1]).map(([a, w, note]) => ({ go: a, goType: "app", name: byId.get(a).name, v: w, label: w + "/5", note }));
-    const mix = (layer, n) => segMix(s, layer).slice(0, n).map((x) => ({ name: byId.get(x.id).name, v: x.share, label: Math.round(x.share * 100) + "%" }));
-    return `<div class="md-grid">
-      <div>
-        <p class="sum">${esc(s.sum)}</p>
-        ${facts([["Typical buyers", s.buyers], ["Route to market", s.channel], ["Demand drivers", s.drivers], ["Codes & standards", s.codes]])}
-        ${s.insight ? `<div class="callout"><div class="k">Strategy note</div><p>${esc(s.insight)}</p></div>` : ""}
-        ${GEMBA_SITES.filter((g) => g.segment === s.id).map((g) => `<div class="gemba-cta"><div><b>Gemba walk</b><p>${esc(g.name)}: ${g.stops.length} stops</p></div><button class="btn go" data-site="${g.id}">Walk the site →</button></div>`).join("")}
-      </div>
-      <div>
-        <h3 class="sec-h">Applications <small>share of segment welding, 1–5 · click to open</small></h3>
-        ${bars(apps, LCOLOR.app)}
-      </div>
-      <div>
-        <h3 class="sec-h">Process mix <small>indicative</small></h3>
-        ${bars(mix("process", 4), LCOLOR.process)}
-        <h3 class="sec-h">Automation mix</h3>
-        ${bars(mix("automation", 4), LCOLOR.automation)}
-      </div>
-    </div>`;
-  }
-  function renderMarkets() {
-    let segs = SEGS.filter((s) => state.tier === "all" || (s.tiers || []).includes(state.tier));
-    let body = "";
-    if (state.sort === "group") {
-      GROUPS.forEach((g) => {
-        const list = segs.filter((s) => s.group === g.id);
-        if (!list.length) return;
-        body += `<tr class="grp"><td colspan="7"><b>${esc(g.name)}</b><span>${esc(g.sum)}</span></td></tr>` + list.map(segRow).join("");
-      });
-    } else {
-      const f = { growth: (s) => growthScore(s.growth), intensity: (s) => s.intensity || 0, auto: (s) => autoScore(s.autoLevel) }[state.sort];
-      body = segs.slice().sort((a, b) => f(b) - f(a) || (b.intensity || 0) - (a.intensity || 0)).map(segRow).join("");
-    }
-    $("#mkTable").innerHTML = `<thead><tr><th>Segment</th><th>Tier</th><th>Growth</th><th>Weld intensity</th><th>Automation</th><th>Top processes</th><th style="text-align:right">Apps</th></tr></thead><tbody>${body}</tbody>`;
-  }
-  $("#mkTable").addEventListener("click", (ev) => {
-    if (ev.target.closest("tr.mdetail")) return;
-    const r = ev.target.closest("tr.mrow"); if (!r) return;
-    const id = r.dataset.seg;
-    state.openSeg = state.openSeg === id ? null : id;
-    if (state.openSeg) state.seg = id;
-    renderMarkets(); renderCrumb();
-    try { history.replaceState(null, "", "#" + (state.openSeg || "markets")); } catch (e) { /* no hash */ }
-  });
-
-  /* ================= 2. Applications ================= */
-  const appSegSel = $("#appSeg");
-  appSegSel.innerHTML = `<option value="all">All markets (${APPS.length} applications)</option>` +
-    GROUPS.map((g) => `<optgroup label="${esc(g.name)}">${SEGS.filter((s) => s.group === g.id).map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join("")}</optgroup>`).join("");
-  appSegSel.addEventListener("change", () => { state.appSeg = appSegSel.value; if (state.appSeg !== "all") state.seg = state.appSeg; renderAppList(); renderCrumb(); });
-  $("#appQ").addEventListener("input", renderAppList);
-  function renderAppList() {
-    appSegSel.value = state.appSeg;
-    const q = $("#appQ").value.trim().toLowerCase();
-    let list = APPS;
-    if (state.appSeg !== "all") {
-      const s = byId.get(state.appSeg);
-      list = (s.apps || []).slice().sort((a, b) => b[1] - a[1]).map(([a]) => byId.get(a));
-    } else list = list.slice().sort((a, b) => a.name.localeCompare(b.name));
-    if (q) list = list.filter((a) => [a.name, a.sum, a.mat, (a.processes || []).map((p) => byId.get(p).name).join(" ")].join(" ").toLowerCase().includes(q));
-    $("#appUl").innerHTML = list.map((a) => {
-      const segs = appSegs.get(a.id);
-      const tiers = [...new Set(segs.flatMap((x) => x.seg.tiers || []))];
-      return `<li><button data-app="${a.id}" aria-current="${a.id === state.app}"><span class="nm">${esc(a.name)}</span><span class="sub">${tierTags(tiers)} ${esc(short(a.processes[0]))} · ${segs.length} market${segs.length === 1 ? "" : "s"}</span></button></li>`;
-    }).join("") || `<li style="padding:10px;color:var(--faint);font-size:12.5px">No applications match.</li>`;
-    $("#appCount").textContent = `${list.length} shown`;
-  }
-  function markAppList() { document.querySelectorAll("#appUl button[data-app]").forEach((b) => b.setAttribute("aria-current", String(b.dataset.app === state.app))); }
-  const RECIPE = [
-    { layer: "process", label: "Weld process" },
-    { layer: "automation", label: "Automation" },
-    { layer: "filler", label: "Filler metal" },
-    { layer: "ndt", label: "Inspection & QA" },
-  ];
-  function renderApp() {
-    const a = byId.get(state.app);
-    const segs = appSegs.get(a.id);
-    const cobotFit = (a.processes || []).includes("proc_gmaw") && (a.automation || []).some((x) => ["auto_cobot", "auto_robot", "auto_semi"].includes(x));
-    const note = store.get("ww-note-" + a.id) || "";
-    $("#appDetail").innerHTML = `<div class="wrap">
-      <div class="app-top">
-        <div>
-          <div class="kicker" style="--c:${LCOLOR.app}">Step 2 · Application</div>
-          <h2 class="h-view">${esc(a.name)}</h2>
-          <p class="sum">${esc(a.sum)}</p>
-          <h3 class="sec-h">Materials & thickness</h3>
-          <p style="margin:0;font-size:13.5px">${esc(a.mat || "")}</p>
-        </div>
-        <div>
-          <h3 class="sec-h">Found in these markets <small>share of that market's welding</small></h3>
-          ${bars(segs.map((x) => ({ go: x.seg.id, goType: "seg", name: x.seg.name, v: x.w, label: x.w + "/5", note: x.note })), LCOLOR.segment)}
-        </div>
-      </div>
-      <h3 class="sec-h">Weld system recipe <small>primary choice first · click any item for a definition</small></h3>
-      <div class="recipe">${RECIPE.map((r) => {
-        const ids = a[KEY[r.layer]] || []; if (!ids.length) return "";
-        const main = byId.get(ids[0]);
-        return `<div class="rcard" style="--c:${LCOLOR[r.layer]}"><span class="rk">${esc(r.label)}</span>
-          <button class="main" data-gloss="${main.id}">${esc(main.name)}</button>
-          <p>${esc((main.sum || "").split(". ")[0].replace(/\.$/, ""))}.</p>
-          ${ids.length > 1 ? `<div class="alts">Also used<div class="chips">${ids.slice(1).map(nodeChip).join("")}</div></div>` : ""}</div>`;
-      }).join("")}</div>
-      ${cobotFit
-        ? `<div class="cta3d"><div><b>See the welding system in 3D</b><p>This application can run on a MIG cobot cell. Explore the power source, feeder, wire, torch and arm, with ESAB/EWM vs Lincoln, Miller and Fronius for each part.</p></div><button class="btn primary" data-go-system>Open MIG cobot cell →</button></div>`
-        : `<div class="cta3d off"><div><b>3D model not built yet</b><p>This application runs mainly on ${esc(byId.get(a.automation[0]).name.toLowerCase())}. The SAW column & boom and orbital TIG models are on the roadmap. The MIG cobot cell is available now.</p></div><button class="btn" data-go-system>Open MIG cobot cell</button></div>`}
-      ${GEMBA_SITES.filter((g) => g.apps.includes(a.id)).map((g) => `<div class="gemba-cta"><div><b>Go to Gemba: ${esc(g.name)}</b><p>Walk a typical customer site where this application happens, stop by stop.</p></div><button class="btn go" data-site="${g.id}">Walk the site →</button></div>`).join("")}
-      <h3 class="sec-h">Workflow <small>typical sequence</small></h3>
-      <ol class="flow">${(a.steps || []).map((s) => `<li>${esc(s)}</li>`).join("")}</ol>
-      <h3 class="sec-h">My notes <small class="saved" id="noteSaved"></small></h3>
-      <div class="notes"><textarea id="note-app" data-note="${a.id}" placeholder="Customers, volumes, questions to validate… (saved in this browser)">${esc(note)}</textarea></div>
-      <p class="disclaimer">${esc(D.meta.disclaimer)}</p>
-    </div>`;
-    $("#appDetail").scrollTop = 0;
+  function notesBlock(key, placeholder) {
+    return `<h3 class="sec-h">My notes <small class="saved" data-saved="${esc(key)}"></small></h3><div class="notes"><textarea data-note="${esc(key)}" placeholder="${esc(placeholder)}">${esc(store.get("ww-note-" + key) || "")}</textarea></div>`;
   }
   let noteTimer = null;
   document.addEventListener("input", (ev) => {
@@ -697,133 +676,359 @@
     clearTimeout(noteTimer);
     noteTimer = setTimeout(() => {
       const ok = store.set("ww-note-" + ta.dataset.note, ta.value.trim() ? ta.value : "");
-      const s = $("#noteSaved"); if (s) s.textContent = ok ? "saved" : "browser storage unavailable: note not saved";
+      document.querySelectorAll(`[data-saved="${CSS.escape(ta.dataset.note)}"]`).forEach((s) => (s.textContent = ok ? "saved" : "browser storage unavailable: not saved"));
     }, 400);
   });
 
-  /* ================= Glossary overlay ================= */
-  const gloss = $("#gloss");
-  let glossReturn = null;
-  function openGloss(id) {
-    const n = byId.get(id); if (!n) return;
-    const apps = APPS.filter((a) => (a[KEY[n.layer]] || []).includes(id));
-    gloss.innerHTML = `<div class="card">
-      <div class="top"><div class="kicker" style="--c:${LCOLOR[n.layer]}">${esc(LNAME[n.layer])}</div><button class="btn" id="glossClose">Close</button></div>
-      <h2 id="glossTitle">${esc(n.name)}</h2>${n.alias ? `<p class="alias">${esc(n.alias)}</p>` : ""}
-      <p class="sum">${esc(n.sum || "")}</p>
-      ${n.how ? `<h3 class="sec-h">How it works</h3><p class="body">${esc(n.how)}</p>` : ""}
-      ${n.facts ? `<h3 class="sec-h">Key facts</h3>${facts(n.facts)}` : ""}
-      ${n.pros || n.cons ? `<h3 class="sec-h">Trade-offs</h3><div class="procon"><div><b>Strengths</b>${esc(n.pros || "")}</div><div><b>Limits</b>${esc(n.cons || "")}</div></div>` : ""}
-      ${n.ex ? `<h3 class="sec-h">Examples</h3><p class="body" style="font-family:var(--font-mono);font-size:12.5px;color:var(--muted)">${esc(n.ex)}</p>` : ""}
-      ${apps.length ? `<h3 class="sec-h">Used in ${apps.length} applications</h3><div class="chips">${apps.map((a) => `<button class="chip" data-app="${a.id}" style="--c:${LCOLOR.app}">${esc(a.name)}</button>`).join("")}</div>` : ""}
-    </div>`;
-    glossReturn = document.activeElement;
-    gloss.hidden = false;
-    $("#glossClose").focus();
+  /* ================= Navigation ================= */
+  const views = { markets: $("#v-markets"), map: $("#v-map"), system: $("#v-system"), gemba: $("#v-gemba") };
+  function setHash(h) { try { history.replaceState(null, "", "#" + h); } catch (e) { /* no hash */ } }
+  function go(view, o = {}) {
+    closeGloss();
+    state.view = view;
+    Object.entries(views).forEach(([k, el]) => (el.hidden = k !== view));
+    document.querySelectorAll(".steps button").forEach((b) => { if (b.dataset.view === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    if (view === "markets") {
+      if (o.mk !== undefined) state.mk = o.mk;
+      if (o.tab) state.tab = o.tab;
+      if (o.app !== undefined) state.app = o.app;
+      renderMarkets();
+      $("#v-markets").scrollTop = 0;
+      setHash(state.mk ? state.mk + (state.tab !== "overview" ? "." + state.tab : "") : "markets");
+    } else if (view === "map") {
+      if (o.mk) { state.mapMk = new Set([o.mk]); state.acct = null; }
+      if (o.hs !== undefined) state.hs = o.hs;
+      renderMap(); setHash("map");
+    } else if (view === "system") {
+      if (o.sys && o.sys !== state.sys) { state.sys = o.sys; state.comp = null; }
+      showSystem(o.comp !== undefined ? o.comp : state.comp);
+    } else if (view === "gemba") {
+      openSite(o.site || state.site, o.stop != null ? o.stop : (o.site && o.site !== state.site ? -1 : state.stop));
+    }
+    renderCrumb();
   }
-  function closeGloss() { if (gloss.hidden) return; gloss.hidden = true; if (glossReturn && glossReturn.focus) glossReturn.focus(); }
-  gloss.addEventListener("click", (ev) => { if (ev.target === gloss || ev.target.closest("#glossClose")) closeGloss(); });
-  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") closeGloss(); });
+  document.querySelector(".steps").addEventListener("click", (ev) => { const b = ev.target.closest("button[data-view]"); if (b) go(b.dataset.view, b.dataset.view === "markets" ? { mk: null } : {}); });
+  function renderCrumb() {
+    let h = "";
+    if (state.view === "markets" && state.mk) h = `<button data-mk="${state.mk}"><b>Market</b>${esc(mkById.get(state.mk).name)}</button>`;
+    if (state.view === "system") h = `<button data-sys="${state.sys}"><b>System</b>${esc(sysById.get(state.sys).name)}</button>`;
+    if (state.view === "gemba") { const s = siteById.get(state.site); h = `<button data-mk="${s.market}"><b>Market</b>${esc(mkById.get(s.market).name)}</button><button data-site="${s.id}"><b>Site</b>${esc(s.name)}</button>`; }
+    if (state.view === "map") h = `<span style="align-self:center">${ACCTS.length} named US accounts · ${HS.length} hotspots</span>`;
+    $("#crumb").innerHTML = h;
+  }
+  document.addEventListener("click", (ev) => {
+    const t = ev.target.closest("[data-mk],[data-gloss],[data-sys],[data-site],[data-comp],[data-map-mk]");
+    if (!t || t.closest("#gloss .top")) return;
+    if (t.closest(".map-rail .mk-toggles") || t.closest("#v-map svg")) return;
+    if (t.dataset.gloss) { openGloss(t.dataset.gloss); return; }
+    if (t.dataset.mapMk) { go("map", { mk: t.dataset.mapMk }); return; }
+    if (t.dataset.mk) { go("markets", { mk: t.dataset.mk, tab: t.dataset.tab || "overview", app: t.dataset.app || null }); return; }
+    if (t.dataset.sys) { go("system", { sys: t.dataset.sys, comp: t.dataset.comp || null }); return; }
+    if (t.dataset.site) { go("gemba", { site: t.dataset.site, stop: t.dataset.stop != null ? +t.dataset.stop : undefined }); return; }
+    if (t.dataset.comp && state.view === "system") { selectComp(t.dataset.comp); }
+  });
 
-  /* ================= 3. System data & panel ================= */
-  const SYSTEM = SYS.systems[0];
-  const COMPS = SYSTEM.components;
-  const compById = new Map(COMPS.map((c) => [c.id, c]));
-  const compIdx = (id) => COMPS.findIndex((c) => c.id === id);
-  $("#sysName").textContent = SYSTEM.name;
-  $("#sysSum").textContent = SYSTEM.sum;
-  $("#compList").innerHTML = COMPS.map((c, i) => `<li><button data-comp="${c.id}" aria-current="false"><span class="num">${i + 1}</span>${esc(c.name)}</button></li>`).join("");
+  /* ================= 1. End markets ================= */
+  const cellBg = (lv) => ["var(--bg)", "rgba(88,196,245,.1)", "rgba(88,196,245,.25)", "rgba(88,196,245,.5)"][lv];
+  function renderMarkets() {
+    const el = $("#v-markets");
+    if (!state.mk) { el.innerHTML = marketsHome(); return; }
+    el.innerHTML = marketDetail(mkById.get(state.mk));
+    if (state.tab === "accounts" || state.tab === "gemba") return;
+  }
+  function topCells(m, n) {
+    const a = AGG.get(m.id), cells = [];
+    PROCS.forEach((p) => MODES.forEach((md, j) => cells.push({ p: p.name, md: md.name, v: a[p.id][j] })));
+    return cells.sort((x, y) => y.v - x.v).slice(0, n);
+  }
+  function marketsHome() {
+    const cards = MK.map((m) => {
+      const n = ACCTS.filter((a) => a.market === m.id).length;
+      const sites = SITES.filter((s) => s.market === m.id).map((s) => s.name).join(" · ");
+      return `<button class="mk-card" data-mk="${m.id}" style="--c:${m.color}">
+        <h3>${esc(m.name)}</h3><span class="tg">${esc(m.tagline)}</span>
+        <div class="stats"><div><div class="k">Growth</div><div class="v">${esc(fact(m, "Growth").split(",")[0])}</div></div><div><div class="k">Automation</div><div class="v">${esc(fact(m, "Automation").split(":")[0])}</div></div><div><div class="k">US accounts</div><div class="v">${n}</div></div></div>
+        <div class="tops">${topCells(m, 3).map((c) => `<span>${esc(c.p)} · ${esc(c.md)}</span>`).join("")}</div>
+        <span class="go">${m.apps.length} applications · Gemba: ${esc(sites)} →</span></button>`;
+    }).join("");
+    const head1 = `<tr><th></th>${PROCS.map((p) => `<th class="grp" colspan="3">${esc(p.name)}</th>`).join("")}</tr>`;
+    const head2 = `<tr><th class="row">End market</th>${PROCS.map(() => MODES.map((md, j) => `<th class="${j === 0 ? "grp" : ""}">${esc(md.name)}</th>`).join("")).join("")}</tr>`;
+    const rows = MK.map((m) => {
+      const a = AGG.get(m.id);
+      return `<tr><th class="row"><button data-mk="${m.id}" data-tab="products" style="--c:${m.color}">${esc(m.name)}</button></th>${PROCS.map((p) => MODES.map((md, j) => { const lv = lvlOf(a[p.id][j]); return `<td class="${j === 0 ? "gl" : ""}"><span class="cellv" data-mk="${m.id}" data-tab="products" title="${esc(m.name)}: ${esc(p.name)} × ${esc(md.name)} = ${LVL[lv]}" style="background:${cellBg(lv)};color:${lv >= 3 ? "#06202D" : "var(--muted)"}">${lv ? LVL[lv] : ""}</span></td>`; }).join("")).join("")}</tr>`;
+    }).join("");
+    return `<div class="wrap">
+      <div class="kicker" style="--c:var(--amber)">Step 1 · End markets</div>
+      <h2 class="h-view">Six end markets, one welding value chain</h2>
+      <p class="lede">Open a market to see its applications, <b>who actually does the welding</b> (owner, contractor or fabricator), the products used (MIG · TIG · SAW · Flux-cored × Manual · Cobot · Automation, then NDT), the named US accounts and a Gemba walk.</p>
+      <div class="mk-cards">${cards}</div>
+      <h3 class="sec-h" style="margin-top:28px">Products at a glance <small>weighted by application share · click a row to open its product grid</small></h3>
+      <div class="tbl-wrap"><table class="glance"><thead>${head1}${head2}</thead><tbody>${rows}</tbody></table></div>
+      <div class="legend"><span><i style="background:${cellBg(3)}"></i>Primary</span><span><i style="background:${cellBg(2)}"></i>Common</span><span><i style="background:${cellBg(1)}"></i>Niche</span><span>Automation = column &amp; boom, orbital, gantry, carriage or robot</span></div>
+      <p class="disclaimer">EBXWorld v${APP_VERSION} · ${APP_DATE}. Levels, shares and account tiers are analyst estimates from public information, not ESAB data. Validate before external use.</p>
+    </div>`;
+  }
+  const TABS = [["overview", "Overview"], ["apps", "Applications"], ["who", "Who welds"], ["products", "Products"], ["accounts", "US accounts"], ["gemba", "Gemba"]];
+  function marketDetail(m) {
+    if (!m.apps.some((a) => a.id === state.app)) state.app = null;
+    const body = { overview: tabOverview, apps: tabApps, who: tabWho, products: tabProducts, accounts: tabAccounts, gemba: tabGemba }[state.tab] || tabOverview;
+    return `<div class="wrap" style="--c:${m.color}">
+      <button class="back" data-home>← All end markets</button>
+      <div class="mk-hero"><div class="kicker">End market</div><h2>${esc(m.name)}</h2><p>${esc(m.tagline)}</p></div>
+      <nav class="tabs" role="tablist">${TABS.map(([id, nm]) => `<button role="tab" data-tabgo="${id}" aria-selected="${state.tab === id}">${esc(nm)}</button>`).join("")}</nav>
+      <div class="tabpanel">${body(m)}</div></div>`;
+  }
+  $("#v-markets").addEventListener("click", (ev) => {
+    if (ev.target.closest("[data-home]")) { go("markets", { mk: null }); return; }
+    const tb = ev.target.closest("[data-tabgo]"); if (tb) { go("markets", { tab: tb.dataset.tabgo }); return; }
+    const ap = ev.target.closest("[data-apppick]"); if (ap) { state.app = ap.dataset.apppick || null; renderMarkets(); return; }
+    const at = ev.target.closest("[data-appgo]"); if (at) { go("markets", { tab: at.dataset.tab, app: at.dataset.appgo }); return; }
+  });
+  function tabOverview(m) {
+    const n = ACCTS.filter((a) => a.market === m.id);
+    return `<div class="two"><div>
+        <p style="margin:0;font-size:15px;line-height:1.6">${esc(m.sum)}</p>
+        <h3 class="sec-h">At a glance</h3>${facts(m.facts)}
+        <div class="callout" style="border-color:rgba(88,196,245,.45);background:rgba(88,196,245,.07)"><div class="k" style="color:var(--accent)">ESAB play</div><p>${esc(m.esab)}</p></div>
+      </div><div>
+        <h3 class="sec-h">Where the welding is <small>share of market weld volume · indicative</small></h3>
+        ${bars(m.apps.map((a) => ({ name: a.name, v: a.share, label: a.share + "%", note: "Holds the torch: " + a.torch, attr: `data-appgo="${a.id}" data-tab="who"` })), m.color)}
+        <h3 class="sec-h">US hotspots <small>click to see on the map</small></h3>
+        <div class="chips">${m.hotspots.map((h) => `<button class="chip" data-hsgo="${h}" style="--c:var(--amber)">${esc(hsById.get(h).name)}</button>`).join("")}</div>
+        <h3 class="sec-h">Named US accounts <small>${n.length}</small></h3>
+        <div class="chips">${n.slice(0, 12).map((a) => `<button class="chip" data-acctgo="${a.id}" style="--c:${m.color}">${esc(a.name)}</button>`).join("")}</div>
+        <h3 class="sec-h">Welding systems in 3D</h3>
+        <div class="chips">${SYSTEMS.filter((s) => (s.markets || []).includes(m.id)).map((s) => sysChip(s.id)).join("")}</div>
+      </div></div>`;
+  }
+  function primaryCells(a) { const out = []; PROCS.forEach((p) => MODES.forEach((md, j) => { if ((a.grid[p.id] || [])[j] === 3) out.push(p.name + " · " + md.name); })); return out; }
+  function tabApps(m) {
+    return `<div class="app-cards">${m.apps.map((a) => `<div class="app-card" style="--c:${m.color}">
+      <div class="row"><span>SHARE OF ${esc(m.name.toUpperCase())} WELDING</span><span>${a.share}%</span></div>
+      <div class="sharebar"><i style="width:${a.share}%"></i></div>
+      <h3>${esc(a.name)}</h3><p>${esc(a.sum)}</p><span class="mat">${esc(a.materials)}</span>
+      <div class="tops chips">${primaryCells(a).map((x) => `<span class="esab-tag" style="background:rgba(88,196,245,.1)">${esc(x)}</span>`).join("")}</div>
+      <div class="torch"><b>Holds the torch:</b> ${esc(a.torch)}</div>
+      <div class="acts"><button class="btn" data-appgo="${a.id}" data-tab="who">Who welds →</button><button class="btn" data-appgo="${a.id}" data-tab="products">Products →</button></div>
+    </div>`).join("")}</div>`;
+  }
+  function appPills(m, allowAll) {
+    return `<div class="app-pills">${allowAll ? `<button data-apppick="" aria-pressed="${!state.app}">All applications (weighted)</button>` : ""}${m.apps.map((a) => `<button data-apppick="${a.id}" aria-pressed="${state.app === a.id}">${esc(a.name)}</button>`).join("")}</div>`;
+  }
+  function tabWho(m) {
+    const a = m.apps.find((x) => x.id === state.app) || m.apps[0];
+    state.app = a.id;
+    const chain = a.chain.map((s, i) => `${i ? `<div class="arr" aria-hidden="true">→</div>` : ""}<div class="stage-box${s.torch ? " torch" : ""}"><div class="st">${esc(s.stage)}</div><div class="who">${esc(s.who)}</div><div class="rl">${esc(s.role)}</div><div class="bdgs">${s.torch ? `<span class="bdg torch">Holds the torch</span>` : ""}${s.buys ? `<span class="bdg buys">Buys equipment</span>` : ""}${s.spec ? `<span class="bdg spec">Specifies</span>` : ""}</div></div>`).join("");
+    const rows = m.apps.map((x) => `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.chain.filter((s) => s.torch).map((s) => s.stage).join(" + ") || "—")}</td><td>${esc(x.chain.filter((s) => s.buys).map((s) => s.stage).join(" + ") || "—")}</td><td>${esc(x.chain.filter((s) => s.spec).map((s) => s.stage).join(" + ") || "—")}</td></tr>`).join("");
+    return `${appPills(m, false)}
+      <h3 class="sec-h" style="margin-top:0">Value chain: ${esc(a.name)} <small>owner → … → whoever holds the torch</small></h3>
+      <div class="chain">${chain}</div>
+      <div class="callout" style="border-color:rgba(232,121,90,.45);background:rgba(232,121,90,.07)"><div class="k" style="color:var(--copper)">Who holds the torch</div><p>${esc(a.torch)}</p></div>
+      <h3 class="sec-h">All ${esc(m.name)} applications</h3>
+      <div class="tbl-wrap"><table class="simple"><thead><tr><th>Application</th><th>Holds the torch</th><th>Buys equipment</th><th>Specifies</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="legend"><span><span class="bdg torch">Holds the torch</span> does the welding</span><span><span class="bdg buys">Buys equipment</span> purchase decision</span><span><span class="bdg spec">Specifies</span> sets requirements or brands</span></div>`;
+  }
+  function tabProducts(m) {
+    const a = m.apps.find((x) => x.id === state.app);
+    const grid = a ? a.grid : null, ag = AGG.get(m.id);
+    const cell = (p, j) => {
+      const lv = a ? (grid[p.id] || [0, 0, 0])[j] || 0 : lvlOf(ag[p.id][j]);
+      const sys = M.systemFor[p.id + "|" + MODES[j].id];
+      let inner = `<div class="lv">${LVL[lv]}</div>`;
+      if (lv && a && a.esab && a.esab[p.id]) inner += `<div class="ep"><b>ESAB:</b> ${esc(a.esab[p.id])}</div>`;
+      if (lv && !a) { const users = m.apps.filter((x) => ((x.grid[p.id] || [])[j] || 0) >= 2).map((x) => x.name); if (users.length) inner += `<div class="ap">${esc(users.join(" · "))}</div>`; }
+      if (lv && sys) inner += `<button class="s3" data-sys="${sys}">3D system →</button>`;
+      return `<td class="lv${lv}">${inner}</td>`;
+    };
+    const ndt = a ? a.ndt : [...new Set(m.apps.flatMap((x) => x.ndt))];
+    return `${appPills(m, true)}
+      <table class="pgrid"><thead><tr><th class="p"></th>${MODES.map((md) => `<th title="${esc(md.full)}">${esc(md.name)}</th>`).join("")}</tr></thead>
+      <tbody>${PROCS.map((p) => `<tr><th class="p"><button data-gloss="${p.gloss}">${esc(p.name)}</button><small>${esc(p.full)}</small></th>${MODES.map((_, j) => cell(p, j)).join("")}</tr>`).join("")}</tbody></table>
+      ${a ? `<p style="margin:6px 0 0;font-size:12.5px;color:var(--muted)"><b style="color:var(--text)">Automation here means:</b> ${esc(a.auto)}</p>` : ""}
+      <div class="ndt-row"><span class="k">Then NDT</span>${ndt.map(glossChip).join("")}</div>
+      <div class="legend"><span><i style="background:rgba(88,196,245,.5)"></i>Primary</span><span><i style="background:rgba(88,196,245,.25)"></i>Common</span><span><i style="background:rgba(88,196,245,.1)"></i>Niche</span><span>Click MIG / TIG / SAW / Flux or an NDT method for a definition</span></div>`;
+  }
+  function tabAccounts(m) {
+    const list = ACCTS.filter((a) => a.market === m.id).sort((x, y) => x.tier.localeCompare(y.tier));
+    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px"><p class="lede" style="margin:0">Named US accounts from public information. <b>Holds the torch</b> means the organisation welds itself; owners and GCs don't, but they specify.</p><button class="btn primary" data-map-mk="${m.id}">Show on US map →</button></div>
+      <div class="tbl-wrap"><table class="simple"><thead><tr><th>Tier</th><th>Account</th><th>Type</th><th>Holds torch</th><th>US sites</th><th>Outsources to / partners</th><th>Note</th></tr></thead><tbody>
+      ${list.map((a) => `<tr><td><span class="tier ${a.tier}">${a.tier}</span></td><td><b>${esc(a.name)}</b></td><td>${esc(a.type)}</td><td class="${a.welds ? "yes" : "no"}">${a.welds ? "Yes" : "No"}</td><td>${esc(a.sites.map((s) => s[0]).join("; "))}</td><td>${esc(a.partners || "—")}</td><td>${esc(a.note)}</td></tr>`).join("")}
+      </tbody></table></div>
+      <p class="disclaimer">Tier = analyst view of welding relevance (A high), not ESAB revenue. "(verify)" items need confirmation. Replace with CRM data.</p>`;
+  }
+  function tabGemba(m) {
+    const sites = SITES.filter((s) => s.market === m.id);
+    return `<div class="site-cards">${sites.map((s) => `<div class="app-card" style="--c:var(--good)"><div class="kicker" style="--c:var(--good)">Gemba walk · ${s.stops.length} stops</div><h3>${esc(s.name)}</h3><p>${esc(s.sum)}</p><ol class="flow" style="margin-top:6px">${s.stops.map((st) => `<li>${esc(st.name)}</li>`).join("")}</ol><div class="acts"><button class="btn go" data-site="${s.id}">Walk the site →</button></div></div>`).join("")}</div>`;
+  }
+  $("#v-markets").addEventListener("click", (ev) => {
+    const h = ev.target.closest("[data-hsgo]"); if (h) { state.mapMk = new Set(MK.map((m) => m.id)); go("map", { hs: h.dataset.hsgo }); return; }
+    const a = ev.target.closest("[data-acctgo]"); if (a) { const ac = ACCTS.find((x) => x.id === a.dataset.acctgo); state.acct = ac.id; state.mapMk = new Set([ac.market]); go("map"); }
+  });
 
+  /* ================= 2. US market map ================= */
+  const K38 = Math.cos((38 * Math.PI) / 180), SC = 16;
+  const proj = (lat, lon) => [(lon + 125) * K38 * SC + 10, (49.6 - lat) * SC + 10];
+  const MAP_W = Math.ceil((125 - 66.5) * K38 * SC + 20), MAP_H = Math.ceil((49.6 - 24.3) * SC + 20);
+  const outlinePath = "M" + M.usOutline.map(([la, lo]) => proj(la, lo).map((v) => v.toFixed(1)).join(",")).join("L") + "Z";
+  function mapFiltered() {
+    return ACCTS.filter((a) => state.mapMk.has(a.market) && (state.mapType === "all" || a.type === state.mapType) && (state.mapTier === "all" || a.tier === state.mapTier) && (!state.mapTorch || a.welds));
+  }
+  function renderMap() {
+    const list = mapFiltered();
+    const types = [...new Set(ACCTS.map((a) => a.type))];
+    $("#mapRail").innerHTML = `
+      <div><div class="kicker" style="--c:var(--amber)">Step 2 · US market map</div><h2>Who, and where</h2></div>
+      <p>Named accounts across the six markets and the geographic hotspots of work. Filled dots hold the torch; hollow dots are owners, GCs or distributors who specify or buy.</p>
+      <div><h3 class="sec-h" style="margin-top:0">Markets</h3><div class="mk-toggles">${MK.map((m) => `<button data-mtog="${m.id}" aria-pressed="${state.mapMk.has(m.id)}" style="--c:${m.color}"><i></i>${esc(m.name)}<span class="n">${ACCTS.filter((a) => a.market === m.id).length}</span></button>`).join("")}</div>
+        <div style="display:flex;gap:6px;margin-top:6px"><button class="btn" data-mall>All</button><button class="btn" data-mnone>None</button></div></div>
+      <div class="filter-group"><label class="flabel" for="mapType">Account type</label><select class="sel" id="mapType"><option value="all">All types</option>${types.map((t) => `<option value="${esc(t)}" ${state.mapType === t ? "selected" : ""}>${esc(t)}</option>`).join("")}</select>
+        <span class="flabel" style="margin-top:6px">Tier</span><div class="pills" id="mapTier">${["all", "A", "B", "C"].map((t) => `<button data-v="${t}" aria-pressed="${state.mapTier === t}">${t === "all" ? "All" : t}</button>`).join("")}</div>
+        <label style="display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)"><input type="checkbox" id="mapTorch" ${state.mapTorch ? "checked" : ""}> Only those who hold the torch</label></div>
+      <div><h3 class="sec-h" style="margin-top:0">Hotspots <small>${HS.length}</small></h3><ul class="hs-list">${HS.filter((h) => h.markets.some((x) => state.mapMk.has(x))).map((h) => `<li><button data-hs="${h.id}" aria-pressed="${state.hs === h.id}"><b>${HS.indexOf(h) + 1}. ${esc(h.name)}</b><span class="d">${esc(h.note)}</span></button></li>`).join("")}</ul></div>`;
+    const sites = list.flatMap((a) => a.sites.map((s) => ({ a, s })));
+    const welders = list.filter((a) => a.welds).length;
+    const hsVisible = HS.filter((h) => h.markets.some((x) => state.mapMk.has(x)));
+    let svg = `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="Map of US welding accounts and hotspots">`;
+    for (let lo = -120; lo <= -70; lo += 10) { const [x] = proj(30, lo); svg += `<line class="grid" x1="${x}" y1="0" x2="${x}" y2="${MAP_H}"/>`; }
+    for (let la = 30; la <= 45; la += 5) { const [, y] = proj(la, -100); svg += `<line class="grid" x1="0" y1="${y}" x2="${MAP_W}" y2="${y}"/>`; }
+    svg += `<path class="us" d="${outlinePath}"/>`;
+    hsVisible.forEach((h) => { const [x, y] = proj(h.lat, h.lon); svg += `<circle class="hs${state.hs === h.id ? " on" : ""}" data-hs="${h.id}" cx="${x}" cy="${y}" r="28"><title>${esc(h.name)}: ${esc(h.note)}</title></circle>`; });
+    hsVisible.forEach((h) => { const [x, y] = proj(h.lat, h.lon), n = HS.indexOf(h) + 1; svg += `<g data-hs="${h.id}" style="cursor:pointer"><circle cx="${x + 21}" cy="${y - 21}" r="9" fill="${state.hs === h.id ? "#F2A93B" : "#3a2c14"}" stroke="#F2A93B"/><text x="${x + 21}" y="${y - 17.5}" text-anchor="middle" style="font:600 10px var(--font-mono);fill:${state.hs === h.id ? "#0b1115" : "#F2C47A"};pointer-events:none">${n}</text></g>`; });
+    const hsSel = state.hs && hsVisible.find((h) => h.id === state.hs);
+    if (hsSel) { const [x, y] = proj(hsSel.lat, hsSel.lon); svg += `<text class="hsl" x="${x}" y="${y + 44}" text-anchor="middle" style="paint-order:stroke;stroke:#0b1115;stroke-width:4px">${esc(hsSel.name)}</text>`; }
+    sites.forEach(({ a, s }) => { const [x, y] = proj(s[1], s[2]); const c = mkById.get(a.market).color; svg += `<circle class="dot${a.welds ? "" : " hollow"}${state.acct === a.id ? " sel" : ""}" data-acct="${a.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${state.acct === a.id ? 8 : 6}" style="fill:${c};stroke:${a.welds ? "#0b1115" : c}"><title>${esc(a.name)} · ${esc(s[0])}</title></circle>`; });
+    svg += `</svg>`;
+    $("#mapMain").innerHTML = `
+      <div class="kpis"><div class="kpi"><div class="k">Accounts shown</div><div class="v">${list.length}</div></div><div class="kpi"><div class="k">US sites</div><div class="v">${sites.length}</div></div><div class="kpi"><div class="k">Hold the torch</div><div class="v">${welders}</div></div><div class="kpi"><div class="k">Hotspots</div><div class="v">${hsVisible.length}</div></div></div>
+      <div class="mapbox">${svg}</div>
+      <div class="legend">${MK.filter((m) => state.mapMk.has(m.id)).map((m) => `<span><i style="background:${m.color};width:10px;height:10px;border-radius:50%"></i>${esc(m.name)}</span>`).join("")}<span>● holds the torch · ○ specifies / buys only</span><span>Schematic map · public information · validate with CRM</span></div>`;
+    const sel = ACCTS.find((a) => a.id === state.acct);
+    const hs = state.hs && hsById.get(state.hs);
+    const hsAccts = hs ? list.filter((a) => a.sites.some((s) => Math.hypot(s[1] - hs.lat, (s[2] - hs.lon) * K38) < 2.6)) : null;
+    $("#mapSide").innerHTML = `
+      ${sel ? `<div class="acct-card" style="--c:${mkById.get(sel.market).color}"><div class="kicker" style="--c:${mkById.get(sel.market).color}">${esc(mkById.get(sel.market).name)} · ${esc(sel.type)} · Tier ${sel.tier}</div><h3>${esc(sel.name)}</h3>
+        ${facts([["Holds the torch", sel.welds ? "Yes: welds in-house" : "No: specifies or buys; welding done by others"], ["US sites", sel.sites.map((s) => s[0]).join("; ")], ["Outsources to / partners", sel.partners || "—"], ["Note", sel.note]])}
+        <div class="chips" style="margin-top:10px">${mkChip(sel.market)}<button class="chip" data-clracct style="--c:var(--faint)">Clear</button></div></div>` : ""}
+      ${hs ? `<div class="acct-card" style="--c:var(--amber)"><div class="kicker" style="--c:var(--amber)">Hotspot</div><h3>${esc(hs.name)}</h3><p style="margin:0;font-size:13px;line-height:1.5">${esc(hs.note)}</p><div class="chips" style="margin-top:8px">${hs.markets.map(mkChip).join("")}<button class="chip" data-clrhs style="--c:var(--faint)">Clear</button></div></div>` : ""}
+      <h3 class="sec-h" style="margin-top:0">${hs ? "Accounts in this hotspot" : "Accounts"} <small>${(hsAccts || list).length}</small></h3>
+      <ul class="acct-list">${(hsAccts || list).slice().sort((x, y) => x.tier.localeCompare(y.tier) || x.name.localeCompare(y.name)).map((a) => `<li><button data-acct="${a.id}" aria-current="${state.acct === a.id}" style="--c:${mkById.get(a.market).color}"><i class="${a.welds ? "" : "hollow"}"></i><span>${esc(a.name)}</span><span class="tier ${a.tier}">${a.tier}</span><span class="sub">${esc(a.type)} · ${esc(a.sites[0][0])}${a.sites.length > 1 ? ` +${a.sites.length - 1}` : ""}</span></button></li>`).join("") || `<li style="color:var(--faint);font-size:12.5px;padding:8px 0">No accounts match these filters.</li>`}</ul>`;
+    renderCrumb();
+  }
+  $("#v-map").addEventListener("click", (ev) => {
+    const t = ev.target.closest("[data-mtog]"); if (t) { const id = t.dataset.mtog; if (state.mapMk.has(id)) state.mapMk.delete(id); else state.mapMk.add(id); renderMap(); return; }
+    if (ev.target.closest("[data-mall]")) { state.mapMk = new Set(MK.map((m) => m.id)); renderMap(); return; }
+    if (ev.target.closest("[data-mnone]")) { state.mapMk = new Set(); renderMap(); return; }
+    const tr = ev.target.closest("#mapTier button[data-v]"); if (tr) { state.mapTier = tr.dataset.v; renderMap(); return; }
+    const a = ev.target.closest("[data-acct]"); if (a) { state.acct = state.acct === a.dataset.acct ? null : a.dataset.acct; renderMap(); return; }
+    const h = ev.target.closest("[data-hs]"); if (h) { state.acct = null; state.hs = state.hs === h.dataset.hs ? null : h.dataset.hs; renderMap(); return; }
+    if (ev.target.closest("[data-clracct]")) { state.acct = null; renderMap(); return; }
+    if (ev.target.closest("[data-clrhs]")) { state.hs = null; renderMap(); }
+  });
+  $("#v-map").addEventListener("change", (ev) => {
+    if (ev.target.id === "mapType") { state.mapType = ev.target.value; renderMap(); }
+    if (ev.target.id === "mapTorch") { state.mapTorch = ev.target.checked; renderMap(); }
+  });
+
+  /* ================= 3. Welding systems ================= */
+  $("#sysPick").innerHTML = SYSTEMS.map((s) => `<li><button data-sys="${s.id}" aria-current="false"><span class="nm">${esc(s.name)}</span><span class="sub">${(s.markets || []).map((m) => esc(mkById.get(m).name)).join(" · ")}</span></button></li>`).join("");
   const CALC_DEF = [
     ["shifts", "Shifts per day", 1], ["hours", "Hours per shift", 8], ["days", "Days per year", 240],
     ["dep", "Deposition (kg/h arc-on)", 3], ["arcCobot", "Cobot arc-on %", 50], ["arcMan", "Manual arc-on %", 25],
     ["gas", "Gas flow (L/min)", 15], ["tip", "Contact tip life (arc h)", 5],
   ];
-  const calcVals = {};
-  CALC_DEF.forEach(([k, , v]) => (calcVals[k] = v));
+  const calcVals = {}; CALC_DEF.forEach(([k, , v]) => (calcVals[k] = v));
   function calcHTML() {
-    return `<div class="calc">
-      <div class="inputs">${CALC_DEF.map(([k, l]) => `<label for="calc-${k}">${esc(l)}<input id="calc-${k}" data-calc="${k}" type="number" min="0" step="any" value="${calcVals[k]}"></label>`).join("")}</div>
-      <div id="calcOut"></div>
-      <p class="formula">Arc hours = shifts × hours × days × arc-on %. Wire ≈ arc hours × deposition (filler losses ignored). Gas = arc hours × flow × 60 / 1000. Tips = arc hours ÷ tip life. Indicative model for discussion.</p>
-    </div>`;
+    return `<div class="calc"><div class="inputs">${CALC_DEF.map(([k, l]) => `<label for="calc-${k}">${esc(l)}<input id="calc-${k}" data-calc="${k}" type="number" min="0" step="any" value="${calcVals[k]}"></label>`).join("")}</div><div id="calcOut"></div>
+      <p class="formula">Arc hours = shifts × hours × days × arc-on %. Wire ≈ arc hours × deposition. Gas = arc hours × flow × 60 / 1000. Tips = arc hours ÷ tip life. Indicative model.</p></div>`;
   }
   function calcOut() {
     const v = calcVals, base = v.shifts * v.hours * v.days;
-    const row = (arc) => { const h = base * arc / 100; return { h, wire: h * v.dep / 1000, gas: h * v.gas * 60 / 1000, tips: v.tip > 0 ? h / v.tip : 0 }; };
+    const row = (arc) => { const h = (base * arc) / 100; return { h, wire: (h * v.dep) / 1000, gas: (h * v.gas * 60) / 1000, tips: v.tip > 0 ? h / v.tip : 0 }; };
     const c = row(v.arcCobot), m = row(v.arcMan);
-    const f = (x, d = 0) => Number.isFinite(x) ? x.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d }) : "–";
+    const f = (x, d = 0) => (Number.isFinite(x) ? x.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d }) : "–");
     const el = $("#calcOut"); if (!el) return;
     el.innerHTML = `<table><thead><tr><th>Per year</th><th>Cobot cell</th><th>Manual welder</th></tr></thead><tbody>
-      <tr><td>Arc-on hours</td><td>${f(c.h)}</td><td>${f(m.h)}</td></tr>
-      <tr><td>Wire (tonnes)</td><td class="big">${f(c.wire, 1)}</td><td>${f(m.wire, 1)}</td></tr>
-      <tr><td>Shielding gas (m³)</td><td>${f(c.gas)}</td><td>${f(m.gas)}</td></tr>
-      <tr><td>Contact tips</td><td>${f(c.tips)}</td><td>${f(m.tips)}</td></tr>
+      <tr><td>Arc-on hours</td><td>${f(c.h)}</td><td>${f(m.h)}</td></tr><tr><td>Wire (tonnes)</td><td class="big">${f(c.wire, 1)}</td><td>${f(m.wire, 1)}</td></tr>
+      <tr><td>Shielding gas (m³)</td><td>${f(c.gas)}</td><td>${f(m.gas)}</td></tr><tr><td>Contact tips</td><td>${f(c.tips)}</td><td>${f(m.tips)}</td></tr>
       <tr><td>Wire uplift</td><td class="big">${m.wire > 0 ? "×" + f(c.wire / m.wire, 1) : "–"}</td><td></td></tr></tbody></table>`;
   }
-  document.addEventListener("input", (ev) => {
-    const i = ev.target.closest("input[data-calc]"); if (!i) return;
-    const x = parseFloat(i.value); calcVals[i.dataset.calc] = Number.isFinite(x) && x >= 0 ? x : 0; calcOut();
-  });
+  document.addEventListener("input", (ev) => { const i = ev.target.closest("input[data-calc]"); if (!i) return; const x = parseFloat(i.value); calcVals[i.dataset.calc] = Number.isFinite(x) && x >= 0 ? x : 0; calcOut(); });
 
-  const sysPanel = $("#sysPanel");
-  function renderSysPanel() {
-    const c = state.comp && compById.get(state.comp);
+  const curSys = () => sysById.get(state.sys);
+  function showSystem(comp) {
+    const s = curSys();
+    document.querySelectorAll("#sysPick button").forEach((b) => b.setAttribute("aria-current", String(b.dataset.sys === s.id)));
+    $("#sysName").textContent = s.name; $("#sysSum").textContent = s.sum;
+    $("#compList").innerHTML = s.components.map((c, i) => `<li><button data-comp="${c.id}" aria-current="false"><span class="num">${i + 1}</span>${esc(c.name)}${isEsab(c) ? `<span class="esab-tag">ESAB</span>` : ""}</button></li>`).join("");
+    const cobot = s.id === "cobot_mig";
+    $("#stage").hidden = !cobot; $("#stage2").hidden = cobot;
+    $("#btnRun").setAttribute("aria-pressed", "false");
+    if (cobot) { ensure3D(); if (gl) { gl.setRun(false); gl.resize(); } }
+    else { ensureSW(); if (sw) { if (swLoaded !== s.id) { sw.load(s); swLoaded = s.id; } sw.setRun(false); sw.setExplode($("#btnExplode").getAttribute("aria-pressed") === "true"); sw.setEsab(state.esabHi); sw.resize(); } }
+    if (gl && cobot) { gl.setExplode($("#btnExplode").getAttribute("aria-pressed") === "true"); gl.setEsab(); }
+    selectComp(comp || null);
+  }
+  function selectComp(id) {
+    const s = curSys();
+    state.comp = id && s.components.some((c) => c.id === id) ? id : null;
     document.querySelectorAll("#compList button").forEach((b) => b.setAttribute("aria-current", String(b.dataset.comp === state.comp)));
+    renderSysPanel();
+    if (s.id === "cobot_mig") { if (gl) gl.focus(state.comp); } else if (sw) sw.focus(state.comp);
+    setHash("s." + s.id + (state.comp ? "." + state.comp : ""));
+    renderCrumb();
+  }
+  function renderSysPanel() {
+    const s = curSys(), P = $("#sysPanel"), c = state.comp && s.components.find((x) => x.id === state.comp);
+    const nE = s.components.filter(isEsab).length;
     if (!c) {
-      const apps = APPS.filter((a) => (a.automation || []).includes(SYSTEM.automation));
-      sysPanel.innerHTML = `
-        <div class="kicker">System overview</div>
-        <h2>${esc(SYSTEM.name)}</h2>
-        <p class="role">${esc(SYSTEM.sum)} Click any numbered part in the model or the list to compare brands.</p>
-        <h3 class="sec-h">Key facts</h3>${facts(SYSTEM.facts)}
-        <div class="callout"><div class="k">Strategy note</div><p>${esc(SYSTEM.insight)}</p></div>
-        <h3 class="sec-h">Consumables per cell <small>edit the inputs</small></h3>${calcHTML()}
-        <h3 class="sec-h">The four brands</h3>
-        <div class="brand-notes">${SYS.brands.map((b) => `<div class="bcard ${b.id}"><div class="bn">${esc(b.name)}</div><div class="be">${esc(b.note)}</div></div>`).join("")}</div>
-        <h3 class="sec-h">Applications that use cobots</h3>
-        <div class="chips">${apps.map((a) => `<button class="chip" data-app="${a.id}" style="--c:${LCOLOR.app}">${esc(a.name)}</button>`).join("")}</div>
-        <h3 class="sec-h">Process</h3><div class="chips">${nodeChip(SYSTEM.process)}${nodeChip(SYSTEM.automation)}</div>
-        <p class="disclaimer">Product names come from public catalogs; items marked "verify" need checking. Prices and consumption figures are indicative.</p>`;
-      calcOut();
-      sysPanel.scrollTop = 0;
-      return;
+      P.innerHTML = `<div class="kicker">System overview</div><h2>${esc(s.name)}</h2><p class="role">${esc(s.sum)}</p>
+        <h3 class="sec-h">ESAB content <small>${nE} of ${s.components.length} parts</small></h3>
+        <div class="meter"><i style="width:${(nE / s.components.length) * 100}%"></i></div>
+        <table class="bom" style="margin-top:10px">${s.components.map((x, i) => `<tr class="${isEsab(x) ? "y" : "n"}"><td><button data-comp="${x.id}">${i + 1}. ${esc(x.name)}</button></td><td>${esc(x.esabPick || "—")}</td></tr>`).join("")}</table>
+        <p class="makers">Tip: <b>Highlight ESAB</b> colours every ESAB-supplied part blue in the 3D view.</p>
+        <h3 class="sec-h">Key facts</h3>${facts(s.facts)}
+        <div class="callout"><div class="k">Strategy note</div><p>${esc(s.insight)}</p></div>
+        <h3 class="sec-h">Used in</h3><div class="chips">${(s.markets || []).map(mkChip).join("")}</div>
+        ${s.id === "cobot_mig" ? `<h3 class="sec-h">Consumables per cell <small>edit the inputs</small></h3>${calcHTML()}` : ""}
+        <h3 class="sec-h">The four brands</h3><div class="brand-notes">${SYS.brands.map((b) => `<div class="bcard ${b.id}"><div class="bn">${esc(b.name)}</div><div class="be">${esc(b.note)}</div></div>`).join("")}</div>
+        <p class="disclaimer">Product names come from public catalogs; "(verify)" items need checking. Prices and figures are indicative.</p>`;
+      calcOut(); P.scrollTop = 0; return;
     }
-    const i = compIdx(c.id), prev = COMPS[(i - 1 + COMPS.length) % COMPS.length], next = COMPS[(i + 1) % COMPS.length];
-    sysPanel.innerHTML = `
-      <button class="btn" data-comp-back>← System overview</button>
-      <div style="margin-top:14px" class="kicker">Part ${i + 1} of ${COMPS.length}</div>
-      <h2>${esc(c.name)}</h2>
-      <p class="role">${esc(c.role)}</p>
+    const i = s.components.indexOf(c), prev = s.components[(i - 1 + s.components.length) % s.components.length], next = s.components[(i + 1) % s.components.length];
+    const esab = isEsab(c), eb = c.brands && c.brands.esab;
+    P.innerHTML = `<button class="btn" data-comp-back>← System overview</button>
+      <div style="margin-top:14px" class="kicker">Part ${i + 1} of ${s.components.length}</div>
+      <h2>${esc(c.name)}</h2><p class="role">${esc(c.role)}</p>
+      <div class="esab-card${esab ? "" : " none"}"><div class="k">${esab ? "ESAB solution" : "ESAB position"}</div><div class="p">${esc(c.esabPick || "—")}</div>${eb && eb.e ? `<div class="e">${esc(eb.e)}</div>` : ""}</div>
       <h3 class="sec-h">How it works</h3><p class="body">${esc(c.what)}</p>
-      ${c.spec ? `<h3 class="sec-h">What buyers compare</h3><ul class="spec">${c.spec.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>` : ""}
+      ${c.spec ? `<h3 class="sec-h">What buyers compare</h3><ul class="spec">${c.spec.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
       ${c.facts ? `<h3 class="sec-h">Key facts</h3>${facts(c.facts)}` : ""}
-      ${c.brands ? `<h3 class="sec-h">Brand comparison <small>product families</small></h3><div class="brand-cards">${SYS.brands.map((b) => { const x = c.brands[b.id]; return x ? `<div class="bcard ${b.id}"><div class="bn">${esc(b.name)}</div><div class="bp">${esc(x.p)}</div>${x.e ? `<div class="be">${esc(x.e)}</div>` : ""}</div>` : ""; }).join("")}</div>` : ""}
+      ${c.brands ? `<h3 class="sec-h">Competitor comparison</h3><div class="brand-cards">${SYS.brands.filter((b) => b.id !== "esab").map((b) => { const x = c.brands[b.id]; return x ? `<div class="bcard ${b.id}"><div class="bn">${esc(b.name)}</div><div class="bp">${esc(x.p)}</div>${x.e ? `<div class="be">${esc(x.e)}</div>` : ""}</div>` : ""; }).join("")}</div>` : ""}
       ${c.makers ? `<p class="makers">${esc(c.makers)}</p>` : ""}
       ${c.angle ? `<div class="callout"><div class="k">Strategy note</div><p>${esc(c.angle)}</p></div>` : ""}
       <div class="pager"><button class="btn" data-comp="${prev.id}">← ${esc(prev.name)}</button><button class="btn" data-comp="${next.id}">${esc(next.name)} →</button></div>`;
-    sysPanel.scrollTop = 0;
+    P.scrollTop = 0;
   }
-  sysPanel.addEventListener("click", (ev) => { if (ev.target.closest("[data-comp-back]")) selectComp(null); });
-  function selectComp(id) {
-    state.comp = id && compById.has(id) ? id : null;
-    renderSysPanel(); renderCrumb();
-    if (gl) gl.focus(state.comp);
-    try { history.replaceState(null, "", "#" + (state.comp ? "c_" + state.comp : "system")); } catch (e) { /* no hash */ }
-  }
-  $("#btnExplode").addEventListener("click", (ev) => { const on = ev.currentTarget.getAttribute("aria-pressed") !== "true"; ev.currentTarget.setAttribute("aria-pressed", String(on)); if (gl) gl.setExplode(on); });
-  $("#btnRun").addEventListener("click", (ev) => { const on = ev.currentTarget.getAttribute("aria-pressed") !== "true"; ev.currentTarget.setAttribute("aria-pressed", String(on)); if (gl) gl.setRun(on); });
-  $("#btnReset").addEventListener("click", () => { if (gl) gl.reset(); });
+  $("#sysPanel").addEventListener("click", (ev) => { if (ev.target.closest("[data-comp-back]")) selectComp(null); });
+  $("#btnExplode").addEventListener("click", (ev) => { const on = ev.currentTarget.getAttribute("aria-pressed") !== "true"; ev.currentTarget.setAttribute("aria-pressed", String(on)); if (state.sys === "cobot_mig") { if (gl) gl.setExplode(on); } else if (sw) sw.setExplode(on); });
+  $("#btnRun").addEventListener("click", (ev) => { const on = ev.currentTarget.getAttribute("aria-pressed") !== "true"; ev.currentTarget.setAttribute("aria-pressed", String(on)); if (state.sys === "cobot_mig") { if (gl) gl.setRun(on); } else if (sw) sw.setRun(on); });
+  $("#btnEsab").addEventListener("click", (ev) => { state.esabHi = ev.currentTarget.getAttribute("aria-pressed") !== "true"; ev.currentTarget.setAttribute("aria-pressed", String(state.esabHi)); if (gl) gl.setEsab(); if (sw) sw.setEsab(state.esabHi); });
+  $("#btnReset").addEventListener("click", () => { if (state.sys === "cobot_mig") { if (gl) gl.reset(); } else if (sw) sw.reset(); });
 
-  /* ================= 3D cobot cell ================= */
+  let sw = null, swTried = false, swLoaded = null;
+  function ensureSW() {
+    if (swTried) return; swTried = true;
+    if (window.THREE && THREE.OrbitControls && window.createSystemWorld) {
+      try { sw = window.createSystemWorld($("#stage2"), $("#pins2"), { onPick: (id) => selectComp(id), isEsab }); } catch (e) { console.error(e); sw = null; }
+    }
+    if (!sw) { const n = $("#nogl2"); n.hidden = false; n.innerHTML = noGL(); }
+  }
+  const noGL = () => `<div><p style="font:700 20px var(--font-display);text-transform:uppercase;color:var(--text)">3D view unavailable</p><p>${window.THREE ? "This browser could not start WebGL." : "The 3D library could not load."} The part list, ESAB content and brand comparisons still work.</p></div>`;
   let gl = null, glTried = false;
   function ensure3D() {
     if (glTried) return; glTried = true;
     if (window.THREE && THREE.OrbitControls) { try { gl = buildCell(); } catch (e) { console.error(e); gl = null; } }
-    if (!gl) {
-      const n = $("#nogl"); n.hidden = false;
-      n.innerHTML = `<div><p style="font:700 20px var(--font-display);text-transform:uppercase;color:var(--text)">3D view unavailable</p><p>${window.THREE ? "This browser could not start WebGL." : "The 3D library could not load (network or firewall)."} The part list and brand comparisons still work.</p></div>`;
-    }
+    if (!gl) { const n = $("#nogl"); n.hidden = false; n.innerHTML = noGL(); }
   }
 
   function buildCell() {
@@ -866,7 +1071,7 @@
       torch: [0.15, 0.75, 0.45], pendant: [-0.25, 0.3, 0.65], table: [0, -0.35, 0], part: [0.25, 0.45, 0.4], ground: [0.45, 0.1, 0.55],
       reamer: [0.45, 0.35, -0.35], fume: [0.7, 0.2, -0.3], safety: [0, 0, -0.55],
     };
-    COMPS.forEach((c) => { const g = new THREE.Group(); g.userData.comp = c.id; groups[c.id] = g; mats[c.id] = []; scene.add(g); });
+    COBOT.components.forEach((c) => { const g = new THREE.Group(); g.userData.comp = c.id; groups[c.id] = g; mats[c.id] = []; scene.add(g); });
     function mat(comp, color, o = {}) {
       const m = new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.55, metalness: 0.2, transparent: true }, o));
       mats[comp].push(m); return m;
@@ -1102,7 +1307,7 @@
     Object.entries(groups).forEach(([id, g]) => g.traverse((o) => (o.userData.comp = id)));
 
     // --- pins
-    pinsEl.innerHTML = COMPS.map((c, i) => `<button class="pin" data-comp="${c.id}" aria-label="${esc(c.name)}"><span class="num">${i + 1}</span><span class="pl">${esc(c.name)}</span></button>`).join("");
+    pinsEl.innerHTML = COBOT.components.map((c, i) => `<button class="pin${isEsab(c) ? " esab" : ""}" data-comp="${c.id}" aria-label="${esc(c.name)}"><span class="num">${i + 1}</span><span class="pl">${esc(c.name)}</span></button>`).join("");
     const pinEls = {}; pinsEl.querySelectorAll(".pin").forEach((p) => (pinEls[p.dataset.comp] = p));
 
     // --- sizing
@@ -1134,14 +1339,19 @@
 
     // --- highlight
     function paint() {
-      const sel = state.comp;
+      const sel = state.view === "system" && state.sys === "cobot_mig" ? state.comp : null;
       Object.entries(mats).forEach(([id, list]) => list.forEach((m) => {
         if (!m.userData.base) m.userData.base = { op: m.opacity, em: m.emissive ? m.emissive.getHex() : null, ei: m.emissiveIntensity };
         const b = m.userData.base;
         const on = sel === id, hov = hover === id && !on;
-        if (m.emissive) { m.emissive.setHex(on ? 0x14506d : hov ? 0x10384a : b.em); m.emissiveIntensity = on ? 0.55 : hov ? 0.5 : b.ei; }
-        m.opacity = sel && !on ? Math.min(b.op, 0.28) : b.op;
-        m.depthWrite = !(sel && !on) && id !== "safety";
+        const esab = isEsab(COBOT.components.find((x) => x.id === id) || {});
+        let em = b.em, ei = b.ei, op = b.op;
+        if (state.esabHi) { if (esab) { em = 0x1f6d96; ei = 0.55; } else op = Math.min(op, 0.35); }
+        if (sel && !on) op = Math.min(op, 0.28);
+        if (on) { em = 0x14506d; ei = 0.55; } else if (hov) { em = 0x10384a; ei = 0.5; }
+        if (m.emissive) { m.emissive.setHex(em); m.emissiveIntensity = ei; }
+        m.opacity = op;
+        m.depthWrite = op > 0.9 && id !== "safety";
       }));
       Object.entries(pinEls).forEach(([id, p]) => p.classList.toggle("on", id === sel));
     }
@@ -1212,7 +1422,7 @@
       controls.update();
       renderer.render(scene, camera);
       // pins
-      COMPS.forEach((c) => {
+      COBOT.components.forEach((c) => {
         const p = pinEls[c.id]; v.copy(anchorOf(c.id)).project(camera);
         if (v.z > 1 || Math.abs(v.x) > 1.05 || Math.abs(v.y) > 1.05) { p.style.visibility = "hidden"; return; }
         p.style.visibility = "";
@@ -1240,46 +1450,44 @@
         else { runT = 0; pause = 0; }
       },
       reset() { fly(HOME_T, homePos()); },
+      setEsab() { paint(); },
     };
   }
 
+
+
   /* ================= 4. Gemba walk ================= */
+  function renderSiteList() {
+    $("#siteList").innerHTML = MK.map((m) => { const ss = SITES.filter((s) => s.market === m.id); return ss.length ? `<li class="site-group" style="--c:${m.color}">${esc(m.name)}</li>` + ss.map((g) => `<li><button data-site="${g.id}" aria-current="${g.id === state.site}"><span class="nm">${esc(g.name)}</span><span class="sub">${esc(g.tier)} · ${g.stops.length} stops</span></button></li>`).join("") : ""; }).join("");
+  }
+  renderSiteList();
+  let gw = null, gwTried = false, loadedSite = null;
+  function ensureGemba() {
+    if (gwTried) return; gwTried = true;
+    if (window.THREE && THREE.OrbitControls && window.createGembaWorld) { try { gw = window.createGembaWorld($("#gstage"), $("#gpins"), (i) => goStop(i)); } catch (e) { console.error(e); gw = null; } }
+    if (!gw) { const n = $("#gnogl"); n.hidden = false; $("#gbar").hidden = true; n.innerHTML = noGL(); }
+  }
   function openSite(id, stop) {
-    if (!siteById.has(id)) id = GEMBA_SITES[0].id;
+    if (!siteById.has(id)) id = SITES[0].id;
     const changed = id !== loadedSite;
     state.site = id; state.stop = stop == null ? -1 : stop;
     const site = siteById.get(id);
     if (state.stop >= site.stops.length) state.stop = -1;
     ensureGemba();
-    if (gw) { if (changed) { gw.load(site); loadedSite = id; } gw.resize(); gw.goStop(state.stop); }
-    else loadedSite = id;
-    renderGembaRail(); renderGembaPanel();
+    if (gw) { if (changed) { gw.load(site); loadedSite = id; } gw.resize(); gw.goStop(state.stop); } else loadedSite = id;
+    renderGembaRail(); renderGembaPanel(); setHash(gembaHash());
   }
-  function gembaHash() { return "g_" + state.site + (state.stop >= 0 ? "." + (state.stop + 1) : ""); }
+  const gembaHash = () => "g_" + state.site + (state.stop >= 0 ? "." + (state.stop + 1) : "");
   function goStop(i) {
     const site = siteById.get(state.site);
     state.stop = Math.max(-1, Math.min(site.stops.length - 1, i));
     if (gw) gw.goStop(state.stop);
-    renderGembaRail(); renderGembaPanel();
-    try { history.replaceState(null, "", "#" + gembaHash()); } catch (e) { /* no hash */ }
+    renderGembaRail(); renderGembaPanel(); setHash(gembaHash());
   }
-  let gw = null, gwTried = false, loadedSite = null;
-  function ensureGemba() {
-    if (gwTried) return; gwTried = true;
-    if (window.THREE && THREE.OrbitControls && window.createGembaWorld) {
-      try { gw = window.createGembaWorld($("#gstage"), $("#gpins"), (i) => goStop(i)); } catch (e) { console.error(e); gw = null; }
-    }
-    if (!gw) {
-      const n = $("#gnogl"); n.hidden = false; $("#gbar").hidden = true;
-      n.innerHTML = `<div><p style="font:700 20px var(--font-display);text-transform:uppercase;color:var(--text)">3D site unavailable</p><p>${window.THREE ? "This browser could not start WebGL." : "The 3D library could not load (network or firewall)."} The stop-by-stop briefing on the right still works.</p></div>`;
-    }
-  }
-  $("#siteList").innerHTML = GEMBA_SITES.map((g) => `<li><button data-site="${g.id}" aria-current="false"><span class="nm">${esc(g.name)}</span><span class="sub">${esc(byId.get(g.segment).name)} · ${esc(g.tier)} · ${g.stops.length} stops</span></button></li>`).join("");
   function renderGembaRail() {
     const site = siteById.get(state.site);
     document.querySelectorAll("#siteList button").forEach((b) => b.setAttribute("aria-current", String(b.dataset.site === state.site)));
-    $("#stopList").innerHTML = `<li><button data-stop="-1" aria-current="${state.stop === -1}"><span class="num">·</span>Site overview</button></li>` +
-      site.stops.map((st, i) => `<li><button data-stop="${i}" aria-current="${state.stop === i}"><span class="num">${i + 1}</span>${esc(st.name)}</button></li>`).join("");
+    $("#stopList").innerHTML = `<li><button data-stop="-1" aria-current="${state.stop === -1}"><span class="num">·</span>Site overview</button></li>` + site.stops.map((st, i) => `<li><button data-stop="${i}" aria-current="${state.stop === i}"><span class="num">${i + 1}</span>${esc(st.name)}</button></li>`).join("");
     const cur = state.stop >= 0 ? site.stops[state.stop] : null;
     $("#gWhere").innerHTML = cur ? `<b>STOP ${state.stop + 1}/${site.stops.length}</b>${esc(cur.name)}` : `<b>OVERVIEW</b>${esc(site.name)}`;
     $("#gPrev").disabled = state.stop < 0;
@@ -1296,57 +1504,75 @@
     else if (ev.key === "ArrowLeft") { ev.preventDefault(); if (state.stop >= 0) goStop(state.stop - 1); }
   });
   const gl_ = (items, color, roles) => items && items.length ? `<ul class="gl" style="--c:${color}">${items.map((x) => { const i = roles ? x.indexOf(": ") : -1; return `<li>${i > 0 ? `<b>${esc(x.slice(0, i))}</b>: ${esc(x.slice(i + 2))}` : esc(x)}</li>`; }).join("")}</ul>` : "";
-  function linkChip(id) {
-    const n = byId.get(id); if (!n) return "";
-    return n.layer === "app" ? `<button class="chip" data-app="${id}" style="--c:${LCOLOR.app}">${esc(n.name)}</button>` : nodeChip(id);
+  function flowSVG(site) {
+    const n = site.stops.length, bw = 168, bh = 48, gx = 22, gy = 26, cols = 2, rows = Math.ceil(n / cols);
+    const W = cols * bw + gx, H = rows * (bh + gy) - gy + 4;
+    const pos = site.stops.map((_, i) => { const r = Math.floor(i / cols), c = r % 2 ? cols - 1 - (i % cols) : i % cols; return [c * (bw + gx), r * (bh + gy) + 2]; });
+    let s = `<svg class="flowsvg" viewBox="-2 0 ${W + 4} ${H}" role="img" aria-label="Walk sequence">`;
+    for (let i = 1; i < n; i++) { const [x1, y1] = pos[i - 1], [x2, y2] = pos[i]; if (y1 === y2) s += `<path class="ln" d="M${x1 < x2 ? x1 + bw : x1} ${y1 + bh / 2}H${x1 < x2 ? x2 : x2 + bw}"/>`; else s += `<path class="ln" d="M${x1 + bw / 2} ${y1 + bh}V${y2}"/>`; }
+    site.stops.forEach((st, i) => {
+      const [x, y] = pos[i], words = st.name.split(" "), lines = [""];
+      words.forEach((w) => { if ((lines[lines.length - 1] + " " + w).trim().length > 22 && lines.length < 2) lines.push(w); else lines[lines.length - 1] = (lines[lines.length - 1] + " " + w).trim(); });
+      s += `<g data-stopgo="${i}"><rect class="bx${st.system ? " sys" : ""}" x="${x}" y="${y}" width="${bw}" height="${bh}" rx="6"/><circle class="nc" cx="${x + 16}" cy="${y + bh / 2}" r="10"/><text class="n" x="${x + 16}" y="${y + bh / 2 + 4}" text-anchor="middle">${i + 1}</text>${lines.map((l, k) => `<text class="t" x="${x + 32}" y="${y + bh / 2 + (lines.length === 1 ? 4 : k * 14 - 3)}">${esc(l)}</text>`).join("")}${st.system ? `<circle class="ed" cx="${x + bw - 10}" cy="${y + 10}" r="4"><title>3D welding system available</title></circle>` : ""}</g>`;
+    });
+    return s + `</svg>`;
   }
+  const linkChip = (id) => glossChip(id);
   function renderGembaPanel() {
-    const site = siteById.get(state.site), P = $("#gPanel");
+    const site = siteById.get(state.site), P = $("#gPanel"), m = mkById.get(site.market);
+    const sysIds = [...new Set(site.stops.map((s) => s.system).filter(Boolean))];
     if (state.stop < 0) {
-      P.innerHTML = `
-        <div class="kicker" style="--c:var(--good)">Site overview · ${esc(site.tier)}</div>
-        <h2>${esc(site.name)}</h2>
+      P.innerHTML = `<div class="kicker" style="--c:var(--good)">Site overview · ${esc(site.tier)}</div><h2>${esc(site.name)}</h2>
+        <div class="chips" style="margin-top:8px">${mkChip(site.market)}</div>
         <p class="role">${esc(site.sum)}</p>
+        <h3 class="sec-h">The walk <small>blue dot = 3D welding system</small></h3>${flowSVG(site)}
         <h3 class="sec-h">At a glance</h3>${facts(site.facts)}
         <div class="callout"><div class="k">Customer economics</div><p>${esc(site.economics)}</p></div>
         <div class="g-before"><b>Before you go.</b> ${esc(site.before)}</div>
-        <h3 class="sec-h">The walk <small>${site.stops.length} stops</small></h3>
-        <ol class="flow">${site.stops.map((st, i) => `<li><button class="chip" data-stop-go="${i}" style="--c:var(--good)">${esc(st.name)}</button></li>`).join("")}</ol>
-        <h3 class="sec-h">Linked in the atlas</h3>
-        <div class="chips"><button class="chip" data-seg="${site.segment}" style="--c:${LCOLOR.segment}">${esc(byId.get(site.segment).name)}</button>${site.apps.map(linkChip).join("")}</div>
-        <div style="margin-top:18px"><button class="btn go" data-stop-go="0">Start the walk →</button></div>
-        <p class="disclaimer">Headcounts, rates and volumes are indicative. A composite of typical sites, not a specific customer.</p>`;
+        ${sysIds.length ? `<h3 class="sec-h">Welding systems on this site</h3><div class="chips">${sysIds.map(sysChip).join("")}</div>` : ""}
+        <div style="margin-top:18px"><button class="btn go" data-stopgo="0">Start the walk →</button></div>
+        <p class="disclaimer">A composite of typical sites, not a specific customer. Figures are indicative.</p>`;
     } else {
       const st = site.stops[state.stop], n = site.stops.length;
-      const note = store.get("ww-note-g_" + site.id + "_" + st.id) || "";
-      P.innerHTML = `
-        <div class="kicker" style="--c:var(--good)">Stop ${state.stop + 1} of ${n} · ${esc(site.name)}</div>
-        <h2>${esc(st.name)}</h2>
+      P.innerHTML = `<div class="kicker" style="--c:var(--good)">Stop ${state.stop + 1} of ${n} · ${esc(site.name)}</div><h2>${esc(st.name)}</h2>
         <h3 class="sec-h">What you'd see</h3><p class="body" style="margin:0;font-size:14px;line-height:1.6">${esc(st.see)}</p>
-        <h3 class="sec-h">Who's here and what they care about</h3>${gl_(st.people, LCOLOR.segment, true)}
+        <h3 class="sec-h">Who's here and what they care about</h3>${gl_(st.people, "#F2A93B", true)}
         ${st.pains && st.pains.length ? `<h3 class="sec-h">Waste & pain points <small>what to notice</small></h3>${gl_(st.pains, "#E8795A")}` : ""}
-        ${st.products && st.products.length ? `<h3 class="sec-h">Welding products in use</h3>${gl_(st.products, LCOLOR.process)}` : ""}
-        <h3 class="sec-h">Questions to ask</h3>${gl_(st.ask, LCOLOR.automation)}
+        ${st.products && st.products.length ? `<h3 class="sec-h">Welding products in use</h3>${gl_(st.products, "#58C4F5")}` : ""}
+        <h3 class="sec-h">Questions to ask</h3>${gl_(st.ask, "#A48CF7")}
         <div class="callout"><div class="k">Where ESAB can win</div><p>${esc(st.play)}</p></div>
-        ${st.system ? `<div class="cta3d" style="margin-top:14px"><div><b>See this cell part by part</b><p>Power source, feeder, wire, torch and arm, with the brands compared.</p></div><button class="btn primary" data-go-system>Open MIG cobot cell →</button></div>` : ""}
-        ${st.links && st.links.length ? `<h3 class="sec-h">Look it up <small>definitions</small></h3><div class="chips">${st.links.map(linkChip).join("")}</div>` : ""}
-        <h3 class="sec-h">My notes <small class="saved" id="noteSaved"></small></h3>
-        <div class="notes"><textarea id="note-gemba" data-note="g_${site.id}_${st.id}" placeholder="What would you check on a real visit? (saved in this browser)">${esc(note)}</textarea></div>
-        <div class="pager"><button class="btn" data-stop-go="${state.stop - 1}">${state.stop === 0 ? "← Overview" : "← " + esc(site.stops[state.stop - 1].name)}</button>${state.stop < n - 1 ? `<button class="btn go" data-stop-go="${state.stop + 1}">${esc(site.stops[state.stop + 1].name)} →</button>` : `<button class="btn" data-stop-go="-1">Back to overview</button>`}</div>`;
+        ${st.system ? `<div class="cta3d" style="margin-top:14px"><div><b>See the welding system</b><p>${esc(sysById.get(st.system).name)}, part by part, with ESAB components highlighted.</p></div><button class="btn primary" data-sys="${st.system}">Open in 3D →</button></div>` : ""}
+        ${(st.links || []).map(linkChip).join("") ? `<h3 class="sec-h">Look it up <small>definitions</small></h3><div class="chips">${st.links.map(linkChip).join("")}</div>` : ""}
+        ${notesBlock("g_" + site.id + "_" + st.id, "What would you check on a real visit? (saved in this browser)")}
+        <div class="pager"><button class="btn" data-stopgo="${state.stop - 1}">${state.stop === 0 ? "← Overview" : "← " + esc(site.stops[state.stop - 1].name)}</button>${state.stop < n - 1 ? `<button class="btn go" data-stopgo="${state.stop + 1}">${esc(site.stops[state.stop + 1].name)} →</button>` : `<button class="btn" data-stopgo="-1">Back to overview</button>`}</div>`;
     }
     P.scrollTop = 0;
   }
-  $("#gPanel").addEventListener("click", (ev) => { const b = ev.target.closest("[data-stop-go]"); if (b) goStop(+b.dataset.stopGo); });
+  $("#gPanel").addEventListener("click", (ev) => { const b = ev.target.closest("[data-stopgo]"); if (b) goStop(+b.dataset.stopgo); });
+
+  /* ================= Glossary ================= */
+  const gloss = $("#gloss");
+  let glossReturn = null;
+  function openGloss(id) {
+    const n = byId.get(id); if (!n) return;
+    gloss.innerHTML = `<div class="card"><div class="top"><div class="kicker" style="--c:${LCOLOR[n.layer]}">${esc(LNAME[n.layer])}</div><button class="btn" id="glossClose">Close</button></div>
+      <h2 id="glossTitle">${esc(n.name)}</h2>${n.alias ? `<p class="alias">${esc(n.alias)}</p>` : ""}<p class="sum">${esc(n.sum || "")}</p>
+      ${n.how ? `<h3 class="sec-h">How it works</h3><p class="body">${esc(n.how)}</p>` : ""}${n.facts ? `<h3 class="sec-h">Key facts</h3>${facts(n.facts)}` : ""}
+      ${n.pros || n.cons ? `<h3 class="sec-h">Trade-offs</h3><div class="procon"><div><b>Strengths</b>${esc(n.pros || "")}</div><div><b>Limits</b>${esc(n.cons || "")}</div></div>` : ""}
+      ${n.ex ? `<h3 class="sec-h">Examples</h3><p class="body" style="font-family:var(--font-mono);font-size:12.5px;color:var(--muted)">${esc(n.ex)}</p>` : ""}</div>`;
+    glossReturn = document.activeElement; gloss.hidden = false; $("#glossClose").focus();
+  }
+  function closeGloss() { if (gloss.hidden) return; gloss.hidden = true; if (glossReturn && glossReturn.focus) glossReturn.focus(); }
+  gloss.addEventListener("click", (ev) => { if (ev.target === gloss || ev.target.closest("#glossClose")) closeGloss(); });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") closeGloss(); });
 
   /* ================= Boot ================= */
+  $("#appVer").textContent = "v" + APP_VERSION;
   const h = (location.hash || "").slice(1);
-  if (h.startsWith("app_") && byId.has(h)) go("apps", h);
-  else if (h.startsWith("c_") && compById.has(h.slice(2))) go("system", null, { comp: h.slice(2) });
-  else if (h === "system") go("system");
-  else if (h === "apps") go("apps");
-  else if (h.startsWith("seg_") && byId.has(h)) go("markets", h);
-  else if (h.startsWith("g_")) { const [sid, n] = h.slice(2).split("."); go("gemba", siteById.has(sid) ? sid : null, { stop: n ? (+n || 0) - 1 : -1 }); }
-  else if (h === "gemba") go("gemba");
-  else go("markets");
+  if (h.startsWith("mk_")) { const [mk, tab] = h.split("."); go("markets", { mk: mkById.has(mk) ? mk : null, tab: tab || "overview" }); }
+  else if (h === "map") go("map");
+  else if (h.startsWith("s.")) { const [, sid, cid] = h.split("."); go("system", { sys: sysById.has(sid) ? sid : "cobot_mig", comp: cid || null }); }
+  else if (h.startsWith("g_")) { const [sid, n] = h.slice(2).split("."); go("gemba", { site: siteById.has(sid) ? sid : SITES[0].id, stop: n ? (+n || 0) - 1 : -1 }); }
+  else go("markets", { mk: null });
 })();
 </script>

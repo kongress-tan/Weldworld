@@ -4,6 +4,28 @@ This file records how the tool's logic evolved: what I assumed, what I changed a
 
 ---
 
+## Release v2.0 (2026-09-28): executive feedback round
+
+### Feedback received
+Refine to 6 end markets; simplify products to MIG/TIG/SAW/Flux × manual/cobot/automation, then NDT; show who in the workflow does the welding; build market visibility (top customers, outsourcing contractors, US hotspots); build out the welding systems and highlight ESAB components; add more graphics to the Gemba sites and tie them to the markets.
+
+### Logic decisions
+1. **Nest detail inside each market.** Applications, who welds, products, accounts and Gemba became tabs of a market instead of separate top-level steps. The top-level navigation shrank to four steps, and every view starts from the market the executive cares about.
+2. **Separate "holds the torch" from "buys" and "specifies".** The key insight for data centers and fabs is that the owner and GC never weld; the fabricator, erector or contractor does, and the GC or owner may still specify. Three badges make this visible, and the map shows it too (filled vs hollow dots).
+3. **A product grid with levels, not a list.** Primary / Common / Niche per process × mode cell, weighted by application share for the market view. Each cell links to the matching 3D system, which ties products to equipment.
+4. **Public-information accounts, labeled.** 63 named accounts with tiers based on welding relevance, not revenue. Everything uncertain says "(verify)", and the data is structured so CRM data can replace it.
+5. **Be honest about white space.** Orbital TIG equipment is shown as not a core ESAB offer (verify). Hiding it would mislead executives; flagging it turns it into a strategy question.
+6. **ESAB highlighting as a mode, not a colour scheme.** "Highlight ESAB" tints ESAB-supplied parts blue and fades the rest, and each system shows "ESAB supplies X of Y parts". The ESAB share of each cell is visible at a glance.
+
+### Mistakes and fixes
+- **V1. New 3D systems failed to load.** The builders called a helper (`C`) that only existed inside another function. The browser test caught it on the first run ("C is not defined"). *Lesson:* when refactoring into modules, check what each function can actually see.
+- **V2. Hotspot labels collided** in the Northeast on the map. *Fix:* numbered badges, with a name shown only for the selected hotspot. *Lesson:* dense geography needs labels on demand.
+- **V3. The operator blocked the view** in the orbital and TIG bench scenes. *Fix:* moved the operator behind the bench and changed the camera. *Lesson:* check the first frame of every 3D scene.
+- **V4. SAW arcs threw sparks.** In real submerged-arc welding the flux hides the arc, so there are no sparks. *Fix:* sparks are off for SAW arcs. *Lesson:* small realism errors undermine credibility with experts.
+- **V5. The map filter labels ran together** because a CSS rule from an older version was missing. *Fix:* added explicit styles.
+
+---
+
 ## Release v1.0 (2026-09-28): renamed to EBXWorld for executive sharing
 - **Change:** renamed the tool from "WeldWorld" to **EBXWorld**, added a visible version stamp (v1.0, top bar and Markets footer), added `CHANGELOG.md`, and tagged the git release `v1.0.0`.
 - **Logic:** executives need to know which version they are looking at when giving feedback, so the version appears in the page itself, not only in git.

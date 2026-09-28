@@ -8,6 +8,8 @@ A study tool for commercial strategy in welding: structured end markets, applica
 
 ## How to open it
 
+- **To share:** send `dist/EBXWorld-v1.0.html`. It is one self-contained file (~900 KB) that opens in Chrome, Edge or Safari by double-clicking, with no install and no internet needed. Rebuild it after edits with `python3 build.py`.
+
 - **Locally:** open `index.html` in Chrome or Edge. Keep `data.js`, `systems.js`, `gemba-data.js` and `gemba-world.js` next to it. It needs internet access to load three.js from jsdelivr.
 - **Hosted:** use the private artifact link shared in the Claude session.
 

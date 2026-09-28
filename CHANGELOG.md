@@ -13,6 +13,9 @@ Internal build history before the release (see `LEARNINGS.md`):
 - build 2: markets table, applications, 3D cobot cell
 - build 3: Gemba walks
 
+### Shareable file
+- `dist/EBXWorld-v1.0.html`: a single self-contained HTML file with three.js (MIT, see `vendor/three-LICENSE.txt`) and all data inlined. It works offline. Built by `build.py`.
+
 ### Known limitations
 - Weights, shares, prices and volumes are indicative estimates, not ESAB market data
 - Product names marked "(verify)" still need confirming with product management

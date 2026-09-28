@@ -1,60 +1,56 @@
 # WeldWorld Atlas
 
-An interactive 3D map of welding and NDT workflows, built for commercial strategy work. You can trace any end segment through its applications, weld processes, automation, filler metals and inspection methods, in manual and automated settings.
+A study tool for commercial strategy in welding: structured end markets, application workflows, and a 3D model of the actual welding equipment with brand comparisons (ESAB/EWM, Lincoln Electric, Miller/ITW, Fronius).
 
 ```
-Industry tier → End segment → Application → Weld process → Automation → Filler metal → NDT & QA
-   (2)             (18)          (41)           (11)           (13)          (15)          (12)
+① Markets  →  ② Application  →  ③ Welding system (3D)
 ```
 
 ## How to open it
 
-- **Locally:** open `index.html` in Chrome or Edge. `data.js` must sit next to it. It needs internet access once to load three.js from jsdelivr.
+- **Locally:** open `index.html` in Chrome or Edge. Keep `data.js` and `systems.js` next to it. It needs internet access to load three.js from jsdelivr.
 - **Hosted:** use the private artifact link shared in the Claude session.
 
-## How to use it
+## What each step does
 
-| Action | What happens |
+| Step | What you see |
 | --- | --- |
-| Click a node | Its full chain lights up and animated particles show the direction of flow. The camera frames the chain and the right panel explains the node. |
-| Segment panel | Shows each application's share of the segment's weld workload (1–5) plus an indicative mix of processes, automation, fillers and NDT |
-| Application panel | Shows a step-by-step workflow, materials and thickness, and the exact process, automation, filler and NDT chain |
-| Process, automation, filler and NDT panels | Explain how it works, key facts, trade-offs, and "where it matters most" by segment |
-| Filters | Light or heavy tier; manual, mechanized or robotic mode |
-| Matrix | Compares segments against processes, automation, fillers or NDT as a heat map |
-| Guided tours | Data center, wind tower, pipeline, yellow-goods robot cell, semiconductor UHP, job-shop cobot |
-| My notes | Per-node notes saved in your browser (localStorage) |
-| Deep links | `index.html#seg_dc` opens with the Data Centers segment selected |
+| **1 · Markets** | 18 segments in 7 market groups, as a sortable table: tier, growth, weld intensity, automation level and top processes. Click a row for buyers, route to market, drivers, codes, a strategy note, the applications inside it (share of segment welding) and the process and automation mix. |
+| **2 · Applications** | 41 applications, filterable by market. Each page has materials, the markets it serves, a **weld system recipe** (process, automation, filler, inspection; primary first), the workflow steps and personal notes. Click any recipe item for a definition. |
+| **3 · Welding system** | A 3D **MIG cobot cell** with 13 clickable parts: power source, feeder, wire drum, gas, cobot arm, torch, pendant/software, table, workpiece, ground, reamer, fume extraction and safety. Each part shows how it works, what buyers compare, and a **brand comparison**. It also has Explode, Run weld (the arm follows the seam and the bead grows), and a **consumables calculator** (wire, gas and tips per year, cobot vs manual). |
+
+Deep links: `#seg_dc` (market), `#app_liquid` (application), `#system`, `#c_wire` (a part).
 
 ## Editing the content
 
-All content lives in `data.js`. The comment header explains the schema. Common edits:
-
-- **Change a segment's application weights:** edit `apps: [["app_id", weight, "note"]]` on the segment.
-- **Add an application:** add a node with `layer: "app"` and list its `processes`, `automation`, `fillers` and `ndt`, primary first. Then reference it from one or more segments.
-- **Order matters:** the first item in each application list counts as primary (rank factors 1.0, 0.6, 0.4, 0.3 …) in the mix and matrix scores.
+- `data.js`: markets, applications, processes, automation, fillers, NDT. The header explains the schema. The first item in each application list counts as primary.
+- `systems.js`: 3D system components and brand product families. Items marked "(verify)" need checking against current catalogs.
 
 ## Project task tracker
 
+### v2 (current): structured markets + 3D equipment
 | # | Task | Status |
 | --- | --- | --- |
-| 1 | Scaffold repo (`index.html`, `data.js`, `LEARNINGS.md`, README) | Done |
-| 2 | Domain data: tiers, segments, applications, processes, automation, fillers, NDT and links | Done (v1.0) |
-| 3 | 3D engine: layered layout, curved links, glow nodes, label de-cluttering | Done |
-| 4 | Interaction: trace, detail panel, search, filters, tours, matrix, notes, deep links | Done |
-| 5 | Headless browser test (desktop + mobile) | Done |
-| 6 | Commit, push, publish as a private artifact | Done |
-| 7 | Log logic changes and mistakes in `LEARNINGS.md` | Ongoing |
+| 1 | Restructure data: market groups, buyers, channel; remove graph tours | Done |
+| 2 | Markets table view with expandable segment detail | Done |
+| 3 | Application page with weld system recipe and glossary | Done |
+| 4 | 3D MIG cobot cell (13 parts, IK-driven arm, explode, run weld) | Done |
+| 5 | Brand comparison per part (ESAB/EWM, Lincoln, Miller, Fronius) | Done |
+| 6 | Consumables pull-through calculator | Done |
+| 7 | Browser test (desktop + mobile), publish, commit, push | Done |
+| 8 | Update `LEARNINGS.md` | Done |
 
-### Backlog (ideas for v2)
+### v1: 3D relationship graph (replaced)
+Superseded by v2 after feedback that the graph was confusing.
 
-- [ ] Replace indicative weights with ESAB market-intelligence data (tonnage or revenue by segment)
-- [ ] Add a cutting layer (plasma, oxy-fuel, laser) and gas and consumable-parts layers
-- [ ] Regional view (NA / EU / APAC / LATAM), since process mix varies a lot by region
-- [ ] Competitor or brand overlay per node
-- [ ] Export the current view or matrix to CSV
-- [ ] Shared team notes (needs a shared backend instead of localStorage)
+### Backlog
+- [ ] 3D: SAW column & boom with turning rolls and flux recovery
+- [ ] 3D: orbital TIG (power supply + enclosed head) for semiconductor and data-center liquid cooling
+- [ ] 3D: semi-automatic MIG/FCAW shop setup
+- [ ] Verify all "(verify)" product names with the product management team
+- [ ] Replace indicative weights with ESAB market-intelligence data
+- [ ] Regional view (NA / EU / APAC / LATAM)
 
 ## Disclaimer
 
-Weights (1–5), shares and deposition rates are indicative analyst estimates for learning and discussion, not market data. Validate them before external use.
+Weights, shares, prices and consumption figures are indicative estimates for learning and discussion, not market data. Product names come from public catalogs; validate them before external use.

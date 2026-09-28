@@ -4,6 +4,33 @@ This file records how the tool's logic evolved: what I assumed, what I changed a
 
 ---
 
+## Session 2 (2026-09-28): v2 redesign after feedback
+
+### Feedback received
+> "The 3D is pretty confusing. I wanted 3D to understand the actual welding system / cobot / wire for the product, with Lincoln, Miller, Fronius, ESAB/EWM brands. I need more structure in end markets. The navigation seems complicated."
+
+### Biggest mistake: 3D was used for the wrong thing
+- **What I did in v1:** used 3D to draw an abstract *relationship graph* (111 floating nodes and links).
+- **Why that was wrong:** relationships read better in tables and lists. 3D earns its place when the subject is a *physical object*. The user wanted to see the product (power source, feeder, wire, torch, cobot) the way a customer sees it.
+- **Analogy:** I built a subway map when you asked to look inside the train.
+- **Lesson:** before choosing a visual form, ask "what would a person point at?" If the answer is a machine, model the machine. If it's a relationship, use a table.
+
+### Logic changes in v2
+1. **Navigation became a 3-step drill-down** (Markets → Application → Welding system) with numbered tabs, plus a breadcrumb showing the current market and application. It replaced 7 layers, filters, tours and a matrix all shown at once.
+2. **Markets got real structure:** 7 market groups; each segment now has *buyers* and *route to market* in addition to growth, weld intensity and automation. The table sorts by group, growth, intensity or automation.
+3. **Applications now show a "weld system recipe"**: 4 cards (process, automation, filler, inspection) with the primary choice first, instead of a lit-up chain.
+4. **The 3D cobot cell uses inverse kinematics**: the arm calculates its joint angles from where the torch tip must be. "Run weld" moves the tip along the seam and the arm follows naturally. Hand-posing the joints would have looked wrong as soon as anything moved.
+5. **Brand comparison lives on each part**, so the comparison is concrete (Lincoln Power Wave vs Fronius TPS/i vs ESAB Aristo / EWM Titan XQ). Uncertain names are marked "(verify)" instead of guessed.
+6. **Added a consumables calculator.** Commercial insight: wire, gas and contact tips are the recurring revenue after the equipment sale, and equipment-only brands (Fronius) can't capture it.
+
+### Bugs found in testing and fixed
+- **B1. Invisible overlay blocked all clicks (local file only).** The glossary overlay used `display: grid`, which overrides the HTML `hidden` attribute. The artifact wrapper adds a rule that hides it, so the published page looked fine, but opening `index.html` locally was broken. *Fix:* my own `[hidden] { display: none !important; }`. *Lesson:* test the file the way the user will open it, not only in the hosted wrapper.
+- **B2. Weld seam faced away from the camera.** I first put the fillet on the back side of the plate. *Fix:* moved the seam to the camera side and aimed the torch direction to match.
+- **B3. The torch nozzle taper was reversed** (wide at the tip). *Fix:* orient the cylinder from the neck toward the tip.
+- **B4. A memory leak in click detection:** each animation frame added a new cable mesh to the pickable list. *Fix:* raycast the component groups directly.
+- **B5. The selected-part highlight was too strong** and washed out labels (e.g. the wire drum text). *Fix:* a softer highlight.
+- **B6. Tool failures:** in session 1 the command-safety check failed repeatedly, so testing and git push were delayed. *Lesson:* publish or save deliverables early, and say clearly what is untested.
+
 ## Session 1 (2026-09-28): v1.0 build
 
 ### Approach (as confirmed at the start)

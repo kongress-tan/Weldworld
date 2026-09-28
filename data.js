@@ -1,10 +1,10 @@
 /*
  * WeldWorld data model
  * ------------------------------------------------------------------
- * Edit this file to add or correct content. The 3D map, matrix and
- * tours are all generated from it.
+ * Edit this file to add or correct content. The markets table,
+ * application pages and glossary are all generated from it.
  *
- * Layers (left to right in the 3D map):
+ * Layers (market -> weld chain):
  *   tier -> segment -> app -> process -> automation -> filler -> ndt
  *
  * Links are declared on the node that "owns" them:
@@ -1176,69 +1176,35 @@ window.WELD_DATA = {
     },
   ],
 
-  /* ============================== TOURS ============================== */
-  tours: [
-    {
-      id: "tour_dc", name: "Data center build-out",
-      steps: [
-        { node: "seg_dc", text: "A hyperscale data center touches both tiers: heavy structural and piping work on site, and light fabrication of enclosures and skids in factories. Weights show where the weld volume sits." },
-        { node: "app_chw", text: "The biggest weld-inch pool is large-bore chilled-water and condenser piping. Carbon-steel spools are rolled on positioners in prefab shops (TIG or stick root, FCAW or GMAW fill), with stick for field tie-ins." },
-        { node: "app_dcstruct", text: "Structural steel: the building frame, mezzanines, pipe racks. Self-shielded flux core and stick in the field; beam lines and robots in the shop. UT on complete-joint-penetration welds." },
-        { node: "app_enclosure", text: "Switchgear, busway and UPS enclosures: thin sheet, MIG short-circuit or pulsed, TIG on stainless. A light-industrial demand surge pulled by data centers." },
-        { node: "app_liquid", text: "This is where orbital TIG fits: stainless technology cooling system (TCS) loops and CDU skids for direct-to-chip liquid cooling. The share is smaller today but it is the fastest-growing slice." },
-        { node: "auto_orbtube", text: "Enclosed-head orbital GTAW: autogenous, programmed, and logged for every weld. An operator can run it without being a master TIG welder." },
-        { node: "ndt_leak", text: "Liquid-cooling loops are accepted by borescope, pressure and leak testing. Piping gets sample RT or PAUT. Structural gets UT and MT." },
-      ],
-    },
-    {
-      id: "tour_wind", name: "Wind tower factory",
-      steps: [
-        { node: "seg_wind", text: "A tower factory is a SAW plant: long seams and circumferential seams on rolled cans, 20–80 mm thick." },
-        { node: "app_windtower", text: "Workflow: cut, bevel, roll, SAW long seam inside and outside, join cans with circ seams on rotators, weld flanges, then 100% UT." },
-        { node: "proc_saw", text: "Tandem or twin SAW lifts deposition to 20+ kg/h per head. Flux and wire are qualified together." },
-        { node: "auto_cab", text: "The column and boom positions the head over the seam while turning rolls rotate the can." },
-        { node: "fil_saw", text: "Basic agglomerated flux plus EM12K or EA2 wire, bought in bulk. Flux use roughly equals wire use by weight." },
-        { node: "ndt_paut", text: "PAUT and TOFD replace RT: no radiation zone, so production keeps running while inspection happens." },
-      ],
-    },
-    {
-      id: "tour_pipe", name: "Pipeline spread",
-      steps: [
-        { node: "seg_pipeline", text: "Three distinct pipeline markets: pipe mills (SAW), yard double-jointing (SAW), and the field spread (stick or mechanized GMAW)." },
-        { node: "app_girth", text: "Field girth welds: line-up clamp, root, hot pass within minutes, fill and cap, then 100% inspection." },
-        { node: "fil_cell", text: "Manual spreads use cellulosic E6010 or E8010 stick welded vertical-down (stovepipe): fast, forgiving, and still dominant on small and medium projects." },
-        { node: "auto_mechpipe", text: "Large-diameter spreads run internal root welders and external dual-torch GMAW bugs, like a moving production line." },
-        { node: "ndt_aut", text: "Automated UT inspects each weld in minutes, fast enough to keep up with the mechanized welding." },
-      ],
-    },
-    {
-      id: "tour_robot", name: "Yellow goods robot cell",
-      steps: [
-        { node: "seg_yellow", text: "Excavators, loaders and mining trucks: thick high-strength plate and multi-pass welds, the biggest robotic-arc market outside automotive." },
-        { node: "app_boom", text: "Booms and buckets are welded in large robot cells with two-axis positioners that keep every weld flat." },
-        { node: "proc_gmaw", text: "Spray or pulsed GMAW at high current. The robot keeps arc-on time around 60–85%, versus 20–40% by hand." },
-        { node: "fil_mcw", text: "Metal-cored wire in drums bridges gaps and deposits faster than solid wire with little slag, a good match for robots." },
-        { node: "ndt_monitor", text: "Arc data from every weld goes to monitoring software, and PAUT covers fatigue-critical joints." },
-      ],
-    },
-    {
-      id: "tour_semi", name: "Semiconductor UHP",
-      steps: [
-        { node: "seg_semi", text: "A fab contains tens of thousands of orbital tube welds on gas and chemical lines, plus large process piping and structural steel." },
-        { node: "app_uhp", text: "Electropolished 316L tube, cleanroom preparation, ultra-high-purity argon purge, and coupons at every shift start." },
-        { node: "auto_orbtube", text: "Enclosed-head orbital GTAW with stored schedules. The weld log is a deliverable to the fab owner." },
-        { node: "fil_none", text: "Autogenous, so there is no filler revenue. Value sits in orbital systems, heads, tungsten and argon." },
-        { node: "ndt_leak", text: "Borescope on coupons and helium leak testing at very low leak rates." },
-      ],
-    },
-    {
-      id: "tour_cobot", name: "Job shop goes cobot",
-      steps: [
-        { node: "seg_genfab", text: "Tens of thousands of small shops, served through distribution, with a severe welder shortage." },
-        { node: "app_jobshop", text: "Brackets, frames and weldments in batches of 5 to 500: too varied for a fenced robot, too repetitive for a scarce welder." },
-        { node: "auto_cobot", text: "The welder teaches points by hand, a cart makes the cobot portable, and payback comes from arc-on time on repeat jobs." },
-        { node: "fil_solid_cs", text: "The same ER70S-6 wire used for semi-auto, now fed to the cobot, so the consumables stay the same." },
-      ],
-    },
+  /* ====================== MARKET STRUCTURE ====================== */
+  groups: [
+    { id: "energy", name: "Energy & Power", sum: "Moving and generating energy: pipelines, power plants, wind, LNG and hydrogen." },
+    { id: "process", name: "Process & Pressure Equipment", sum: "Plants and the code-stamped vessels, piping and tanks inside them." },
+    { id: "infra", name: "Infrastructure & Construction", sum: "Buildings, bridges and the data centers driving new construction." },
+    { id: "transport", name: "Transportation & Defense", sum: "Things that move: cars, rail, trucks, ships, aircraft and military vehicles." },
+    { id: "mfg", name: "Industrial Manufacturing", sum: "Factory-built products: job shops, heavy equipment, HVAC and appliances." },
+    { id: "purity", name: "High-Purity & Hygienic", sum: "Clean systems where weld cleanliness is the product: fabs, pharma, food." },
+    { id: "mro", name: "Mining & Maintenance", sum: "Keeping heavy assets running: repair, rebuild and wear protection." },
   ],
+  // group, typical buyers and route to market for each segment
+  segmentMeta: {
+    seg_pipeline: { group: "energy", buyers: "Pipeline contractors, pipe mills, owner-operators", channel: "Direct to contractors; rental fleets" },
+    seg_power: { group: "energy", buyers: "Boiler and HRSG OEMs, nuclear fabricators, utilities, EPCs", channel: "Direct, specification-driven" },
+    seg_wind: { group: "energy", buyers: "Tower and monopile factories", channel: "Direct key accounts" },
+    seg_lng: { group: "energy", buyers: "EPCs, tank contractors, cryogenic equipment makers", channel: "Direct, project-based" },
+    seg_process: { group: "process", buyers: "EPC contractors, pipe fabricators, owner-operators (turnarounds)", channel: "Direct and distribution; EPC specifications decide" },
+    seg_pv: { group: "process", buyers: "Vessel and tank fabricators, tank erection contractors", channel: "Direct and distribution" },
+    seg_struct: { group: "infra", buyers: "Steel fabricators, erectors, bridge fabricators", channel: "Distribution; direct for large fabricators" },
+    seg_dc: { group: "infra", buyers: "Mechanical contractors, steel erectors, modular prefab shops, electrical equipment OEMs", channel: "Distribution and contractor accounts; hyperscaler specs influence choices" },
+    seg_auto: { group: "transport", buyers: "Vehicle OEMs, Tier 1 and Tier 2 suppliers, robot integrators", channel: "Direct key accounts and integrators" },
+    seg_transport: { group: "transport", buyers: "Railcar builders, truck and trailer OEMs, bus makers", channel: "Direct and distribution" },
+    seg_ship: { group: "transport", buyers: "Naval and commercial shipyards, offshore yards", channel: "Direct, project-based" },
+    seg_aero: { group: "transport", buyers: "Engine and airframe OEMs, MRO shops, defense primes", channel: "Direct; qualified supplier lists" },
+    seg_genfab: { group: "mfg", buyers: "Job shops, contract fabricators, OEM fab shops", channel: "Distribution (welding supply stores)" },
+    seg_yellow: { group: "mfg", buyers: "Equipment OEMs (e.g. Caterpillar, Deere, Komatsu, Volvo CE) and their Tier 1 fabricators", channel: "Direct key accounts and integrators" },
+    seg_hvac: { group: "mfg", buyers: "HVAC and appliance OEMs, compressor makers", channel: "Direct and integrators" },
+    seg_semi: { group: "purity", buyers: "Specialty gas-system and process piping contractors", channel: "Specialist distribution and direct" },
+    seg_food: { group: "purity", buyers: "Sanitary fabricators, process equipment OEMs", channel: "Distribution" },
+    seg_mining: { group: "mro", buyers: "Mines, cement and steel plants, repair and hardfacing shops", channel: "Distribution and service" },
+  },
 };

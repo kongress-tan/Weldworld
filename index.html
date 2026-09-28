@@ -232,6 +232,50 @@
   .calc .formula { margin-top: 8px; font-size: 11px; color: var(--faint); line-height: 1.45; }
   .brand-notes { display: flex; flex-direction: column; gap: 6px; }
 
+  /* ---------- 4. Gemba ---------- */
+  #v-gemba { display: grid; grid-template-columns: 270px minmax(0, 1fr) 410px; }
+  .g-rail { border-right: 1px solid var(--line); background: var(--surface); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .g-rail h2 { margin: 4px 0 0; font: 700 24px/1.05 var(--font-display); text-transform: uppercase; }
+  .g-rail > p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+  .site-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .site-list button { width: 100%; text-align: left; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .site-list button:hover { border-color: var(--line-2); background: var(--surface-3); }
+  .site-list button[aria-current="true"] { border-color: var(--good); background: rgba(77,212,166,.08); }
+  .site-list .nm { font-size: 13.5px; font-weight: 600; }
+  .site-list .sub { font-size: 11.5px; color: var(--faint); }
+  .stop-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+  .stop-list button { width: 100%; display: flex; gap: 10px; align-items: center; background: none; border: 0; border-radius: 4px; padding: 6px 8px; text-align: left; font-size: 13px; }
+  .stop-list button:hover { background: var(--surface-2); }
+  .stop-list button[aria-current="true"] { background: var(--surface-3); color: #fff; }
+  .stop-list button[aria-current="true"] .num { background: var(--good); color: #06231a; border-color: var(--good); }
+  #gstage { position: relative; overflow: hidden; min-width: 0; min-height: 0; background: #0f171c; }
+  #gstage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  #gpins { position: absolute; inset: 0; pointer-events: none; }
+  .gpin .num { border-color: var(--good) !important; color: var(--good) !important; }
+  .gpin.on .num { background: var(--good) !important; color: #06231a !important; }
+  #gbar {
+    position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px;
+    background: rgba(16,24,30,.94); border: 1px solid var(--line-2); border-radius: 999px; padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,.45);
+    max-width: calc(100% - 32px);
+  }
+  #gbar .where { font-size: 12.5px; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  #gbar .where b { font: 500 11px var(--font-mono); color: var(--good); margin-right: 6px; }
+  #gbar .btn { border-radius: 999px; white-space: nowrap; }
+  #gnogl { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+  .g-panel { border-left: 1px solid var(--line); background: var(--surface); overflow-y: auto; padding: 18px 18px 28px; }
+  .g-panel h2 { margin: 8px 0 2px; font: 700 28px/1.05 var(--font-display); }
+  .g-panel .role { margin: 10px 0 0; font-size: 14.5px; line-height: 1.55; }
+  ul.gl { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  ul.gl li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.45; }
+  ul.gl li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 7px; height: 7px; border-radius: 2px; background: var(--c, var(--muted)); }
+  ul.gl li b { font-weight: 600; }
+  .g-before { margin-top: 14px; font-size: 12.5px; color: var(--muted); background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; line-height: 1.5; }
+  .g-before b { color: var(--text); }
+  .gemba-cta { margin-top: 14px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 12px 14px; border-radius: var(--radius); background: linear-gradient(90deg, rgba(77,212,166,.12), rgba(77,212,166,.02)); border: 1px solid rgba(77,212,166,.4); }
+  .gemba-cta b { font: 700 16px/1.1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; }
+  .gemba-cta p { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
+  .btn.go { background: var(--good); border-color: var(--good); color: #06231a; font-weight: 600; }
+
   /* ---------- Glossary overlay ---------- */
   #gloss { position: fixed; inset: 0; z-index: 50; background: rgba(5,9,12,.65); display: grid; place-items: center; padding: 16px; }
   #gloss .card { width: min(620px, 100%); max-height: min(86vh, 760px); overflow-y: auto; background: var(--surface); border: 1px solid var(--line-2); border-radius: 8px; padding: 20px 22px 24px; box-shadow: 0 24px 60px rgba(0,0,0,.6); box-sizing: border-box; }
@@ -271,6 +315,14 @@
     #stage { height: 56vh; }
     .sys-panel { border-left: 0; border-top: 1px solid var(--line); overflow: visible; }
     .stage-hint { display: none; }
+    #v-gemba { display: block; overflow-y: auto; }
+    .g-rail { border-right: 0; border-bottom: 1px solid var(--line); overflow: visible; }
+    .site-list, .stop-list { flex-direction: row; overflow-x: auto; gap: 4px; padding-bottom: 4px; }
+    .site-list button { min-width: 170px; }
+    .stop-list button { white-space: nowrap; background: var(--surface-2); }
+    #gstage { height: 56vh; }
+    .g-panel { border-left: 0; border-top: 1px solid var(--line); overflow: visible; }
+    #gbar .where { display: none; }
   }
   @media (max-width: 520px) {
     .recipe { grid-template-columns: 1fr; }
@@ -287,7 +339,8 @@
     <nav class="steps" aria-label="Sections">
       <button data-view="markets"><span class="n">1</span>Markets</button><span class="sep">›</span>
       <button data-view="apps"><span class="n">2</span>Applications</button><span class="sep">›</span>
-      <button data-view="system"><span class="n">3</span><span class="lg">Welding&nbsp;</span>system</button>
+      <button data-view="system"><span class="n">3</span><span class="lg">Welding&nbsp;</span>system</button><span class="sep">›</span>
+      <button data-view="gemba"><span class="n">4</span>Gemba<span class="lg">&nbsp;walk</span></button>
     </nav>
     <div id="crumb"></div>
   </header>
@@ -359,6 +412,32 @@
       </div>
       <aside class="sys-panel" id="sysPanel" aria-live="polite"></aside>
     </section>
+    <!-- 4. Gemba walk -->
+    <section id="v-gemba" class="view" aria-label="Gemba walk" hidden>
+      <aside class="g-rail">
+        <div>
+          <div class="kicker" style="--c:var(--good)">Step 4 · Gemba walk</div>
+          <h2>Walk a customer site</h2>
+        </div>
+        <p>Go where the work happens. Pick a site, then walk it stop by stop in the order the work flows. Drag to look around at any stop.</p>
+        <ul class="site-list" id="siteList"></ul>
+        <div>
+          <h3 class="sec-h" style="margin-top:4px">Stops</h3>
+          <ul class="stop-list" id="stopList"></ul>
+        </div>
+      </aside>
+      <div id="gstage">
+        <div id="gpins"></div>
+        <div id="gbar">
+          <button class="btn" id="gPrev">← Back</button>
+          <span class="where" id="gWhere"></span>
+          <button class="btn" id="gOver">Overview</button>
+          <button class="btn go" id="gNext">Next →</button>
+        </div>
+        <div id="gnogl" hidden></div>
+      </div>
+      <aside class="g-panel" id="gPanel" aria-live="polite"></aside>
+    </section>
   </main>
 </div>
 
@@ -368,6 +447,8 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 <script src="data.js"></script>
 <script src="systems.js"></script>
+<script src="gemba-data.js"></script>
+<script src="gemba-world.js"></script>
 <script>
 (function () {
   "use strict";
@@ -388,6 +469,8 @@
   const SEGS = of("segment").map((s) => Object.assign(s, D.segmentMeta[s.id] || {}));
   const APPS = of("app");
   const GROUPS = D.groups;
+  const GEMBA_SITES = (window.GEMBA && window.GEMBA.sites) || [];
+  const siteById = new Map(GEMBA_SITES.map((g) => [g.id, g]));
   // application -> [{seg, w, note}]
   const appSegs = new Map(APPS.map((a) => [a.id, []]));
   SEGS.forEach((s) => (s.apps || []).forEach(([a, w, note]) => { if (appSegs.has(a)) appSegs.get(a).push({ seg: s, w, note }); else console.warn("WeldWorld: unknown app", a); }));
@@ -413,10 +496,10 @@
   }
   const nodeChip = (id) => { const n = byId.get(id); return `<button class="chip" data-gloss="${id}" style="--c:${LCOLOR[n.layer]}">${esc(n.name)}</button>`; };
 
-  const state = { view: "markets", tier: "all", sort: "group", openSeg: null, seg: null, app: null, appSeg: "all", comp: null };
+  const state = { site: GEMBA_SITES.length ? GEMBA_SITES[0].id : null, stop: -1, view: "markets", tier: "all", sort: "group", openSeg: null, seg: null, app: null, appSeg: "all", comp: null };
 
   /* ================= Navigation ================= */
-  const views = { markets: $("#v-markets"), apps: $("#v-apps"), system: $("#v-system") };
+  const views = { markets: $("#v-markets"), apps: $("#v-apps"), system: $("#v-system"), gemba: $("#v-gemba") };
   function go(view, id, opts = {}) {
     state.view = view;
     Object.entries(views).forEach(([k, el]) => (el.hidden = k !== view));
@@ -437,6 +520,9 @@
       else renderSysPanel();
       hash = state.comp ? "c_" + state.comp : "system";
       if (gl) gl.resize();
+    } else if (view === "gemba") {
+      openSite(id || state.site, opts.stop != null ? opts.stop : (id && id !== state.site ? -1 : state.stop));
+      hash = gembaHash();
     }
     renderCrumb();
     try { history.replaceState(null, "", "#" + hash); } catch (e) { /* no hash */ }
@@ -444,19 +530,21 @@
   document.querySelector(".steps").addEventListener("click", (ev) => { const b = ev.target.closest("button[data-view]"); if (b) go(b.dataset.view); });
   function renderCrumb() {
     const parts = [];
+    if (state.view === "gemba") { $("#crumb").innerHTML = state.site ? `<button data-site="${state.site}"><b>Site</b>${esc(siteById.get(state.site).name)}</button>` : ""; return; }
     if (state.seg) parts.push(`<button data-seg="${state.seg}"><b>Market</b>${esc(byId.get(state.seg).name)}</button>`);
     if (state.app) parts.push(`<button data-app="${state.app}"><b>Application</b>${esc(byId.get(state.app).name)}</button>`);
     $("#crumb").innerHTML = parts.join("");
   }
   // Global delegated navigation
   document.addEventListener("click", (ev) => {
-    const t = ev.target.closest("[data-seg],[data-app],[data-gloss],[data-comp],[data-go-system]");
+    const t = ev.target.closest("[data-seg],[data-app],[data-gloss],[data-comp],[data-go-system],[data-site]");
     if (!t || t.closest("tr.mrow")) return;
     if (t.dataset.gloss) { openGloss(t.dataset.gloss); return; }
     closeGloss();
     if (t.dataset.seg) go("markets", t.dataset.seg);
     else if (t.dataset.app) go("apps", t.dataset.app);
     else if (t.dataset.comp) go("system", null, { comp: t.dataset.comp });
+    else if (t.dataset.site) go("gemba", t.dataset.site, t.dataset.siteStop != null ? { stop: +t.dataset.siteStop } : {});
     else if (t.dataset.goSystem !== undefined) go("system", null, { comp: null });
   });
 
@@ -491,6 +579,7 @@
         <p class="sum">${esc(s.sum)}</p>
         ${facts([["Typical buyers", s.buyers], ["Route to market", s.channel], ["Demand drivers", s.drivers], ["Codes & standards", s.codes]])}
         ${s.insight ? `<div class="callout"><div class="k">Strategy note</div><p>${esc(s.insight)}</p></div>` : ""}
+        ${GEMBA_SITES.filter((g) => g.segment === s.id).map((g) => `<div class="gemba-cta"><div><b>Gemba walk</b><p>${esc(g.name)}: ${g.stops.length} stops</p></div><button class="btn go" data-site="${g.id}">Walk the site →</button></div>`).join("")}
       </div>
       <div>
         <h3 class="sec-h">Applications <small>share of segment welding, 1–5 · click to open</small></h3>
@@ -589,6 +678,7 @@
       ${cobotFit
         ? `<div class="cta3d"><div><b>See the welding system in 3D</b><p>This application can run on a MIG cobot cell. Explore the power source, feeder, wire, torch and arm, with ESAB/EWM vs Lincoln, Miller and Fronius for each part.</p></div><button class="btn primary" data-go-system>Open MIG cobot cell →</button></div>`
         : `<div class="cta3d off"><div><b>3D model not built yet</b><p>This application runs mainly on ${esc(byId.get(a.automation[0]).name.toLowerCase())}. The SAW column & boom and orbital TIG models are on the roadmap. The MIG cobot cell is available now.</p></div><button class="btn" data-go-system>Open MIG cobot cell</button></div>`}
+      ${GEMBA_SITES.filter((g) => g.apps.includes(a.id)).map((g) => `<div class="gemba-cta"><div><b>Go to Gemba: ${esc(g.name)}</b><p>Walk a typical customer site where this application happens, stop by stop.</p></div><button class="btn go" data-site="${g.id}">Walk the site →</button></div>`).join("")}
       <h3 class="sec-h">Workflow <small>typical sequence</small></h3>
       <ol class="flow">${(a.steps || []).map((s) => `<li>${esc(s)}</li>`).join("")}</ol>
       <h3 class="sec-h">My notes <small class="saved" id="noteSaved"></small></h3>
@@ -1091,6 +1181,7 @@
     const clock = new THREE.Clock();
     function loop() {
       requestAnimationFrame(loop);
+      if (stage.offsetParent === null) { clock.getDelta(); return; }
       const dt = Math.min(clock.getDelta(), 0.05);
       if (Math.abs(ex - exTarget) > 0.001) {
         ex += (exTarget - ex) * (reduceMotion ? 1 : Math.min(1, dt * 5));
@@ -1148,6 +1239,101 @@
     };
   }
 
+  /* ================= 4. Gemba walk ================= */
+  function openSite(id, stop) {
+    if (!siteById.has(id)) id = GEMBA_SITES[0].id;
+    const changed = id !== loadedSite;
+    state.site = id; state.stop = stop == null ? -1 : stop;
+    const site = siteById.get(id);
+    if (state.stop >= site.stops.length) state.stop = -1;
+    ensureGemba();
+    if (gw) { if (changed) { gw.load(site); loadedSite = id; } gw.resize(); gw.goStop(state.stop); }
+    else loadedSite = id;
+    renderGembaRail(); renderGembaPanel();
+  }
+  function gembaHash() { return "g_" + state.site + (state.stop >= 0 ? "." + (state.stop + 1) : ""); }
+  function goStop(i) {
+    const site = siteById.get(state.site);
+    state.stop = Math.max(-1, Math.min(site.stops.length - 1, i));
+    if (gw) gw.goStop(state.stop);
+    renderGembaRail(); renderGembaPanel();
+    try { history.replaceState(null, "", "#" + gembaHash()); } catch (e) { /* no hash */ }
+  }
+  let gw = null, gwTried = false, loadedSite = null;
+  function ensureGemba() {
+    if (gwTried) return; gwTried = true;
+    if (window.THREE && THREE.OrbitControls && window.createGembaWorld) {
+      try { gw = window.createGembaWorld($("#gstage"), $("#gpins"), (i) => goStop(i)); } catch (e) { console.error(e); gw = null; }
+    }
+    if (!gw) {
+      const n = $("#gnogl"); n.hidden = false; $("#gbar").hidden = true;
+      n.innerHTML = `<div><p style="font:700 20px var(--font-display);text-transform:uppercase;color:var(--text)">3D site unavailable</p><p>${window.THREE ? "This browser could not start WebGL." : "The 3D library could not load (network or firewall)."} The stop-by-stop briefing on the right still works.</p></div>`;
+    }
+  }
+  $("#siteList").innerHTML = GEMBA_SITES.map((g) => `<li><button data-site="${g.id}" aria-current="false"><span class="nm">${esc(g.name)}</span><span class="sub">${esc(byId.get(g.segment).name)} · ${esc(g.tier)} · ${g.stops.length} stops</span></button></li>`).join("");
+  function renderGembaRail() {
+    const site = siteById.get(state.site);
+    document.querySelectorAll("#siteList button").forEach((b) => b.setAttribute("aria-current", String(b.dataset.site === state.site)));
+    $("#stopList").innerHTML = `<li><button data-stop="-1" aria-current="${state.stop === -1}"><span class="num">·</span>Site overview</button></li>` +
+      site.stops.map((st, i) => `<li><button data-stop="${i}" aria-current="${state.stop === i}"><span class="num">${i + 1}</span>${esc(st.name)}</button></li>`).join("");
+    const cur = state.stop >= 0 ? site.stops[state.stop] : null;
+    $("#gWhere").innerHTML = cur ? `<b>STOP ${state.stop + 1}/${site.stops.length}</b>${esc(cur.name)}` : `<b>OVERVIEW</b>${esc(site.name)}`;
+    $("#gPrev").disabled = state.stop < 0;
+    $("#gNext").textContent = state.stop < 0 ? "Start the walk →" : state.stop === site.stops.length - 1 ? "Finish" : "Next →";
+    renderCrumb();
+  }
+  $("#stopList").addEventListener("click", (ev) => { const b = ev.target.closest("button[data-stop]"); if (b) goStop(+b.dataset.stop); });
+  $("#gPrev").addEventListener("click", () => goStop(state.stop - 1));
+  $("#gOver").addEventListener("click", () => goStop(-1));
+  $("#gNext").addEventListener("click", () => { const n = siteById.get(state.site).stops.length; goStop(state.stop >= n - 1 ? -1 : state.stop + 1); });
+  document.addEventListener("keydown", (ev) => {
+    if (state.view !== "gemba" || ev.target.matches("input, textarea, select") || !gloss.hidden) return;
+    if (ev.key === "ArrowRight") { ev.preventDefault(); $("#gNext").click(); }
+    else if (ev.key === "ArrowLeft") { ev.preventDefault(); if (state.stop >= 0) goStop(state.stop - 1); }
+  });
+  const gl_ = (items, color, roles) => items && items.length ? `<ul class="gl" style="--c:${color}">${items.map((x) => { const i = roles ? x.indexOf(": ") : -1; return `<li>${i > 0 ? `<b>${esc(x.slice(0, i))}</b>: ${esc(x.slice(i + 2))}` : esc(x)}</li>`; }).join("")}</ul>` : "";
+  function linkChip(id) {
+    const n = byId.get(id); if (!n) return "";
+    return n.layer === "app" ? `<button class="chip" data-app="${id}" style="--c:${LCOLOR.app}">${esc(n.name)}</button>` : nodeChip(id);
+  }
+  function renderGembaPanel() {
+    const site = siteById.get(state.site), P = $("#gPanel");
+    if (state.stop < 0) {
+      P.innerHTML = `
+        <div class="kicker" style="--c:var(--good)">Site overview · ${esc(site.tier)}</div>
+        <h2>${esc(site.name)}</h2>
+        <p class="role">${esc(site.sum)}</p>
+        <h3 class="sec-h">At a glance</h3>${facts(site.facts)}
+        <div class="callout"><div class="k">Customer economics</div><p>${esc(site.economics)}</p></div>
+        <div class="g-before"><b>Before you go.</b> ${esc(site.before)}</div>
+        <h3 class="sec-h">The walk <small>${site.stops.length} stops</small></h3>
+        <ol class="flow">${site.stops.map((st, i) => `<li><button class="chip" data-stop-go="${i}" style="--c:var(--good)">${esc(st.name)}</button></li>`).join("")}</ol>
+        <h3 class="sec-h">Linked in the atlas</h3>
+        <div class="chips"><button class="chip" data-seg="${site.segment}" style="--c:${LCOLOR.segment}">${esc(byId.get(site.segment).name)}</button>${site.apps.map(linkChip).join("")}</div>
+        <div style="margin-top:18px"><button class="btn go" data-stop-go="0">Start the walk →</button></div>
+        <p class="disclaimer">Headcounts, rates and volumes are indicative. A composite of typical sites, not a specific customer.</p>`;
+    } else {
+      const st = site.stops[state.stop], n = site.stops.length;
+      const note = store.get("ww-note-g_" + site.id + "_" + st.id) || "";
+      P.innerHTML = `
+        <div class="kicker" style="--c:var(--good)">Stop ${state.stop + 1} of ${n} · ${esc(site.name)}</div>
+        <h2>${esc(st.name)}</h2>
+        <h3 class="sec-h">What you'd see</h3><p class="body" style="margin:0;font-size:14px;line-height:1.6">${esc(st.see)}</p>
+        <h3 class="sec-h">Who's here and what they care about</h3>${gl_(st.people, LCOLOR.segment, true)}
+        ${st.pains && st.pains.length ? `<h3 class="sec-h">Waste & pain points <small>what to notice</small></h3>${gl_(st.pains, "#E8795A")}` : ""}
+        ${st.products && st.products.length ? `<h3 class="sec-h">Welding products in use</h3>${gl_(st.products, LCOLOR.process)}` : ""}
+        <h3 class="sec-h">Questions to ask</h3>${gl_(st.ask, LCOLOR.automation)}
+        <div class="callout"><div class="k">Where ESAB can win</div><p>${esc(st.play)}</p></div>
+        ${st.system ? `<div class="cta3d" style="margin-top:14px"><div><b>See this cell part by part</b><p>Power source, feeder, wire, torch and arm, with the brands compared.</p></div><button class="btn primary" data-go-system>Open MIG cobot cell →</button></div>` : ""}
+        ${st.links && st.links.length ? `<h3 class="sec-h">Look it up <small>definitions</small></h3><div class="chips">${st.links.map(linkChip).join("")}</div>` : ""}
+        <h3 class="sec-h">My notes <small class="saved" id="noteSaved"></small></h3>
+        <div class="notes"><textarea id="note-gemba" data-note="g_${site.id}_${st.id}" placeholder="What would you check on a real visit? (saved in this browser)">${esc(note)}</textarea></div>
+        <div class="pager"><button class="btn" data-stop-go="${state.stop - 1}">${state.stop === 0 ? "← Overview" : "← " + esc(site.stops[state.stop - 1].name)}</button>${state.stop < n - 1 ? `<button class="btn go" data-stop-go="${state.stop + 1}">${esc(site.stops[state.stop + 1].name)} →</button>` : `<button class="btn" data-stop-go="-1">Back to overview</button>`}</div>`;
+    }
+    P.scrollTop = 0;
+  }
+  $("#gPanel").addEventListener("click", (ev) => { const b = ev.target.closest("[data-stop-go]"); if (b) goStop(+b.dataset.stopGo); });
+
   /* ================= Boot ================= */
   const h = (location.hash || "").slice(1);
   if (h.startsWith("app_") && byId.has(h)) go("apps", h);
@@ -1155,6 +1341,8 @@
   else if (h === "system") go("system");
   else if (h === "apps") go("apps");
   else if (h.startsWith("seg_") && byId.has(h)) go("markets", h);
+  else if (h.startsWith("g_")) { const [sid, n] = h.slice(2).split("."); go("gemba", siteById.has(sid) ? sid : null, { stop: n ? (+n || 0) - 1 : -1 }); }
+  else if (h === "gemba") go("gemba");
   else go("markets");
 })();
 </script>

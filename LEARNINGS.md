@@ -4,6 +4,26 @@ This file records how the tool's logic evolved: what I assumed, what I changed a
 
 ---
 
+## Session 3 (2026-09-28): v3 Gemba walks
+
+### Request
+> "Spend more time describing, and potentially showing, a 3D world of the welding application so I can go to Gemba without actually going, and experience what the typical customer application looks like."
+
+### Approach and logic
+1. **Walk in the order the work flows.** Each site is a sequence of stops that follows the material (plate → can → section → inspection → paint), because that is how a real Gemba walk is done and how the value chain makes sense.
+2. **Same six questions at every stop:** what you'd see; who's here and what they care about; waste and pain points; welding products in use; questions to ask; where ESAB can win. A fixed structure makes sites comparable and turns the tool into visit prep.
+3. **A reusable 3D kit instead of six hand-built scenes.** Halls, cranes, people, arcs, turning rolls, column & booms, vehicles and booths are functions; each site is a layout that calls them. Adding site #7 is mostly content work.
+4. **Cameras are part of the layout.** Each builder returns a target and camera position per stop id, so the text (gemba-data.js) and the world (gemba-world.js) stay separate but linked by id.
+5. **Composite sites, labeled as such.** Every site is a typical composite, not a specific customer, and volumes are marked indicative.
+
+### Mistakes and fixes
+- **G1. The new view was never shown.** I added the Gemba section but forgot to register it in the list of views the navigation toggles, so it stayed hidden. The browser test caught it immediately. *Lesson:* when adding a view, grep for every place the existing views are listed.
+- **G2. Welders hidden inside the ship hull.** I put the dry-dock erection crew in the gap between two hull blocks, so the camera sat inside a red wall. *Fix:* weld the seam from staging on the outside of the shell, as happens in a real dock. *Lesson:* check each camera stop visually; 3D layout bugs don't show up in automated tests.
+- **G3. Signs blocking the view.** Pipeline signs stood between the camera and the work. *Fix:* moved behind the spoil pile.
+- **G4. Wrong bold text.** The list formatter bolded anything before a colon, which turned "Who owns the welding machines:" into a fake role. *Fix:* only bold roles in the "who's here" list.
+- **G5. Stray objects from draft code.** Two leftover lines would have placed a power source and extra cans at wrong coordinates. I found them by re-reading before running. *Lesson:* re-read generated geometry code for leftovers before testing.
+- **G6. Breadcrumb mismatch.** While walking a site, the top bar still showed an unrelated application. *Fix:* in Gemba, show only the current site.
+
 ## Session 2 (2026-09-28): v2 redesign after feedback
 
 ### Feedback received
